@@ -1,0 +1,11 @@
+standards/**
+standards/RFCs/
+standards/RFCs/catalog.json
+
+# local and generated files not to be committed
+**/__pycache__
+
+# ignore backup and temp files
+*~
+/tmp/
+
