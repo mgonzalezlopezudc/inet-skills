@@ -6,6 +6,16 @@ Use repository skills for detailed procedures. Keep project-wide policy here and
 
 Use `inet-agent-orchestration` for nontrivial work with independent evidence lanes, production C++/NED/MSG changes, unexplained runtime behavior, standards-to-implementation analysis, statistical analysis, or independent regression/review. Keep simple lookups and obvious one-file edits in the root thread.
 
+### Skill-path access
+- Use the canonical path `/home/user/omnetpp_ws/inet-skills/.agents/...`.
+- For the first skill read, invoke the read with the required path access/escalation immediately; do not probe the symlink first with `ls`, `wc`, or `realpath`.
+- If the sandbox rejects the command before execution, retry the identical read using required path access.
+
+### Codex path to project `config.toml` and agent definitions `.toml` files 
+- Use the canonical path `/home/user/omnetpp_ws/inet-skills/.codex/...`.
+- For the agent definition read, invoke the read with the required path access/escalation immediately; do not probe the symlink first with `ls`, `wc`, or `realpath`.
+- If the sandbox rejects the command before execution, retry the identical read using required path access.
+
 ### Repository rules
 
 - Before changing anything under `src/inet/`, use `inet-architectural-requirements` to check sealing, architecture, naming, exception-ledger, audit, and review requirements.
@@ -16,10 +26,6 @@ Use `inet-agent-orchestration` for nontrivial work with independent evidence lan
 - Keep build mode, runner, and model libraries consistent. Use `-j$(nproc)` for parallel builds unless the user requests otherwise.
 - Never update fingerprint CSV files without explicit user approval after explaining the changed trajectory.
 - Report reproducible commands with their working directory, configuration, run/seed, build mode, exit status, and artifact paths when applicable.
-
-### IEEE 802.11 standards
-
-Use `ieee80211-standards` and its generated corpus before processing PDFs under `standards/`. IEEE text governs normative claims; checked-out source and observed runs govern implemented behavior.
 
 ### Persisting reusable lessons
 

@@ -24,6 +24,6 @@ inet_run_unit_tests -m release -f '(First|Second|Third).*\.test'
 
 For module tests, use `inet_run_module_tests` with the same build/mode rule. When piping through `tee`, preserve the runner's exit status with `pipefail`.
 
-Run the smallest relevant filter first. When `inet-agent-orchestration` requires final full-suite validation, use the repository-supported no-filter invocation on the final build; a focused filter is not a substitute. A build/test failure or unavailable required suite is incomplete validation.
+Run the smallest relevant filter first. A build/test failure or unavailable required suite is incomplete validation.
 
 Distinguish INET-library build failures, test-executable build failures, and assertion failures. Report the first relevant failure rather than counting cascades as independent causes.

@@ -19,7 +19,7 @@ Then run the wrapper from `tests/fingerprint`:
 ./fingerprinttest -d -f 'tplx' -f '~tNl' -f '~tND'
 ```
 
-The working directory is mandatory because default CSV expansion occurs before the wrapper's directory option. Treat `Ran 0 tests` or `NO TESTS RAN` as invocation failure. Use `-m`/`-x` filters for a focused selection; use the unfiltered command for the final suite. Release mode or `tyf` coverage must be requested or justified separately.
+The working directory is mandatory because default CSV expansion occurs before the wrapper's directory option. Treat `Ran 0 tests` or `NO TESTS RAN` as invocation failure. Use `-m`/`-x` filters for a focused selection. For the final suite perform a filtered run only on those tests related with the produced code; use the unfiltered command only if explicitly required by the user. Release mode or `tyf` coverage must be requested or justified separately.
 
 For a mismatch:
 

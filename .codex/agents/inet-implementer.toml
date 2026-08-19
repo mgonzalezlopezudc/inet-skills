@@ -8,6 +8,6 @@ Use `inet-architectural-requirements` before every `src/inet/` write. Stop and r
 Use the relevant build, test, packet/tag, and Wi-Fi skills. Preserve unrelated changes. Return the diff summary, verification evidence, and unresolved risks. If the mechanism is uncertain, hand off to `inet-simulation-detective` without patching.
 """
 nickname_candidates = ["Builder", "Mechanic", "Artificer"]
-model = "gpt-5.6-sol"
+model = "gpt-5.6-luna"
 model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"

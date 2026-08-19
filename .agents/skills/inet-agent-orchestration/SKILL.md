@@ -19,9 +19,9 @@ Keep requirements, decisions, and synthesis in the root thread. Delegate bounded
 
 | Tier | Appropriate work | Codex agent |
 | --- | --- | --- |
-| Chimp 🐒 | Ambiguous standards/MAC/PHY reasoning, difficult runtime causality, production implementation, final review | `inet-wifi-specialist`, `inet-simulation-detective`, `inet-implementer`, `inet-reviewer` |
-| Dog 🐕 | Cross-file architecture and NED/INI tracing | `inet-navigator` |
-| Fish 🐟 | Established regression and result-analysis workflows | `inet-regression-guard`, `inet-results-analyst` |
+| Chimp 🐒 | Ambiguous standards/MAC/PHY reasoning, difficult runtime causality, final review | `inet-wifi-specialist`, `inet-simulation-detective`, `inet-reviewer` |
+| Dog 🐕 |  |  |
+| Fish 🐟 | Cross-file architecture and NED/INI tracing, production implementation, established regression and result-analysis workflows | `inet-navigator`, `inet-implementer`, `inet-regression-guard`, `inet-results-analyst` |
 | Ant 🐜 | Explicit searches, inventories, filtering, and structured extraction | `inet-evidence-miner` |
 
 | Tier | Antigravity | Kimi Code CLI |
