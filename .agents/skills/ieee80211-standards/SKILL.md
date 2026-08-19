@@ -5,15 +5,16 @@ description: Search and inspect IEEE 802.11 standards stored in this repository.
 
 # IEEE 802.11 standards corpus
 
-Run from the repository root using the options `--standards-dir $HOME$/omnetpp_ws/inet-standards --output $HOME/omnetpp_ws/inet-standards/processed --json`
+Check status by running from the repository root: `inet_process_standards status`. If it reports a missing or stale corpus, run `inet_process_standards build --standards-dir $HOME$/omnetpp_ws/inet-standards --output $HOME/omnetpp_ws/inet-standards/processed`, recheck status, and repeat the search. 
+
+For search and show, run from the repository root using the options `--standards-dir $HOME$/omnetpp_ws/inet-standards --output $HOME/omnetpp_ws/inet-standards/processed --json`
 
 ```sh
-inet_process_standards status
 inet_process_standards search "<clause, table, field, or distinctive phrase>"
 inet_process_standards show <document:chunk:id>
 ```
 
-If `status` reports a missing or stale corpus, run `inet_process_standards build`, recheck status, and repeat the search. Search definitions and cross-references when one chunk is insufficient, and confirm the result belongs to the requested standard revision.
+Search definitions and cross-references when one chunk is insufficient, and confirm the result belongs to the requested standard revision.
 
 The generated corpus is under `$HOME/omnetpp_ws/inet-standards/processed/`. It is ignored build output: do not edit or commit it.
 
