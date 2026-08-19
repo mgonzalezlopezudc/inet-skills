@@ -10,16 +10,16 @@ Run from the repository root with `inet_run_unit_tests`; do not infer a runner f
 After compiled INET source or generated-code inputs change, rebuild INET explicitly in the same mode as the tests:
 
 ```sh
-make MODE=release -j$(nproc)
-inet_run_unit_tests -m release -f '<regex>'
+make MODE=debug -j$(nproc)
+inet_run_unit_tests -m debug -f '<regex>'
 ```
 
-Use `MODE=debug` with `-m debug` when required. The test runner builds selected test executables but does not rebuild `src/libINET.so` or `src/libINET_dbg.so`. A `.test`-only change needs no INET rebuild unless compiled support inputs changed.
+Use `MODE=release` with `-m release` when required. The test runner builds selected test executables but does not rebuild `src/libINET.so` or `src/libINET_dbg.so`. A `.test`-only change needs no INET rebuild unless compiled support inputs changed.
 
 `-f` accepts one regex. Combine groups with alternation and quote it:
 
 ```sh
-inet_run_unit_tests -m release -f '(First|Second|Third).*\.test'
+inet_run_unit_tests -m debug -f '(First|Second|Third).*\.test'
 ```
 
 For module tests, use `inet_run_module_tests` with the same build/mode rule. When piping through `tee`, preserve the runner's exit status with `pipefail`.
