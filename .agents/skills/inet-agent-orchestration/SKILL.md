@@ -17,7 +17,7 @@ Keep requirements, decisions, and synthesis in the root thread. Delegate bounded
 
 ## Tiers and agents
 
-| Tier | Appropriate work | Codex agent |
+| Tier | Appropriate work | Specialist agent |
 | --- | --- | --- |
 | Chimp 🐒 | Ambiguous standards/MAC/PHY reasoning, difficult runtime causality, final review | `inet-wifi-specialist`, `inet-simulation-detective`, `inet-reviewer` |
 | Dog 🐕 |  |  |
@@ -33,7 +33,7 @@ Keep requirements, decisions, and synthesis in the root thread. Delegate bounded
 
 If a binding is unavailable, move upward in capability. Never silently downgrade Chimp work; disclose the actual model and verification used.
 
-Use workspace-local `.codex/agents/<agent-name>.toml` as the canonical role definition, including Codex model settings. On Codex, spawn that registered type. On prompt-persona runtimes, prepend its `description` and `developer_instructions`. On Kimi, use `explore` for read-only work and `coder` for runs, artifacts, or edits; report inherited model/effort when per-agent selection is unavailable.
+Use workspace-local `.codex/agents/<agent-name>.toml` (for Codex) and `.antigravity/agents/<agent-name>.toml` (for Antigravity) as the registered agent definitions. On Codex and Antigravity, spawn that registered type directly. On prompt-persona runtimes, prepend its `description` and `developer_instructions`. On Kimi, use `explore` for read-only work and `coder` for runs, artifacts, or edits; report inherited model/effort when per-agent selection is unavailable.
 
 ## Routing
 
