@@ -23,7 +23,8 @@ Use `inet-agent-orchestration` for nontrivial work with independent evidence lan
 - Use command-line overrides for temporary logging, tracing, capture, and result recording; do not edit `omnetpp.ini` only to enable diagnostics.
 - Start investigations with one configuration and one run/seed. Expand only when the task requires a campaign or the narrow case is understood.
 - Base claims about delivery, loss, retransmission, scheduling, or protocol behavior on logs, captures, event logs, results, source inspection, or debugger evidence.
-- Keep build mode, runner, and model libraries consistent. Use `-j$(nproc)` for parallel builds unless the user requests otherwise.
+- Use debug mode for every INET/OMNeT++ build, simulation, and test run, with matching debug runners and libraries (`MODE=debug`, `inet --debug`, `-m debug`, `opp_run_dbg`, and `libINET_dbg.so` as applicable). Never build or execute release-mode artifacts. Use `-j$(nproc)` for parallel builds unless the user requests otherwise.
+- For code changes, run only unit, module, and fingerprint tests that are directly related to the changed paths, symbols, or behavioral contracts. Record that mapping and invoke an explicit filter; never run an unfiltered or broader suite. If no directly related test can be identified, report the coverage gap instead of broadening the test selection.
 - Never update fingerprint CSV files without explicit user approval after explaining the changed trajectory.
 - Report reproducible commands with their working directory, configuration, run/seed, build mode, exit status, and artifact paths when applicable.
 

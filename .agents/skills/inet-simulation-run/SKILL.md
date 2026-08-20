@@ -12,16 +12,15 @@ Keep relative INI, result, NED, image, and library paths consistent with that wo
 Use Cmdenv for automated runs:
 
 ```sh
-inet --release -u Cmdenv -f omnetpp.ini -c <config> -r <run>
+inet --debug -u Cmdenv -f omnetpp.ini -c <config> -r <run>
 ```
 
 Use Qtenv only for interactive topology, animation, state inspection, or event stepping:
 
 ```sh
-inet --release -u Qtenv -f omnetpp.ini -c <config> -r <run>
 inet --debug -u Qtenv -f omnetpp.ini -c <config> -r <run> --debug-on-errors=true
 ```
 
-Use `inet --release --printcmd` or `inet --debug --printcmd` when the resolved runner, NED/image paths, or libraries matter. Keep launcher mode and model-library mode consistent. `--debug-on-errors=true` creates a debugger trap; it does not launch a debugger. Use `inet-lldb-debugging` when source-level inspection is required.
+Every simulation invocation must use `inet --debug` with matching debug project libraries. Do not run release-mode simulations. Use `inet --debug --printcmd` when the resolved runner, NED/image paths, or libraries matter. `--debug-on-errors=true` creates a debugger trap; it does not launch a debugger. Use `inet-lldb-debugging` when source-level inspection is required.
 
 Use the dedicated configuration, log, capture, event-log, result, or LLDB skill for deeper diagnosis.

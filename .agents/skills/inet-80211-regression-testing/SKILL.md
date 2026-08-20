@@ -9,13 +9,13 @@ A passing run is evidence, not coverage. Verify the frame exchange, timing, coun
 
 1. State the behavior and protocol-visible invariant under test.
 2. Build the smallest deterministic scenario that exercises it.
-3. Compare before/after with identical seed, binary mode, NED path, configuration, and overrides.
+3. Compare before/after with identical seed, debug binaries, NED path, configuration, and overrides.
 4. Record the invariant with the most direct source: assertion, PCAP, targeted log, event log, or result.
 5. Expand seeds or parameters only after the narrow case is understood, especially for contention, interference, mobility, rate control, or randomized traffic.
 6. Use `inet-fingerprint-regression` for trajectory changes and `inet-ned-ini-analysis` for configuration uncertainty.
 
 Useful invariants include association state, expected ACK/retry/drop behavior, protection policy, sequence/retry evolution, QoS mapping, aggregation/Block Ack progress, receiver power/SNIR/error decisions, AP forwarding addresses, and active HE/EHT feature gates.
 
-For changed 802.11 production behavior, apply `AR-WLAN-QUAL-TESTS` from `inet-architectural-requirements`. The complete-suite completion gate is owned by `inet-agent-orchestration`; unit and fingerprint skills own the commands.
+For changed 802.11 production behavior, apply `AR-WLAN-QUAL-TESTS` from `inet-architectural-requirements`. Run only unit, module, and fingerprint tests directly related to the changed code and behavioral contracts; `inet-agent-orchestration` owns this completion gate, and the unit and fingerprint skills own the filtered debug-mode commands.
 
 Do not accept throughput improvement as proof of the targeted mechanism, update fingerprints before explaining the first changed event, or use an ideal radio as final verification unless it is the intended abstraction.

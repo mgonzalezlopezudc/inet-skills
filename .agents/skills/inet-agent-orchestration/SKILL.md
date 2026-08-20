@@ -53,7 +53,7 @@ Gate handoffs as follows:
 
 1. Diagnose → implement: demonstrated mechanism, bounded change surface, architecture/seal decision, and any required approval.
 2. Implement → verify: stable diff and explicit behavior claim.
-3. Verify → conclude: focused evidence that exercises the claim; for behavior-affecting production changes, complete repository unit and fingerprint suites using their owning skills.
+3. Verify → conclude: focused debug-mode evidence that exercises the claim; for behavior-affecting production changes, run only the unit, module, and fingerprint tests directly mapped to the changed paths, symbols, or behavioral contracts, using explicit filters and their owning skills. Never run complete or unfiltered suites.
 4. Architecture review → conclude: required fitness checks and exact semantic checklist verdicts.
 5. Fingerprint update or sealing change: explicit user approval after the evidence is presented.
 
