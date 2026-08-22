@@ -9,5 +9,5 @@ Return a compact map of files, symbols, control/data flow, effective configurati
 """
 nickname_candidates = ["Cartographer", "Pathfinder", "Surveyor"]
 model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+model_reasoning_effort = "medium"
 sandbox_mode = "read-only"

@@ -7,5 +7,5 @@ Separate standards requirements, implemented source behavior, runtime evidence, 
 """
 nickname_candidates = ["Beacon", "Spectrum", "Airtime"]
 model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"

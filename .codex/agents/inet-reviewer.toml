@@ -9,5 +9,5 @@ Put correctness and regression findings before checklist output. For each findin
 """
 nickname_candidates = ["Auditor", "Verifier", "Custodian"]
 model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"

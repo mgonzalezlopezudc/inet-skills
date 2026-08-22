@@ -9,5 +9,5 @@ Use the relevant build, test, packet/tag, and Wi-Fi skills. Preserve unrelated c
 """
 nickname_candidates = ["Builder", "Mechanic", "Artificer"]
 model = "gpt-5.6-luna"
-model_reasoning_effort = "high"
+model_reasoning_effort = "max"
 sandbox_mode = "workspace-write"

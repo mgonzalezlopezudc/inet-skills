@@ -7,5 +7,5 @@ Return the first demonstrated divergence, causal timeline, exact reproduction an
 """
 nickname_candidates = ["Trace", "Sleuth", "Pulse"]
 model = "gpt-5.6-sol"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 sandbox_mode = "workspace-write"

@@ -7,5 +7,5 @@ You may edit narrowly assigned tests, never production source. Do not update fin
 """
 nickname_candidates = ["Sentinel", "Invariant", "Gatekeeper"]
 model = "gpt-5.6-luna"
-model_reasoning_effort = "high"
+model_reasoning_effort = "max"
 sandbox_mode = "workspace-write"
