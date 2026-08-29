@@ -24,7 +24,8 @@ Ground rules:
 3. **Respect the ledgers.** Couplings already recorded in
    [architecture-exceptions.md](../architecture-exceptions.md) or names in
    [naming-exceptions.md](../naming-exceptions.md) are known — don't re-flag them; flag only *new*
-   deviations, and propose them as new ledger rows.
+   deviations. State the ledger disposition for each new deviation, and propose a row only when it
+   will remain unresolved beyond the reviewed change.
 4. **Scope to the diff.** Review what the change adds or moves, not the whole pre-existing tree.
 
 ## Checklist
@@ -78,8 +79,8 @@ declared in the build descriptors.
 
 **[AR-QUAL-NAMING] Do new NED/`.msg`/semantic names follow the conventions?**
 FLAG names that break [naming-conventions.md](../naming-conventions.md) on the NED/message side that
-`clang-tidy` can't see (wrong role suffix, `Msg`/`Message` packet, abbreviated field). Propose new
-findings as `naming-exceptions.md` rows.
+`clang-tidy` can't see (wrong role suffix, `Msg`/`Message` packet, abbreviated field). If the
+deviation will remain beyond the reviewed change, propose it as a `naming-exceptions.md` row.
 
 **[AR-QUAL-LOGGING] Is a programming error logged instead of thrown?**
 FLAG a violated invariant / impossible state that is written to the log and execution continues, where
@@ -95,5 +96,8 @@ semantically distinct role.
 
 ## Output footer
 
-End with a one-line verdict: `REVIEW: n PASS, n FLAG, n QUESTION` and, for any `FLAG`, a suggested
-ledger row (`AV-*` or `NV-*`) so the finding lands in the backlog rather than being lost.
+End with a one-line verdict: `REVIEW: n PASS, n FLAG, n QUESTION`. For every `FLAG`, state its ledger
+disposition. Propose an `AV-*` or `NV-*` violation row only when the violation will remain unresolved
+beyond the reviewed change, and propose a sanctioned exception only when the deviation is deliberate
+and cannot reasonably be corrected. Do not propose a ledger entry for a finding expected to be fixed
+in the reviewed change.

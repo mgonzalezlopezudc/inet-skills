@@ -11,6 +11,8 @@ Read [finding-quality.md](references/finding-quality.md) for the finding thresho
 
 For any review under `src/inet/`, also use `inet-architectural-requirements` and emit its required checklist after correctness findings. Add subsystem skills when the review depends on effective NED/INI configuration, packet/tag semantics, IEEE 802.11 behavior, simulation causality, tests, or fingerprints.
 
+This skill owns the full correctness and regression findings: proof, severity, consequence, correction direction, and focused verification. `inet-architectural-requirements` owns seal status, requirement identifiers, ledger disposition, exact checklist output, and the compliance verdict. When one mechanism is both a correctness defect and an architectural violation, write one correctness finding and have the checklist `FLAG` reference it instead of repeating the finding.
+
 ## Establish the review target
 
 Resolve the user-specified base, head, commit range, PR diff, or working-tree scope. If the request does not name one, infer the narrowest reviewable range from repository state and state that scope. Verify the range against current `HEAD`; do not review a stale line range or an assumed PR description.

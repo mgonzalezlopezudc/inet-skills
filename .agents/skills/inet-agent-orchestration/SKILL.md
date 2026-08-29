@@ -40,10 +40,13 @@ Use workspace-local `.codex/agents/<agent-name>.toml` (for Codex) and `.antigrav
 - **Architecture/configuration:** use `inet-navigator`; add `inet-reviewer` for a formal compliance verdict and `inet-wifi-specialist` only when 802.11 semantics matter.
 - **Standards/model gap:** use `inet-wifi-specialist`; add `inet-navigator` when the implementation path is broad or unclear.
 - **Runtime failure:** lead with `inet-simulation-detective`; add configuration, Wi-Fi, or extraction lanes only for distinct questions.
-- **Production change:** establish the mechanism and change surface, then assign exactly one `inet-implementer`. Use `inet-regression-guard` for behavior changes and `inet-reviewer` for architecture-sensitive, nontrivial, or 802.11 changes.
+- **Patch review:** use `inet-reviewer`, which must use `inet-code-review` for every pull request, branch, commit-range, diff, or working-tree review. It additionally uses `inet-architectural-requirements` for `src/inet/` scope. For a formal architecture, naming, or sealing audit without a concrete correctness diff, use the architecture skill as primary and add code review only if correctness review is also requested.
+- **Production change:** establish the mechanism and change surface, then assign exactly one `inet-implementer`. Use `inet-regression-guard` for behavior changes and `inet-reviewer` on the stable verified diff for architecture-sensitive, nontrivial, or 802.11 changes.
 - **Results/plots:** use `inet-results-analyst`; use `inet-evidence-miner` only for bounded metadata inventory.
 
 For any `src/inet/` change, the architecture skill owns seal checks, requirement maps, ledgers, fitness checks, and semantic checklist contracts. For 802.11 production changes, it also owns `AR-WLAN-*` mapping and WLAN checklist requirements; normative changes additionally require an IEEE revision and clause.
+
+The code-review skill owns actionable correctness and regression findings. The architecture skill owns policy classification and compliance output. The reviewer emits one report with correctness findings first and checklist verdicts last; a checklist `FLAG` references an existing finding when both describe the same mechanism.
 
 ## Assignments and gates
 
@@ -53,8 +56,9 @@ Gate handoffs as follows:
 
 1. Diagnose → implement: demonstrated mechanism, bounded change surface, architecture/seal decision, and any required approval.
 2. Implement → verify: stable diff and explicit behavior claim.
-3. Verify → conclude: focused debug-mode evidence that exercises the claim; for behavior-affecting production changes, run only the unit, module, and fingerprint tests directly mapped to the changed paths, symbols, or behavioral contracts, using explicit filters and their owning skills. Never run complete or unfiltered suites.
-4. Architecture review → conclude: required fitness checks and exact semantic checklist verdicts.
-5. Fingerprint update or sealing change: explicit user approval after the evidence is presented.
+3. Verify → review or conclude: focused debug-mode evidence that exercises the claim; for behavior-affecting production changes, run only the unit, module, and fingerprint tests directly mapped to the changed paths, symbols, or behavioral contracts, using explicit filters and their owning skills. Never run complete or unfiltered suites. When review is required, pass the stable diff, behavior claim, and this evidence to the reviewer.
+4. Correctness review → conclude: for changes routed to `inet-reviewer`, all actionable `inet-code-review` findings are confirmed resolved by the same reviewer after focused reverification, or explicitly accepted by the user with the residual risk recorded. Report reviewed scope, validation, and residual risks.
+5. Architecture review → conclude: required fitness checks and exact semantic checklist verdicts.
+6. Fingerprint update or sealing change: explicit user approval after the evidence is presented.
 
 Resolve disagreements by reproducible runtime/debugger evidence, packet/event/result evidence, effective configuration, checked-out source, then hypothesis. IEEE text governs normative behavior; source and observed runs govern implementation behavior.
