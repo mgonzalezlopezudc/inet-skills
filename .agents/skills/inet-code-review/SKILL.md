@@ -7,44 +7,42 @@ description: Act as an independent read-only OMNeT++/INET maintainer reviewing a
 
 Review the assigned change as an INET maintainer. Find defects independently; do not wait for the user to supply suspected problems. Remain read-only with respect to source, configuration, tests, fingerprints, ledgers, and seals.
 
-Read [finding-quality.md](references/finding-quality.md) for the finding threshold and comment format. Read [omnetpp-inet-review-patterns.md](references/omnetpp-inet-review-patterns.md) for semantic failure patterns that ordinary line-by-line C++ review misses.
+Read [finding-quality.md](references/finding-quality.md) for the finding threshold and comment format.
 
-For any review under `src/inet/`, also use `inet-architectural-requirements` and emit its required checklist after correctness findings. Add subsystem skills when the review depends on effective NED/INI configuration, packet/tag semantics, IEEE 802.11 behavior, simulation causality, tests, or fingerprints.
+## Select the review layers
 
-This skill owns the full correctness and regression findings: proof, severity, consequence, correction direction, and focused verification. `inet-architectural-requirements` owns seal status, requirement identifiers, ledger disposition, exact checklist output, and the compliance verdict. When one mechanism is both a correctness defect and an architectural violation, write one correctness finding and have the checklist `FLAG` reference it instead of repeating the finding.
+Apply the following layers cumulatively. Select them by the changed runtime contract, not only by file extension: a C++ change may require all four layers, while a NED-only change may require OMNeT++, INET, and IEEE 802.11 checks.
+
+| Layer | Apply when the reviewed contract involves | Detailed checks |
+| --- | --- | --- |
+| General C++ | C++ APIs, object lifetime, containers, algorithms, callbacks, state, or polymorphism | [general-cpp-review-checks.md](references/general-cpp-review-checks.md) |
+| OMNeT++ | modules, initialization stages, events, messages, signals, NED, INI, MSG, statistics, or simulation trajectories | [omnetpp-review-checks.md](references/omnetpp-review-checks.md) |
+| INET | INET packets/chunks/tags, protocol integration, lifecycle operations, queues, serializers, feature composition, or INET tests | [inet-review-checks.md](references/inet-review-checks.md) |
+| IEEE 802.11 | Wi-Fi MAC/PHY behavior, management, association, channel access, Block Ack, capabilities, rates/modes, or 802.11 configuration | [ieee80211-review-checks.md](references/ieee80211-review-checks.md) |
+
+Read every selected layer reference before evaluating the change. Keep findings at the layer that owns the violated contract, but use lower layers to prove the mechanism. For example, a dangling C++ pointer triggered by an OMNeT++ signal remains an ownership finding with OMNeT++ reachability evidence.
+
+For any review under `src/inet/`, also use `inet-architectural-requirements` and emit its required checklist after correctness findings. Add subsystem skills when the review depends on effective NED/INI configuration, packet/tag semantics, IEEE 802.11 behavior, simulation causality, tests, or fingerprints. Use `ieee80211-standards` when a finding depends on normative 802.11 behavior.
+
+This skill owns the full correctness and regression findings: proof, severity, consequence, correction direction, and focused verification. `inet-architectural-requirements` owns architectural-only concerns, required-artifact policy, seal status, requirement identifiers, ledger disposition, exact checklist output, and the compliance verdict. Architectural rules may guide inspection, but do not report noncompliance as a correctness finding unless it meets this skill's trigger, mechanism, and consequence proof standard. When one mechanism is both a correctness defect and an architectural violation, write one correctness finding and have the checklist `FLAG` reference it instead of repeating the finding.
 
 ## Establish the review target
 
 Resolve the user-specified base, head, commit range, PR diff, or working-tree scope. If the request does not name one, infer the narrowest reviewable range from repository state and state that scope. Verify the range against current `HEAD`; do not review a stale line range or an assumed PR description.
 
-Inventory changed files and classify each change by contract: API, lifecycle, protocol state, packet representation, configuration, serialization, timing, observability, build integration, or test behavior. Note generated inputs and feature gates before inspecting individual hunks.
+Inventory changed files and assign the applicable review layers. Classify each change by contract: API, lifecycle, protocol state, packet representation, configuration, serialization, timing, observability, build integration, or test behavior. Note generated inputs and feature gates before inspecting individual hunks.
 
 Do not broaden into a repository-wide audit. Review pre-existing code only where the change calls it, depends on it, changes its contract, or makes an old defect newly material.
 
 ## Trace the changed contract
 
-For every semantic change, inspect beyond the diff:
-
-- declarations, callers, overrides, and sibling paths such as DCF/HCF, QoS/non-QoS, originator/recipient, AP/STA, and legacy/amendment variants;
-- ownership and lifetime across queues, callbacks, signals, timers, returned packets, duplicates, and deferred cleanup;
-- NED composition, INI inheritance, wildcard precedence, `typename`, parameters, gates, feature declarations, and custom configurations;
-- `.msg` sources, serializers, printers, dissectors, generated consumers, field ranges, and round-trip behavior;
-- existing unit, module, simulation, and fingerprint coverage, including what the assertions actually prove.
+For every semantic change, use the selected layer checks to inspect beyond the diff. Trace declarations and consumers, the owner of each invariant, semantic siblings, failure and terminal paths, generated inputs and consumers, effective configuration, and what existing tests actually prove.
 
 Follow the effective runtime path. A helper that looks correct does not establish that the production owner calls it, passes the right identity, or handles every terminal result.
 
 ## Hunt for failures
 
-Challenge the change with boundary and alternate paths suggested by its contract:
-
-- empty, singleton, full, overflow, wraparound, malformed, and unavailable state;
-- initialization, stop/start, crash, dynamic deletion, and runtime reconfiguration;
-- success, refusal, timeout, retry exhaustion, cancellation, stale/duplicate completion, and fragmentation;
-- same peer, different peer, missing peer, sparse capability, and user-defined configuration;
-- explicit override versus inferred default and every affected protocol/mode family;
-- synchronous re-entry, observer callbacks, partial mutation, and exception cleanup.
-
-Look especially for a change applied to one path but omitted from its semantic siblings, a new base interface without complete overrides, widened dispatch into unsupported subclasses, duplicated mutable state, or a test that exercises a helper while bypassing the production integration.
+Challenge the change with the boundary, alternate, failure, re-entrant, lifecycle, configuration, and variant paths named by each selected layer. Look especially for a change applied to one semantic path but omitted from its siblings, duplicated authority, partial state transitions, and tests that exercise a helper while bypassing production integration.
 
 ## Prove findings
 
@@ -63,14 +61,9 @@ Precision outranks finding count. Do not file speculative findings whose reachab
 
 ## Validate proportionally
 
-Use read-only inspection first. When execution materially strengthens a finding or clears a realistic risk, rebuild matching debug artifacts and run only directly mapped checks with explicit filters:
+Use read-only inspection first. When execution materially strengthens a finding or clears a realistic risk, rebuild matching debug artifacts and run only directly mapped checks with explicit filters. Choose the smallest layer-appropriate unit, module, simulation, packet, or fingerprint check described in the selected references. Start runtime validation with one configuration and one run/seed.
 
-- unit tests for pure algorithms, lookup, serialization, sequence arithmetic, and ownership boundaries;
-- module tests for initialization, timers, callbacks, module calls, packet flow, and state-machine interleavings;
-- one configuration/run/seed for runtime causality;
-- directly related fingerprints only when the change may alter the event trajectory.
-
-Do not substitute a broad suite for missing direct coverage. Do not change fingerprint CSVs. Treat a passing fingerprint as regression evidence, not proof of protocol correctness; explain the first divergence before attributing a mismatch to the change.
+Do not substitute a broad suite for missing direct coverage. A missing required companion test is not a standalone correctness finding: when architecture review applies, report it only in the checklist under `AR-QUAL-TESTS`; otherwise report it as residual risk. Do not change fingerprint CSVs. Treat a passing fingerprint as regression evidence, not proof of protocol correctness; explain the first divergence before attributing a mismatch to the change.
 
 ## Report as a reviewer
 

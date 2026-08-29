@@ -1,4 +1,4 @@
 interface:
   display_name: "INET Code Review"
-  short_description: "Independent OMNeT++ and INET maintainer review"
+  short_description: "Layered C++, OMNeT++, INET, and Wi-Fi review"
   default_prompt: "Use $inet-code-review to independently review the current INET diff and report evidence-backed actionable findings."

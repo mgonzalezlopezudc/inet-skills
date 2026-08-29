@@ -91,4 +91,4 @@ Finish with:
 
 `WLAN REVIEW: <n> PASS, <n> FLAG, <n> QUESTION`
 
-For every `FLAG`, include one concrete correction and state its ledger disposition. Propose an `AV-*` violation row only when the violation will remain unresolved beyond the reviewed change, and propose a sanctioned exception only when the deviation is deliberate and cannot reasonably be corrected. Do not propose a ledger entry for a finding expected to be fixed in the reviewed change.
+For every `FLAG`, include one concrete correction and state its ledger disposition. When the same mechanism already has an `inet-code-review` correctness finding, reference that finding instead of repeating its mechanism, consequence, correction, or verification; the referenced finding satisfies the concrete-correction requirement. Propose an `AV-*` violation row only when the violation will remain unresolved beyond the reviewed change, and propose a sanctioned exception only when the deviation is deliberate and cannot reasonably be corrected. Do not propose a ledger entry for a finding expected to be fixed in the reviewed change.

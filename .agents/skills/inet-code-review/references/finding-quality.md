@@ -19,14 +19,13 @@ A blocking finding needs all six. If evidence establishes a real defect but not 
 
 ## Search beyond the changed line
 
-High-value findings often live at the boundary between the hunk and its consumers:
+High-value findings often live at the boundary between the hunk and its consumers. Use every selected review layer to inspect:
 
-- a reference-mode change works for HT but makes VHT fall through to zero;
-- a new extractor interface bypasses a gate because its subclasses override the older collection API only;
-- a correct helper is never exercised by the production HCF path;
-- broader base-class dispatch admits an unsupported frame subclass;
-- a response is built from one channel/capability snapshot but commits later mutable state after ACK;
-- a timer or teardown deletes one object while leaving its reorder, retry, pending-ID, or peer state alive.
+- callers and concrete implementations of the changed interface;
+- the production path that should exercise a new helper;
+- semantic sibling paths admitted or omitted by changed dispatch;
+- asynchronous completion that can observe state different from the state used to begin the operation;
+- terminal cleanup of all state owned by the completed or canceled operation.
 
 Inspect the contract’s siblings and terminal paths before concluding the hunk is complete.
 
@@ -34,38 +33,36 @@ Inspect the contract’s siblings and terminal paths before concluding the hunk 
 
 Before filing:
 
-- trace initialization stages, subscription/publication order, and whether an event can actually run between them;
-- identify the current owner and every cleanup point before using “leak,” “dangling,” or “double free”;
-- distinguish packet movement to a retirement list from deletion and from lost ownership;
-- verify current IEEE text instead of relying on remembered or obsolete field semantics;
-- resolve effective NED/INI values and supported custom configurations instead of reasoning only from type names;
-- distinguish untouched serializer-cache round trips from decode-modify-encode or reconstructed objects;
-- compare against exact clean `HEAD` before attributing an existing fingerprint mismatch to the patch;
-- inspect whether a test’s earlier actions mutate fixture state or whether it would still pass with the changed integration removed.
+- prove the trigger against the effective initialization, configuration, event, and protocol path named by the selected layer checks;
+- identify the current owner, transfer operation, destruction point, and later access before using “leak,” “dangling,” or “double free”;
+- verify external or normative claims against the applicable authoritative source rather than memory;
+- distinguish preserved cached state from state that is decoded, mutated, copied, or reconstructed;
+- compare against the exact clean baseline before attributing an existing runtime or regression mismatch to the patch;
+- inspect fixture mutation and whether a test would still pass with the changed production integration removed.
 
 Do not file as defects:
 
 - intentional behavior already supported by the contract and direct evidence;
 - a hypothetical unsupported future consumer without current reachability;
-- bounded bookkeeping retention mislabeled as a leak;
+- bounded bookkeeping retention mislabeled as a leak or ownership transfer mislabeled as deletion;
 - performance concern without path frequency, operation count, or profiling evidence;
 - unrelated pre-existing behavior not made material by the change;
-- stylistic preference without an applicable INET naming or architecture rule.
+- stylistic preference without an applicable project naming or architecture rule.
 
 ## Prefer contract-level corrections
 
 The review comment should point toward the owning abstraction, not merely the symptom. Common durable directions include:
 
 - one authoritative owner instead of duplicated state;
-- typed operation, PHY family, or transaction result instead of RTTI, vector order, bitrate ties, or observation signals;
-- per-peer, per-TID, or per-agreement capability instead of a station-wide assumption;
-- separate current and pending lifecycle cleanup;
-- protocol identity and generation instead of equality of request fields;
+- an explicit semantic operation or result instead of incidental type, order, or observation;
+- state stored at the granularity at which its contract varies;
+- separate current and pending state when their lifecycle differs;
+- stable identity and generation instead of equality of mutable request fields;
 - explicit rejection of unsupported variants at the dispatch boundary;
 - atomic mode/configuration transitions;
-- ordered typed-plus-opaque wire elements when mutation must preserve unknown extensions.
+- a representation that preserves unknown data and ordering when a mutation contract requires it.
 
-Do not demand that an adjacent independent standards correction be folded into the reviewed change merely because inspection exposed it. Report it separately when it changes unrelated trajectories or broadens the feature.
+Do not demand that an adjacent independent correction be folded into the reviewed change merely because inspection exposed it. Report it separately when it changes unrelated trajectories or broadens the feature.
 
 ## Write an actionable review comment
 

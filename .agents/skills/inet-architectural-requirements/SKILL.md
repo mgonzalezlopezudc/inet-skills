@@ -48,7 +48,7 @@ Use the focused form for a bounded subtree and the repository-wide form for full
 
 For semantic review, emit every general checklist item and its prescribed `REVIEW: n PASS, n FLAG, n QUESTION` footer. For an 802.11 production diff, follow it with every WLAN checklist item and the prescribed `WLAN REVIEW: n PASS, n FLAG, n QUESTION` footer.
 
-This skill owns architectural, naming, and sealing metadata and checklist verdicts; it does not replace correctness review. When composed with `inet-code-review`, keep its correctness findings before the checklist sections. If a checklist `FLAG` describes the same mechanism as a correctness finding, reference that finding instead of duplicating it.
+This skill owns architectural, naming, and sealing metadata, required-artifact policy, and checklist verdicts; it does not replace correctness review. When composed with `inet-code-review`, keep its correctness findings before the checklist sections. If a checklist `FLAG` describes the same mechanism as a correctness finding, reference that finding instead of duplicating it; the finding's correction direction and focused verification satisfy any checklist requirement to provide a correction, while the checklist still supplies the requirement identifier and ledger disposition.
 
 ## Ledgers and sealing
 
