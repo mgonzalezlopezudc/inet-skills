@@ -7,7 +7,7 @@ description: Act as an independent read-only OMNeT++/INET maintainer reviewing a
 
 Review the assigned change as an INET maintainer. Find defects independently; do not wait for the user to supply suspected problems. Remain read-only with respect to source, configuration, tests, fingerprints, ledgers, and seals.
 
-Read [finding-quality.md](references/finding-quality.md) for the finding threshold and comment format.
+Read [finding-quality.md](references/finding-quality.md) for the finding threshold and comment format. Read [common-agent-pitfalls.md](references/common-agent-pitfalls.md) for recurring false-positive and missed-finding patterns. Study [example-review.md](references/example-review.md) for a complete worked example showing the expected depth, format, and checklist composition.
 
 ## Select the review layers
 
@@ -21,6 +21,10 @@ Apply the following layers cumulatively. Select them by the changed runtime cont
 | IEEE 802.11 | Wi-Fi MAC/PHY behavior, management, association, channel access, Block Ack, capabilities, rates/modes, or 802.11 configuration | [ieee80211-review-checks.md](references/ieee80211-review-checks.md) |
 
 Read every selected layer reference before evaluating the change. Keep findings at the layer that owns the violated contract, but use lower layers to prove the mechanism. For example, a dangling C++ pointer triggered by an OMNeT++ signal remains an ownership finding with OMNeT++ reachability evidence.
+
+### Context budget
+
+When context is constrained and all four layer references cannot be loaded simultaneously, prioritize: (1) the layer whose contract the change most directly modifies, (2) `finding-quality.md` (always), (3) the layer needed to prove reachability of the most likely defect class, (4) `common-agent-pitfalls.md`. Load remaining layers incrementally if initial inspection reveals cross-layer mechanisms.
 
 For any review under `src/inet/`, also use `inet-architectural-requirements` and emit its required checklist after correctness findings. Add subsystem skills when the review depends on effective NED/INI configuration, packet/tag semantics, IEEE 802.11 behavior, simulation causality, tests, or fingerprints. Use `ieee80211-standards` when a finding depends on normative 802.11 behavior.
 

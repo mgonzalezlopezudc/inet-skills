@@ -9,15 +9,19 @@ description: Apply INET architectural requirements, naming conventions, exceptio
 
 Before adding, editing, moving, renaming, or deleting anything under `src/inet/`:
 
-1. Read [sealing.md](references/sealing.md) and [sealing-status.md](references/sealing-status.md).
-2. Resolve every target against exact-file and recursive ancestor-directory entries; status paths are relative to `src/inet/`.
-3. Treat new files under sealed directories as sealed and generated `_m.h`/`_m.cc` files as covered by their source `.msg` seal.
-4. For each sealed target, stop before writing and request explicit file-specific permission in the current conversation.
-5. After approval, keep the seal and re-audit the change. Change sealing status only when the user explicitly requests it.
+1. Read [sealing-status.md](references/sealing-status.md) and check whether any sealed path overlaps the affected files.
+2. **If no sealed path overlaps**, proceed — the guard is satisfied. Skip loading `sealing.md`.
+3. **If a sealed path overlaps**, read [sealing.md](references/sealing.md) for the full policy, then:
+   - Resolve every target against exact-file and recursive ancestor-directory entries; status paths are relative to `src/inet/`.
+   - Treat new files under sealed directories as sealed and generated `_m.h`/`_m.cc` files as covered by their source `.msg` seal.
+   - For each sealed target, stop before writing and request explicit file-specific permission in the current conversation.
+   - After approval, keep the seal and re-audit the change. Change sealing status only when the user explicitly requests it.
 
 Assume unlisted files are unsealed only after checking the current status file.
 
 ## Load applicable references
+
+Start with [quick-reference-index.md](references/quick-reference-index.md) to identify which `AR-*` and `AR-WLAN-*` requirements apply to the change type. Then load only the needed sections from:
 
 - [requirements.md](references/requirements.md): user-facing modeling scope, execution, results, visualization, emulation, documentation, and compatibility.
 - [architectural-requirements.md](references/architectural-requirements.md): production design/review and `AR-*` rules.
@@ -27,7 +31,9 @@ Assume unlisted files are unsealed only after checking the current status file.
 - [agent-review-checklist.md](references/enforcement/agent-review-checklist.md): every semantic diff review.
 - [ieee80211-agent-review-checklist.md](references/enforcement/ieee80211-agent-review-checklist.md): semantic reviews of 802.11 production diffs.
 
-Use prior reports only for the unchanged scope they cover; revalidate anything that may have changed.
+For recurring false-positive and missed-finding patterns, see [common-agent-pitfalls.md](../inet-code-review/references/common-agent-pitfalls.md) in the code-review skill.
+
+Use prior reports (in [reports/](references/reports/)) only for the unchanged scope they cover; revalidate anything that may have changed.
 
 ## Apply and validate
 
@@ -44,7 +50,18 @@ bash .agents/skills/inet-architectural-requirements/references/enforcement/check
 bash .agents/skills/inet-architectural-requirements/references/enforcement/check-architecture.sh src/inet/<focused-subtree>
 ```
 
-Use the focused form for a bounded subtree and the repository-wide form for full or cross-cutting audits. The script reports known non-allowlisted violations; reconcile them with the architecture ledger.
+Use the focused form for a bounded subtree and the repository-wide form for full or cross-cutting audits.
+
+### Reconciling `check-architecture.sh` output
+
+The script reports non-allowlisted `#include` violations. For each reported violation:
+
+1. Check [architecture-exceptions.md](references/architecture-exceptions.md) — if the coupling is already recorded as `AS-*` (sanctioned) or `AV-*` (known violation), reference the existing entry.
+2. If the coupling is **new and introduced by the reviewed change**: report it as a finding and propose either a fix direction or a new `AV-*` violation row.
+3. If the coupling is **new but pre-existing** (not introduced by the change): note it as a pre-existing violation outside the reviewed scope; do not block the review on it.
+4. If the coupling is a **deliberate, permanent framework-wide dependency**: propose a new `AS-*` sanctioned-exception row and an allowlist addition in the script.
+
+Never silently add allowlist entries or ledger rows — propose them and await user approval.
 
 For semantic review, emit every general checklist item and its prescribed `REVIEW: n PASS, n FLAG, n QUESTION` footer. For an 802.11 production diff, follow it with every WLAN checklist item and the prescribed `WLAN REVIEW: n PASS, n FLAG, n QUESTION` footer.
 

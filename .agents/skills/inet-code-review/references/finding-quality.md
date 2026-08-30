@@ -31,23 +31,17 @@ Inspect the contract’s siblings and terminal paths before concluding the hunk 
 
 ## Avoid false positives
 
-Before filing:
+Before filing, verify each claim against the actual code path, not a pattern-matched suspicion:
 
-- prove the trigger against the effective initialization, configuration, event, and protocol path named by the selected layer checks;
-- identify the current owner, transfer operation, destruction point, and later access before using “leak,” “dangling,” or “double free”;
-- verify external or normative claims against the applicable authoritative source rather than memory;
-- distinguish preserved cached state from state that is decoded, mutated, copied, or reconstructed;
-- compare against the exact clean baseline before attributing an existing runtime or regression mismatch to the patch;
-- inspect fixture mutation and whether a test would still pass with the changed production integration removed.
+- prove the trigger against the effective initialization, configuration, event, and protocol path;
+- identify the current owner, transfer operation, destruction point, and later access before using "leak," "dangling," or "double free";
+- verify normative or external claims against the applicable authoritative source;
+- distinguish preserved cached state from decoded, mutated, copied, or reconstructed state;
+- compare against the exact clean baseline before attributing a mismatch to the patch.
 
-Do not file as defects:
+Do not file as defects: intentional behavior supported by contract and evidence; hypothetical unsupported future consumers without reachability; bounded bookkeeping retention or ownership transfer; performance concerns without evidence; unrelated pre-existing behavior; or stylistic preferences without an applicable project rule.
 
-- intentional behavior already supported by the contract and direct evidence;
-- a hypothetical unsupported future consumer without current reachability;
-- bounded bookkeeping retention mislabeled as a leak or ownership transfer mislabeled as deletion;
-- performance concern without path frequency, operation count, or profiling evidence;
-- unrelated pre-existing behavior not made material by the change;
-- stylistic preference without an applicable project naming or architecture rule.
+See [common-agent-pitfalls.md](common-agent-pitfalls.md) for recurring false-positive patterns (e.g., retained state misidentified as leaks, cached chunk pointers, intentional tag clearing).
 
 ## Prefer contract-level corrections
 
