@@ -9,6 +9,7 @@ Use `inet-agent-orchestration` for nontrivial work with independent evidence lan
 ### Repository rules
 
 - Before changing anything under `src/inet/`, use `inet-architectural-requirements` to check sealing, architecture, naming, exception-ledger, audit, and review requirements.
+- Before making a semantic change under `src/inet/`, use `inet-code-authoring` to define the implementation contract, apply the relevant preventive correctness checks, and self-audit the stable diff before handoff.
 - Use Cmdenv for automated and reproducible runs. Use Qtenv only for interactive inspection or when requested.
 - Use command-line overrides for temporary logging, tracing, capture, and result recording; do not edit `omnetpp.ini` only to enable diagnostics.
 - Start investigations with one configuration and one run/seed. Expand only when the task requires a campaign or the narrow case is understood.
