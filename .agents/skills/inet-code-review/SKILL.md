@@ -32,7 +32,13 @@ This skill owns the full correctness and regression findings: proof, severity, c
 
 ## Establish the review target
 
-Resolve the user-specified base, head, commit range, PR diff, or working-tree scope. If the request does not name one, infer the narrowest reviewable range from repository state and state that scope. Verify the range against current `HEAD`; do not review a stale line range or an assumed PR description.
+Resolve the user-specified base, head, commit range, PR diff, or working-tree scope. If the request does not name one, infer the narrowest reviewable range from repository state and state that scope. Common target resolution commands:
+- Working tree vs. HEAD: `git diff HEAD`
+- Staged changes only: `git diff --cached`
+- Topic branch vs. base branch: `git diff <base-branch>...HEAD`
+- Specific commit: `git show <commit-hash>`
+
+Verify the range against current `HEAD`; do not review a stale line range or an assumed PR description.
 
 Inventory changed files and assign the applicable review layers. Classify each change by contract: API, lifecycle, protocol state, packet representation, configuration, serialization, timing, observability, build integration, or test behavior. Note generated inputs and feature gates before inspecting individual hunks.
 
@@ -61,7 +67,9 @@ Before reporting a defect, establish:
 
 Trace actual initialization order before claiming an invalid sentinel can escape. Trace the concrete ownership operation before calling retention a leak or a borrowed pointer a use-after-free. Verify normative claims against the applicable standard revision and clause. Distinguish an intentional change, optional hardening, unsupported future configuration, and unrelated pre-existing issue from a defect in the reviewed change.
 
-Precision outranks finding count. Do not file speculative findings whose reachability or consequence is unproven. Use a question only when a concrete ambiguity requires maintainer judgment.
+Precision outranks finding count. Do not file speculative findings whose reachability or consequence is unproven. Classify items strictly:
+- **Actionable finding (`FLAG`)**: proven defect with reachable trigger, broken invariant, and observable consequence.
+- **Maintainer question (`QUESTION`)**: used sparingly only when a concrete standard or behavioral ambiguity genuinely requires maintainer clarification, not for unverified hunches.
 
 ## Validate proportionally
 

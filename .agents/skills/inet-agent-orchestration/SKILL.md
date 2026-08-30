@@ -24,16 +24,11 @@ Keep requirements, decisions, and synthesis in the root thread. Delegate bounded
 | Fish 🐟 | Production implementation, established regression and result-analysis workflows | `inet-implementer`, `inet-regression-guard`, `inet-results-analyst` |
 | Ant 🐜 | Explicit searches, inventories, filtering, and structured extraction | `inet-evidence-miner` |
 
-| Tier | Antigravity | Kimi Code CLI |
-| --- | --- | --- |
-| Chimp | `gemini-3.7-flash`, `high` | `kimi-code/k3`, `max` |
-| Dog | `gemini-3.7-flash`, `medium` | `kimi-code/k3`, `high` |
-| Fish | `gemini-3.7-flash`, `medium` | `kimi-code/kimi-for-coding`, `high` |
-| Ant | `gemini-3.7-flash`, `low` | `kimi-code/kimi-for-coding`, thinking on |
+For model intelligence ratings, pricing, and active tier assignments, consult [MODELS.md](../../MODELS.md). Specific agent runner configurations and default reasoning efforts are registered in `.codex/agents/<agent-name>.toml` (for Codex) and `.antigravity/agents/<agent-name>.toml` (for Antigravity).
 
-If a binding is unavailable, move upward in capability. Never silently downgrade Chimp work; disclose the actual model and verification used.
+If a tier binding is unavailable, move upward in capability. Never silently downgrade Chimp work; disclose the actual model and verification used.
 
-Use workspace-local `.codex/agents/<agent-name>.toml` (for Codex) and `.antigravity/agents/<agent-name>.toml` (for Antigravity) as the registered agent definitions. On Codex and Antigravity, spawn that registered type directly. On prompt-persona runtimes, prepend its `description` and `developer_instructions`. On Kimi, use `explore` for read-only work and `coder` for runs, artifacts, or edits; report inherited model/effort when per-agent selection is unavailable.
+On Codex and Antigravity, spawn registered agent types directly. On prompt-persona runtimes, prepend its `description` and `developer_instructions`. On Kimi, use `explore` for read-only work and `coder` for runs, artifacts, or edits; report inherited model/effort when per-agent selection is unavailable.
 
 ## Routing
 
@@ -51,6 +46,8 @@ For semantic `src/inet/` implementation, `inet-code-authoring` owns the preventi
 The code-review skill owns actionable correctness and regression findings. The architecture skill owns policy classification and compliance output. The reviewer emits one report with correctness findings first and checklist verdicts last; a checklist `FLAG` references an existing finding when both describe the same mechanism.
 
 ## Assignments and gates
+
+When executing in a single-agent session without sub-agent delegation, transition through the 6 gates sequentially in the root thread (Diagnose → Pre-Write Contract → Implement → Focused Test → Review Self-Audit) without skipping pre-write invariant checks or focused verification.
 
 Every delegated prompt must say to follow `AGENTS.md` and the applicable repository skills, not spawn sub-agents, and return to the parent. Specify one deliverable, exact scope and inputs, write authority, exclusions, required evidence, definition of done, and concise return shape. Include paths, symbols, configuration, run/seed, and artifacts when relevant. For semantic `src/inet/` implementation, include the available `inet-code-authoring` contract evidence and require the implementer to complete unresolved items before writing. Reuse a specialist for related follow-up work.
 

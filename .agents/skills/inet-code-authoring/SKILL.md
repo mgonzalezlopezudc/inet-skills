@@ -7,7 +7,7 @@ description: Design and implement semantic INET C++, NED, MSG, INI, and test cha
 
 Prevent defects while defining and implementing a change. Keep `inet-code-review` independent and read-only; reuse its maintained correctness references without adopting its finding format or reviewer role.
 
-For any write under `src/inet/`, first use `inet-architectural-requirements` for sealing, applicable requirement identifiers, naming, ledgers, required artifacts, and architecture constraints. Do not write a sealed target without the file-specific approval that skill requires.
+For any write under `src/inet/`, use `inet-architectural-requirements` to verify sealing status, requirement identifiers, naming conventions, and architecture ledgers before modifying files.
 
 ## Load the preventive checks
 
@@ -33,10 +33,21 @@ Before editing, write a compact working contract or return it in the parent hand
 5. relevant ownership transitions, identity and generation tuples, units, numeric or cyclic boundaries, timer meaning, and scheduling semantics;
 6. the smallest unit, module, simulation, packet, or fingerprint checks that directly exercise the changed production contract.
 
+```text
+### Pre-Write Implementation Contract Template
+- Invariant & Owner: <intended behavior, preserved invariants, owning class/module>
+- Entry Point & Control Path: <effective production caller, entry point, data flow>
+- Affected Consumers & Artifacts: <C++, NED, MSG, serializers, registrations, gates>
+- Siblings & Terminal Paths: <error, timeout, cancellation, lifecycle STOP/START, retry>
+- Boundaries & Units: <identities/TIDs, absolute vs relative time, units, wrap arithmetic>
+- Mapped Verification: <smallest direct unit/module/fingerprint test command>
+```
+
 Resolve uncertainty about the mechanism or effective configuration before writing. Do not turn unsupported hypotheses, optional hardening, or unrelated pre-existing issues into patch scope.
 
 ## Implement against the contract
 
+- **Modern INET conventions**: use `Packet`, `Chunk`, and `Tag` APIs instead of deprecated `cMessage` encapsulation; use `IntrusivePtr`/`SharedPtr` (`makeShared`) for chunk/packet memory instead of raw owning pointers; route lifecycle states through `handleLifecycleOperation` (`ILifecycle`).
 - Make the smallest coherent change that updates every affected semantic path and consumer.
 - Preserve exactly one owner and disposition across normal, early-return, failure, exception, callback, and teardown paths. Establish externally observable state before re-entrant callbacks or signals, and make shared terminal cleanup idempotent when paths can converge.
 - Keep current and pending state, peers, interfaces, flows, TIDs, directions, links, and generations separate according to the owning protocol. Use complete identity tuples and domain-correct boundary or wrap semantics.
