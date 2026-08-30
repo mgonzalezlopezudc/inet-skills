@@ -7,7 +7,21 @@ description: Design and implement semantic INET C++, NED, MSG, INI, and test cha
 
 Prevent defects while defining and implementing a change. Keep `inet-code-review` independent and read-only; reuse its maintained correctness references without adopting its finding format or reviewer role.
 
-For any write under `src/inet/`, use `inet-architectural-requirements` to verify sealing status, requirement identifiers, naming conventions, and architecture ledgers before modifying files.
+## Implementation Workflow Sequence
+
+Follow this 4-step sequence in order for any change under `src/inet/`:
+
+```mermaid
+graph LR
+    Step1[1. Sealing & Arch Guard] --> Step2[2. Pre-Write Contract]
+    Step2 --> Step3[3. Implement against Contract]
+    Step3 --> Step4[4. Self-Audit & Focused Test]
+```
+
+1. **Sealing Guard:** Run `check-sealing.sh` to confirm target files are unsealed. If sealed, STOP and request explicit permission.
+2. **Implementation Contract:** Define the pre-write contract (full or lightweight template) before modifying files.
+3. **Implementation:** Code against the contract adhering to modern INET conventions.
+4. **Self-Audit & Verification:** Audit stable diff against `common-agent-pitfalls.md` and run directly mapped debug-mode tests.
 
 ## Load the preventive checks
 
@@ -24,14 +38,9 @@ Apply layers cumulatively when a higher-layer behavior relies on lower-layer con
 
 ## Define the implementation contract
 
-Before editing, write a compact working contract or return it in the parent handoff. Include:
+Before editing, write a compact working contract or return it in the parent handoff. Study [example-contract.md](references/example-contract.md) for complete worked examples of both full and lightweight contracts.
 
-1. the intended behavior change, preserved behavior, invariant, and authoritative owner;
-2. the effective production entry point and control/data path that reaches the owner;
-3. affected declarations, callers, implementations, C++/NED/MSG/configuration artifacts, generated inputs and consumers, serializers, registrations, and feature gates;
-4. affected semantic siblings and every success, refusal, error, timeout, cancellation, retry-exhaustion, stale/duplicate, re-entrant, lifecycle, teardown, configuration, and supported-variant path;
-5. relevant ownership transitions, identity and generation tuples, units, numeric or cyclic boundaries, timer meaning, and scheduling semantics;
-6. the smallest unit, module, simulation, packet, or fingerprint checks that directly exercise the changed production contract.
+### Full Contract Template (Default for Semantic Changes)
 
 ```text
 ### Pre-Write Implementation Contract Template
@@ -41,6 +50,19 @@ Before editing, write a compact working contract or return it in the parent hand
 - Siblings & Terminal Paths: <error, timeout, cancellation, lifecycle STOP/START, retry>
 - Boundaries & Units: <identities/TIDs, absolute vs relative time, units, wrap arithmetic>
 - Mapped Verification: <smallest direct unit/module/fingerprint test command>
+```
+
+### Lightweight Contract Template (Trivial / Bounded Fixes Only)
+
+Use this fast-track template only when the change meets the trivial-change criteria (single file, <= 5 lines, no state-machine/API/lifecycle changes):
+
+```text
+### Lightweight Pre-Write Contract
+- Target: <file:line>
+- Bug / Invariant: <one-line bug description and preserved invariant>
+- Change: <exact minimal change to apply>
+- Affected Siblings: <confirmation that sibling paths are clean or unshared>
+- Direct Verification: <smallest test or build check command>
 ```
 
 Resolve uncertainty about the mechanism or effective configuration before writing. Do not turn unsupported hypotheses, optional hardening, or unrelated pre-existing issues into patch scope.

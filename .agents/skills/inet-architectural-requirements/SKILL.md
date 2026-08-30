@@ -9,7 +9,12 @@ description: Apply INET architectural requirements, naming conventions, exceptio
 
 Before adding, editing, moving, renaming, or deleting anything under `src/inet/`:
 
-1. Read [sealing-status.md](references/sealing-status.md) and check whether any sealed path overlaps the affected files.
+1. Run `check-sealing.sh` from the repository root to automatically check affected paths against [sealing-status.md](references/sealing-status.md):
+   ```sh
+   bash .agents/skills/inet-architectural-requirements/references/enforcement/check-sealing.sh <affected-files...>
+   # Or to check current git changes:
+   bash .agents/skills/inet-architectural-requirements/references/enforcement/check-sealing.sh --diff
+   ```
 2. **If no sealed path overlaps**, proceed — the guard is satisfied. Skip loading `sealing.md`.
 3. **If a sealed path overlaps**, read [sealing.md](references/sealing.md) for the full policy, then:
    - Resolve every target against exact-file and recursive ancestor-directory entries; status paths are relative to `src/inet/`.
@@ -19,17 +24,20 @@ Before adding, editing, moving, renaming, or deleting anything under `src/inet/`
 
 Assume unlisted files are unsealed only after checking the current status file.
 
-## Load applicable references
+## Load applicable references (Tiered Loading)
 
-Start with [quick-reference-index.md](references/quick-reference-index.md) to identify which `AR-*` and `AR-WLAN-*` requirements apply to the change type. Then load only the needed sections from:
+To optimize context budget, use tiered loading rather than loading all references at once:
 
-- [requirements.md](references/requirements.md): user-facing modeling scope, execution, results, visualization, emulation, documentation, and compatibility.
-- [architectural-requirements.md](references/architectural-requirements.md): production design/review and `AR-*` rules.
-- [ieee80211-architectural-requirements.md](references/ieee80211-architectural-requirements.md): production changes in the IEEE 802.11 subtrees and `AR-WLAN-*` rules.
-- [naming-conventions.md](references/naming-conventions.md): every new or renamed artifact.
-- [architecture-exceptions.md](references/architecture-exceptions.md) and [naming-exceptions.md](references/naming-exceptions.md): existing exception/violation ledgers.
-- [agent-review-checklist.md](references/enforcement/agent-review-checklist.md): every semantic diff review.
-- [ieee80211-agent-review-checklist.md](references/enforcement/ieee80211-agent-review-checklist.md): semantic reviews of 802.11 production diffs.
+- **Tier 1 (Always for any src/inet/ change):** [quick-reference-index.md](references/quick-reference-index.md) to identify which `AR-*` and `AR-WLAN-*` requirements apply.
+- **Tier 2 (Focused by change type):** Load only the specific sections from:
+  - [requirements.md](references/requirements.md): user-facing modeling scope, execution, results, visualization, emulation, documentation, and compatibility.
+  - [architectural-requirements.md](references/architectural-requirements.md): production design/review and `AR-*` rules.
+  - [ieee80211-architectural-requirements.md](references/ieee80211-architectural-requirements.md): production changes in the IEEE 802.11 subtrees and `AR-WLAN-*` rules.
+  - [naming-conventions.md](references/naming-conventions.md): only when introducing new files, classes, signals, or parameters.
+  - [architecture-exceptions.md](references/architecture-exceptions.md) and [naming-exceptions.md](references/naming-exceptions.md): only when checking for pre-existing violations.
+- **Tier 3 (Semantic review / audit):**
+  - [agent-review-checklist.md](references/enforcement/agent-review-checklist.md): every semantic diff review.
+  - [ieee80211-agent-review-checklist.md](references/enforcement/ieee80211-agent-review-checklist.md): semantic reviews of 802.11 production diffs.
 
 For recurring false-positive and missed-finding patterns, see [common-agent-pitfalls.md](../inet-code-review/references/common-agent-pitfalls.md) in the code-review skill.
 
@@ -38,7 +46,7 @@ Use prior reports (in [reports/](references/reports/)) only for the unchanged sc
 ## Apply and validate
 
 1. Establish affected paths and whether the task is design, implementation, focused review, audit, naming, or sealing.
-2. Pass the sealing guard, then map applicable `R-*`, `AR-*`, and, for 802.11 production scope, `AR-WLAN-*` identifiers.
+2. Pass the sealing guard (`check-sealing.sh`), then map applicable `R-*`, `AR-*`, and, for 802.11 production scope, `AR-WLAN-*` identifiers.
 3. Inspect the C++, NED, MSG, configuration, registration, build, and test artifacts that establish behavior.
 4. Reconcile findings with both ledgers; do not reclassify recorded reality as a new violation.
 5. Keep unrelated violations outside the patch and validate the changed contracts.
@@ -63,7 +71,7 @@ The script reports non-allowlisted `#include` violations. For each reported viol
 
 Never silently add allowlist entries or ledger rows — propose them and await user approval.
 
-For semantic review, emit every general checklist item and its prescribed `REVIEW: n PASS, n FLAG, n QUESTION` footer. For an 802.11 production diff, follow it with every WLAN checklist item and the prescribed `WLAN REVIEW: n PASS, n FLAG, n QUESTION` footer.
+For semantic review, emit every general checklist item using `PASS`, `N/A — <reason>`, `FLAG — <file:line> — <reason>`, or `QUESTION — <file:line> — <what to check>`, followed by its prescribed `REVIEW: n PASS, n FLAG, n QUESTION, n N/A` footer. For an 802.11 production diff, follow it with every WLAN checklist item and the prescribed `WLAN REVIEW: n PASS, n FLAG, n QUESTION, n N/A` footer.
 
 This skill owns architectural, naming, and sealing metadata, required-artifact policy, and checklist verdicts; it does not replace correctness review. When composed with `inet-code-review`, keep its correctness findings before the checklist sections. If a checklist `FLAG` describes the same mechanism as a correctness finding, reference that finding instead of duplicating it; the finding's correction direction and focused verification satisfy any checklist requirement to provide a correction, while the checklist still supplies the requirement identifier and ledger disposition.
 

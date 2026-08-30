@@ -116,7 +116,7 @@ Correct this by resetting the reorder window to the starting sequence number fro
 PASS — AR-ORG-VIS-SPLIT
 PASS — AR-ORG-KERNEL
 PASS — AR-MOD-COMPOSITION
-PASS — AR-COM-SOCKETS
+N/A — AR-COM-SOCKETS — MAC component below transport socket interface
 PASS — AR-COM-DIRECT
 PASS — AR-OBS-NED-TRUTH
 PASS — AR-OBS-INTROSPECTION
@@ -129,7 +129,7 @@ PASS — AR-QUAL-LOGGING
 FLAG — AR-QUAL-TESTS — no test accompanies the change (see finding #1 verification)
 PASS — AR-QUAL-DISPLAY
 
-REVIEW: 14 PASS, 1 FLAG, 0 QUESTION
+REVIEW: 13 PASS, 1 FLAG, 0 QUESTION, 1 N/A
 ```
 
 ```
@@ -144,9 +144,9 @@ PASS — AR-WLAN-PHY-TIMING
 PASS — AR-WLAN-MAC-EXCHANGE
 FLAG — AR-WLAN-MAC-SEQUENCE — stale reorder window on restoration (see finding #3)
 PASS — AR-WLAN-MAC-QOS
-PASS — AR-WLAN-MAC-MULTIUSER
+N/A — AR-WLAN-MAC-MULTIUSER — SU Block Ack agreement path only
 FLAG — AR-WLAN-OBS-EVENTS — missing deletion signal on move-to-preserved (see finding #2)
 FLAG — AR-WLAN-QUAL-TESTS — no focused test for agreement preservation lifecycle
 
-WLAN REVIEW: 10 PASS, 4 FLAG, 0 QUESTION
+WLAN REVIEW: 9 PASS, 4 FLAG, 0 QUESTION, 1 N/A
 ```

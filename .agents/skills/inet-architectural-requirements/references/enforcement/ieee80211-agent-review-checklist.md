@@ -8,6 +8,7 @@ Review only the changed code. Do not re-audit unrelated existing code.
 For every item, output one of:
 
 * `PASS — <requirement>`
+* `N/A — <requirement> — <reason>`
 * `FLAG — <requirement> — <file:line> — <clear violation>`
 * `QUESTION — <requirement> — <file:line> — <reason human judgment is needed>`
 
@@ -89,6 +90,6 @@ Also FLAG deterministic decisions that depend on pointers, allocation order, thr
 
 Finish with:
 
-`WLAN REVIEW: <n> PASS, <n> FLAG, <n> QUESTION`
+`WLAN REVIEW: <n> PASS, <n> FLAG, <n> QUESTION, <n> N/A`
 
 For every `FLAG`, include one concrete correction and state its ledger disposition. When the same mechanism already has an `inet-code-review` correctness finding, reference that finding instead of repeating its mechanism, consequence, correction, or verification; the referenced finding satisfies the concrete-correction requirement. Propose an `AV-*` violation row only when the violation will remain unresolved beyond the reviewed change, and propose a sanctioned exception only when the deviation is deliberate and cannot reasonably be corrected. Do not propose a ledger entry for a finding expected to be fixed in the reviewed change.

@@ -10,7 +10,8 @@ a CI step on every change (and locally before pushing).
 Input: the change under review (a diff / PR / working tree). For **each** checklist item, output one
 of:
 
-- `PASS` — the change plainly complies (or the item doesn't apply).
+- `PASS` — the change plainly complies with the requirement.
+- `N/A — <reason>` — the requirement does not apply to this change type (e.g. socket rule on a physical layer change).
 - `FLAG — <file>:<line> — <one-line reason>` — a clear violation.
 - `QUESTION — <file>:<line> — <what to check>` — plausibly a violation but genuinely a judgment call;
   escalate to human review (T5), don't block on it.
@@ -96,7 +97,7 @@ semantically distinct role.
 
 ## Output footer
 
-End with a one-line verdict: `REVIEW: n PASS, n FLAG, n QUESTION`. For every `FLAG`, state its ledger
+End with a one-line verdict: `REVIEW: n PASS, n FLAG, n QUESTION, n N/A`. For every `FLAG`, state its ledger
 disposition. Propose an `AV-*` or `NV-*` violation row only when the violation will remain unresolved
 beyond the reviewed change, and propose a sanctioned exception only when the deviation is deliberate
 and cannot reasonably be corrected. Do not propose a ledger entry for a finding expected to be fixed
