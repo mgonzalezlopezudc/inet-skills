@@ -14,7 +14,7 @@ Apply these checks only when the changed contract reaches IEEE 802.11 MAC, PHY, 
 - Keep current AP/peer state separate from a pending target. Reassociation or roaming cleanup must not erase the active relationship unless that is the intended transition.
 - Distinguish the whole transaction, individual transmission attempt, response wait, and inactivity timers. Verify retry, cancellation, and late callback behavior for each meaning.
 - When state commits after an ACK or later callback, retain the exact channel, capability, or management information advertised in the transmitted response. Do not recompute it from mutable MIB or radio state at completion.
-- Establish negotiated state before emitting or invoking anything that can synchronously tear it down. Pair agreement-added and agreement-deleted observability exactly once.
+- Establish negotiated state before emitting or invoking anything that can synchronously tear it down. Pair agreement-added and agreement-deleted observability exactly once. Example: clear or move the completing callback state before invoking it so a synchronously started replacement operation is not erased on return.
 - Use protocol transaction identity or generation so a terminal event from an older exchange cannot complete a newer one with equal request parameters.
 
 ## Sequence, retry, and Block Ack state
@@ -23,6 +23,7 @@ Apply these checks only when the changed contract reaches IEEE 802.11 MAC, PHY, 
 - Use 802.11 cyclic sequence ordering with the defined half-space. Test immediately before, at, and after the window boundary and across `4095 -> 0`; ordinary integer or map ordering is invalid there.
 - Exercise simultaneous transmitter/receiver, TID, agreement, access-category, direction, or link contexts as applicable and verify that state from one context cannot affect another.
 - Base duplicate detection on the specified identity, including retry, transmitter, sequence/fragment, TID, and exchange context as applicable—not only equal payload or request fields.
+- For fragmentation and reassembly, derive the table key from every discriminating field, place fragments by fragment number, tolerate supported out-of-order and duplicate arrivals, and expire incomplete entries. Example: orders such as `2 (More Fragments clear), 0, 1` and `1, 0, 2 (More Fragments clear)` must not join fragments from different transmitters or complete before every required fragment is present.
 - Exercise empty, singleton, full, overflow, fragmented, stale, and wraparound windows, plus retry exhaustion and agreement teardown.
 
 ## Capabilities, modes, and channels
@@ -49,7 +50,7 @@ Build the smallest deterministic exchange that distinguishes the suspected defec
 | --- | --- |
 | Path coverage | each affected MAC role/mode sibling and unsupported subtype |
 | Association transaction | success, refusal, retry, timeout, cancellation, reassociation, stale completion |
-| Block Ack or reorder | before/at/after window, `4095 -> 0`, per-TID state, teardown |
+| Fragment, Block Ack, or reorder | out-of-order/duplicate/expiry, before/at/after window, `4095 -> 0`, per-peer/TID state, teardown |
 | Duplicate detection | retry/non-retry, fragment, same fields in a new generation or peer context |
 | Capability selection | direction, sparse peer, width/NSS/GI mismatch, all affected PHY families |
 | Mode lookup | equal bitrate, reordered catalog, explicit reference mode, custom mode set |
