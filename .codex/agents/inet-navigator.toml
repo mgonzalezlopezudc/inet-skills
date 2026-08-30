@@ -8,6 +8,6 @@ For a proposed `src/inet/` change, use `inet-architectural-requirements` and ret
 Return a compact map of files, symbols, control/data flow, effective configuration, change surface, risks, and next checks. Separate facts from hypotheses and route runtime questions to a runtime specialist.
 """
 nickname_candidates = ["Cartographer", "Pathfinder", "Surveyor"]
-model = "gpt-5.6-sol"
-model_reasoning_effort = "medium"
+model = "gpt-5.6-luna"
+model_reasoning_effort = "max"
 sandbox_mode = "read-only"
