@@ -5,7 +5,7 @@ Apply these checks to OMNeT++ simulation-kernel contracts and model configuratio
 ## Module lifecycle and initialization
 
 - Trace the exact initialization stage that establishes each field, subscription, module reference, and published value. Resolve the checked-out version's registered stage dependencies; do not infer order from declaration order or a remembered stage list. Determine whether an event or synchronous call can observe partially initialized state.
-- When overriding `initialize(int stage)`, verify that `numInitStages() const` is also overridden and returns `std::max(stage + 1, Base::numInitStages())`. If `numInitStages()` is omitted or returns a smaller count, higher initialization stages will silently never execute.
+- When overriding `initialize(int stage)`, identify the highest named stage the class actually handles and trace the effective `numInitStages()` through inheritance. A local override is required only when the inherited stage count does not cover that stage. Valid implementations return a fixed count such as `NUM_INIT_STAGES`, or preserve a base count with a constant expression such as `std::max(Base::numInitStages(), HIGHEST_STAGE + 1)`; the runtime `stage` parameter is not in scope in `numInitStages()`.
 - Check `initialize()` staging, `finish()`, dynamic module creation/deletion, and destructor behavior separately. Do not assume normal end-of-simulation order matches runtime deletion.
 - Respect OMNeT++ deletion order. Cleanup that traverses child modules may be safe in `finish()` or `preDelete()` but unsafe in a destructor after descendants have been destroyed.
 - For cross-module calls, verify module/gate discovery direction, method-entry requirements such as `Enter_Method`, and whether the callee may retain or delete arguments.
@@ -13,7 +13,7 @@ Apply these checks to OMNeT++ simulation-kernel contracts and model configuratio
 
 ## Simulation determinism and randomness
 
-- Enforce deterministic container iteration. Iterating over `std::unordered_map` or `std::unordered_set` with raw pointer keys (`T*`) introduces non-deterministic iteration order across architectures, allocators, and executions. When iteration order affects packet transmission, queue selection, tie-breaking, or state transitions, use ordered containers (`std::map`, `std::vector`) or sort using stable semantic keys (module ID, sequence number, interface index).
+- Enforce deterministic behavioral iteration. The iteration order of any unordered container is not a simulation contract, regardless of key type. When order affects packet transmission, queue selection, tie-breaking, RNG draws, or state transitions, collect and sort by stable semantic keys (for example sequence number or interface index) before acting. Pointer-address ordering is also unstable across processes, including in ordered containers such as `std::map<T *, ...>`; replacing an unordered pointer container with an ordered pointer container does not fix the trajectory.
 - Use OMNeT++ RNG streams (`getRNG(k)`, `cRNG`, distribution functions) for all stochastic decisions. Bypassing OMNeT++ with raw `rand()`, `std::random_device`, or host system time breaks reproducibility across seeds and runs.
 - Keep wall-clock time (`std::chrono`, `time()`) out of simulation mechanics. Use `simTime()` exclusively for simulation timestamps, timeouts, and intervals; restrict wall-clock time to non-simulation diagnostic profiling.
 - Treat adding, removing, or reordering an RNG draw as a first-class cause of wholesale trajectory divergence: every downstream stochastic decision in that stream re-syncs. When a fingerprint mismatch accompanies such a change, check RNG-draw order before attributing behavioral divergence to the modified logic.
@@ -54,7 +54,7 @@ Use a filtered module test or one Cmdenv configuration/run/seed when kernel beha
 | Mechanism | High-value check |
 | --- | --- |
 | Initialization dependency | normal, delayed/unavailable publication, dynamic creation, `numInitStages()` match |
-| Deterministic execution | pointer-key container iteration vs stable ordering across runs |
+| Deterministic execution | unordered iteration and pointer-address ordering vs stable semantic ordering across runs |
 | Timer lifecycle | absolute/relative input, replace/retain/reject, stale expiry, shutdown, duplicate terminal event |
 | Same-time progress | finite zero-delay chain, permanently blocked retry, response/timeout collision |
 | Re-entrant signal | listener removes current object or a sibling synchronously |

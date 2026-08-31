@@ -38,7 +38,7 @@ Apply layers cumulatively when a higher-layer behavior relies on lower-layer con
 
 ## Define the implementation contract
 
-Before editing, write a compact working contract or return it in the parent handoff. Study [example-contract.md](references/example-contract.md) for complete worked examples of both full and lightweight contracts.
+Before editing, write a compact working contract or return it in the parent handoff. Use the templates below directly; do not load a worked example unless the contract fields are genuinely unclear.
 
 ### Full Contract Template (Default for Semantic Changes)
 
@@ -69,9 +69,9 @@ Resolve uncertainty about the mechanism or effective configuration before writin
 
 ## Implement against the contract
 
-- **Modern INET conventions**: use `Packet`, `Chunk`, and `Tag` APIs instead of deprecated `cMessage` encapsulation; use `IntrusivePtr`/`SharedPtr` (`makeShared`) for chunk/packet memory instead of raw owning pointers; route lifecycle states through `handleLifecycleOperation` (`ILifecycle`) ensuring clean cancellation of timers and reset on `LF_STOP`/`LF_CRASH` and restoration on `LF_START`.
-- **Simulation determinism**: use OMNeT++ RNG infrastructure (`getRNG(k)`, `cRNG`) and `simTime()`; never iterate over pointer-keyed unordered containers (`std::unordered_map<T*, ...>`) when order affects simulation events or protocol state.
-- **Multi-stage initialization**: when implementing `initialize(int stage)`, always override `numInitStages() const` returning `std::max(stage + 1, Base::numInitStages())` to prevent higher stages from being silently skipped.
+- **Modern INET conventions**: use `Packet`, `Chunk`, and `Tag` APIs instead of deprecated `cMessage` encapsulation. `Packet` objects use explicit OMNeT++ ownership transfer through `Packet *`; follow the called API's `take`/`drop`/`send`/delete contract and never place a `Packet` in shared ownership. Chunks and shareable tags use `Ptr`/`makeShared` as their API requires. Use the component's actual lifecycle abstraction—such as `OperationalMixin`'s `handleStartOperation`, `handleStopOperation`, and `handleCrashOperation`, or `ILifecycle::handleOperationStage`—and derive cleanup/restart behavior from that abstraction's contract.
+- **Simulation determinism**: use OMNeT++ RNG infrastructure (`getRNG(k)`, `cRNG`) and `simTime()`. When iteration order can affect events, protocol state, selection, or tie-breaking, do not depend on unordered-container order; sort by a stable semantic key first. Never use pointer addresses as behavioral ordering keys, including through ordered pointer-keyed containers such as `std::map<T *, ...>`.
+- **Multi-stage initialization**: trace the effective `numInitStages()` through inheritance and identify the highest named initialization stage this class handles. Add or update a local override only when the inherited count does not cover that stage; return a fixed count such as `NUM_INIT_STAGES`, or `std::max(Base::numInitStages(), HIGHEST_STAGE + 1)` when the codebase convention requires preserving a base count. The runtime `stage` parameter is not available inside `numInitStages()`.
 - Make the smallest coherent change that updates every affected semantic path and consumer.
 - Preserve exactly one owner and disposition across normal, early-return, failure, exception, callback, and teardown paths. Establish externally observable state before re-entrant callbacks or signals, and make shared terminal cleanup idempotent when paths can converge.
 - Keep current and pending state, peers, interfaces, flows, TIDs, directions, links, and generations separate according to the owning protocol. Use complete identity tuples and domain-correct boundary or wrap semantics.

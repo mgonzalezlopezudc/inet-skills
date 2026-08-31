@@ -33,8 +33,9 @@ To optimize context budget, use tiered loading rather than loading all reference
   - [requirements.md](references/requirements.md): user-facing modeling scope, execution, results, visualization, emulation, documentation, and compatibility.
   - [architectural-requirements.md](references/architectural-requirements.md): production design/review and `AR-*` rules.
   - [ieee80211-architectural-requirements.md](references/ieee80211-architectural-requirements.md): production changes in the IEEE 802.11 subtrees and `AR-WLAN-*` rules.
-  - [naming-conventions.md](references/naming-conventions.md): only when introducing new files, classes, signals, or parameters.
-  - [architecture-exceptions.md](references/architecture-exceptions.md) and [naming-exceptions.md](references/naming-exceptions.md): only when checking for pre-existing violations.
+  - [naming-conventions.md](references/naming-conventions.md): when adding or renaming any governed artifact, including files, packages, namespaces, C++ types/members/methods/constants, NED modules/gates/parameters/signals/statistics, MSG types/fields, and configuration names as applicable.
+  - [architecture-exceptions.md](references/architecture-exceptions.md): when a dependency or architectural deviation may be introduced, a checker reports one, or an existing coupling needs disposition.
+  - [naming-exceptions.md](references/naming-exceptions.md): when a governed name may deviate, a naming check reports one, or an existing name needs disposition.
 - **Tier 3 (Semantic review / audit):**
   - [agent-review-checklist.md](references/enforcement/agent-review-checklist.md): every semantic diff review.
   - [ieee80211-agent-review-checklist.md](references/enforcement/ieee80211-agent-review-checklist.md): semantic reviews of 802.11 production diffs.
@@ -48,7 +49,7 @@ Use prior reports (in [reports/](references/reports/)) only for the unchanged sc
 1. Establish affected paths and whether the task is design, implementation, focused review, audit, naming, or sealing.
 2. Pass the sealing guard (`check-sealing.sh`), then map applicable `R-*`, `AR-*`, and, for 802.11 production scope, `AR-WLAN-*` identifiers.
 3. Inspect the C++, NED, MSG, configuration, registration, build, and test artifacts that establish behavior.
-4. Reconcile findings with both ledgers; do not reclassify recorded reality as a new violation.
+4. Reconcile each finding with the applicable architecture or naming ledger; do not load an irrelevant ledger or reclassify recorded reality as a new violation.
 5. Keep unrelated violations outside the patch and validate the changed contracts.
 
 For architecture-sensitive changes, run from the repository root:

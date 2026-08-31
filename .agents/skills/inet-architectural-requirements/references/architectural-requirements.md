@@ -500,9 +500,9 @@ suite both regression safety and genuine correctness evidence.
 A simulation produces identical results from identical inputs, run after run, regardless of memory
 layout, container iteration order, allocation addresses, or thread scheduling.
 
-Model code must not let observable behavior depend on nondeterministic artifacts: no iterating a
-pointer-keyed hash container in a way that affects the trajectory, no tie-breaking events by an
-allocation or thread-assigned counter, no reliance on undocumented enumeration order. All
+Model code must not let observable behavior depend on nondeterministic artifacts: no iterating an
+unordered container in a way that affects the trajectory, no ordering or tie-breaking by pointer
+address or an allocation/thread-assigned counter, and no reliance on undocumented enumeration order. All
 stochasticity flows through the OMNeT++ RNG framework with explicit stream assignment, and any
 ordering assumption that affects the outcome (topology enumeration, per-event draw order, tie-breaking
 keys) is made explicit and structurally derived from causal/model state rather than left emergent.
@@ -622,7 +622,7 @@ move every requirement as far up this ladder as it can go.
   worth adding? does this read as one system?).
 
 *Proposed* checks below are achievable today with off-the-shelf tooling; starter artifacts live under
-`doc/tmp/enforcement/`.
+`.agents/skills/inet-architectural-requirements/references/enforcement/`.
 
 ### Enforcement map
 

@@ -33,7 +33,7 @@ Do not label retention as a leak until the current owner and every cleanup point
 - Check integer boundaries, narrowing, signedness, overflow, underflow, and wraparound against the represented domain. Use domain ordering rather than ordinary integer ordering for cyclic spaces.
 - Check lookup and ordering logic for duplicate keys, ties, unstable iteration order, missing values, and user-provided sparse inputs. Do not let container order stand in for semantic identity.
 - Keep predicates and read-like queries observational with respect to simulation and owned object state: repeated, skipped, reordered, or short-circuited evaluation must not change the result of later work. Avoid default-inserting lookups such as `operator[]` when absence is semantically different from a default value. Example: an eligibility predicate that consumes a retry token makes queue inspection alter later transmission behavior.
-- Require an explicit eviction, expiry, or bound for every long-lived container keyed by external identity (peer, address, packet, transaction, flow). Growth proportional to traffic or peer count is invisible in short runs and surfaces only as memory or lookup-time degradation in long ones.
+- For each long-lived container keyed by external identity (peer, address, packet, transaction, flow), establish whether supported model cardinality provides a real bound. Require eviction, expiry, or explicit capacity only when the container can otherwise grow with repeated traffic or churn; do not flag an intentional registry whose domain and lifetime are demonstrably bounded.
 - Verify that multi-field state changes are atomic from every observer's perspective, including synchronous callbacks.
 
 ## Focused verification

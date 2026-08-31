@@ -9,7 +9,7 @@ Specific agent runner configurations and default reasoning efforts are registere
 - Antigravity: `.antigravity/agents/<agent-name>.toml` (or skill-level `agents/antigravity.yaml`)
 - OpenAI / Assistants API: `.agents/skills/<skill>/agents/openai.yaml`
 
-For model intelligence ratings, pricing, and active tier assignments, consult [MODELS.md](../../../MODELS.md).
+For active tier assignments, consult [MODELS.md](../../../../MODELS.md). Runner TOML files are authoritative when this overview and a binding disagree.
 
 ## Runtime-Specific Spawning Procedures
 

@@ -6,11 +6,11 @@ Recurring patterns where agents produce false positives, miss real findings, or 
 
 ### Retained state misidentified as a leak
 
-Agents frequently flag `std::map` or `std::vector` entries that are retained for the lifetime of a module as memory leaks. In INET, many modules intentionally retain state (registered protocols, interface entries, cached agreements) until `finish()` or destructor cleanup. **Before calling something a leak:** trace the owner, the cleanup path (destructor, `finish()`, `handleLifecycleOperation(STOP)`), and whether the growth is bounded.
+Agents frequently flag `std::map` or `std::vector` entries that are retained for the lifetime of a module as memory leaks. In INET, many modules intentionally retain state (registered protocols, interface entries, cached agreements) until `finish()`, destruction, or an applicable lifecycle-operation handler. **Before calling something a leak:** trace the owner, the real cleanup path, and whether supported model cardinality bounds growth.
 
 ### Cached chunk access misidentified as a dangling pointer
 
-The chunk API uses shared-pointer semantics internally. An agent that sees a raw `Chunk *` returned from `peekAtFront()` may flag it as dangling after the packet is modified. **Check whether the pointer was obtained from a `SharedPtr`-backed operation** — the chunk remains live as long as the shared pointer does.
+The chunk API returns shared `Ptr` values. An agent that sees a raw `Chunk *` derived with `.get()` from a `Ptr` returned by `peekAtFront()` may flag it as dangling merely because the packet is later modified. **Trace whether a `Ptr` owner is retained across the access:** replacing the packet's reference does not destroy the chunk while another `Ptr` owns it, but a raw pointer that outlives every such owner is unsafe.
 
 ### Intentional tag clearing treated as data loss
 
@@ -44,15 +44,15 @@ A new early-return, error, or lifecycle path may skip signal emissions that the 
 
 ### Stale state after lifecycle stop/restart
 
-Agents verify runtime behavior well but often skip the lifecycle dimension. After `STOP` + `START`, modules should behave as if freshly initialized. **Check whether the change introduces state that persists incorrectly across lifecycle boundaries.**
+Agents verify runtime behavior well but often skip the lifecycle dimension. After a supported stop/start cycle, a module must re-establish its documented operational invariants without stale timers, callbacks, or transaction generations; persistent configuration or statistics need not be reset unless their contract says so. **Check whether the change introduces state that persists incorrectly across lifecycle boundaries.**
 
-### Non-deterministic pointer-keyed container iteration
+### Non-deterministic container iteration and pointer ordering
 
-Agents frequently overlook iteration over `std::unordered_map<T*, ...>` or `std::unordered_set<T*>`. Because pointer addresses vary across runs, operating systems, and memory allocators, iterating over pointer-keyed unordered collections during packet forwarding, queue selection, or timer scheduling introduces subtle simulation non-determinism that breaks seed repeatability and cross-platform regressions. **Check whether iterated containers use pointer keys and recommend stable keys or ordered containers (`std::map`).**
+Agents frequently overlook behavioral iteration over unordered containers and ordering by raw pointer value. An unordered container's order is unspecified for every key type, and pointer addresses vary across processes, operating systems, and allocators even in `std::map<T *, ...>`. Either can change forwarding, selection, timer scheduling, tie-breaking, or RNG-draw order. **When iteration influences the trajectory, require an explicit sort by stable semantic keys; do not recommend an ordered pointer-keyed container as the fix.**
 
-### Missing numInitStages() when overriding multi-stage initialize()
+### Insufficient effective initialization-stage count
 
-When adding multi-stage initialization (`initialize(int stage)`), authors often forget to override `numInitStages() const`. Without this override, the OMNeT++ simulation kernel only calls stage 0 (or the base class's stage count), causing higher initialization stages to be silently skipped at runtime. **Verify that `numInitStages()` returns at least `stage + 1`.**
+When a class starts handling a later initialization stage, authors may forget that the effective `numInitStages()` must cover it, causing that branch to be skipped. The opposite false positive is demanding a local override even though a base class already returns enough stages. **Trace the inherited count and compare it with the highest named stage handled by the class; require a local override only when the effective count is insufficient.**
 
 ### Generated code consumers not updated
 
@@ -60,7 +60,7 @@ When a `.msg` field changes, agents verify the generated `_m.h` but often miss t
 
 ### Ownership transfer in callbacks and notifications
 
-When a callback or signal listener receives an object, agents often assume it is borrowed. But some INET APIs transfer ownership (e.g., `handleWithLifecycle` of lifecycle operations). **Check the documented ownership contract of every callback parameter.**
+When a callback or listener receives an object, agents often assume it is borrowed, but INET callback APIs differ: some retain ownership at the caller while others transfer a packet or message to the callee. **Trace the concrete interface and its callers before deciding the ownership contract of any callback parameter; signal payloads remain borrowed for the emission call unless their documented contract says otherwise.**
 
 ## Calibration errors — findings that use the wrong severity or scope
 

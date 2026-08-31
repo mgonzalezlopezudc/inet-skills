@@ -88,9 +88,11 @@ FLAG a violated invariant / impossible state that is written to the log and exec
 it should `throw`/`ASSERT`/`check_and_cast`. *Not a violation:* informational logging.
 
 **[AR-QUAL-DETERMINISM] Does simulation logic depend on non-deterministic sources or pointer ordering?**
-FLAG iteration over pointer-keyed unordered containers (`std::unordered_map<T*, ...>`), raw `rand()`,
-`std::random_device`, or wall-clock time (`std::chrono`, `time()`) in simulation execution paths.
-*Not a violation:* using OMNeT++ `cRNG` streams or non-simulation diagnostic benchmarking.
+FLAG behavioral dependence on any unordered-container iteration order, ordering or tie-breaking by raw
+pointer address (including ordered pointer-keyed containers), raw `rand()`, `std::random_device`, or
+wall-clock time (`std::chrono`, `time()`) in simulation execution paths. *Not a violation:* iteration
+whose order cannot affect the trajectory, explicit sorting by stable semantic keys, OMNeT++ `cRNG`
+streams, or non-simulation diagnostic benchmarking.
 
 **[AR-QUAL-TESTS] Does the change ship with tests matching its nature?**
 FLAG new behavior with no accompanying unit/module/statistical/validation test (fingerprints alone

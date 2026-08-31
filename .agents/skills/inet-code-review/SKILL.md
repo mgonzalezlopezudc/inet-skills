@@ -9,9 +9,9 @@ Review the assigned change as an INET maintainer. Find defects independently; do
 
 **Read-only scope policy:**
 - Remain strictly read-only with respect to committed source files, NED/MSG definitions, configuration files, test scripts, fingerprints, exception ledgers, and sealing status files.
-- **Validation execution is permitted and encouraged:** Rebuilding debug artifacts (`MODE=debug`) and running focused unit/module tests or diagnostic simulations to confirm or refute a suspected defect is standard maintainer practice.
+- **Validation execution is permitted and encouraged:** Rebuilding debug artifacts (`MODE=debug`) and running focused unit/module tests or diagnostic simulations to confirm or refute a suspected defect is standard maintainer practice. Writes are limited to generated build, test-result, simulation-result, and diagnostic artifacts.
 
-Read [finding-quality.md](references/finding-quality.md) for the finding threshold and comment format. Read [common-agent-pitfalls.md](references/common-agent-pitfalls.md) for recurring false-positive and missed-finding patterns. Study [example-review.md](references/example-review.md) (802.11 Block Ack) and [example-review-lifecycle.md](references/example-review-lifecycle.md) (queue & lifecycle) for complete worked examples showing the expected depth, format, and checklist composition.
+Read [finding-quality.md](references/finding-quality.md) for the finding threshold and comment format. Read [common-agent-pitfalls.md](references/common-agent-pitfalls.md) for recurring false-positive and missed-finding patterns. If the review format or evidence threshold is unfamiliar, consult [example-review.md](references/example-review.md); do not load the example by default.
 
 ## Select the review layers
 

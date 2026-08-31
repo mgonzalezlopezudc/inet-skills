@@ -36,7 +36,7 @@ graph TD
 | Fish 🐟 | Production implementation, established regression and result-analysis workflows | `inet-implementer`, `inet-regression-guard`, `inet-results-analyst` |
 | Ant 🐜 | Explicit searches, inventories, filtering, and structured extraction | `inet-evidence-miner` |
 
-For model intelligence ratings, pricing, and active tier assignments, consult [MODELS.md](../../MODELS.md). For platform-specific runner configurations across Codex, Antigravity, and Kimi, see [platform-bindings.md](references/platform-bindings.md).
+For active tier assignments, consult [MODELS.md](../../../MODELS.md). For platform-specific runner configurations across Codex, Antigravity, and Kimi, see [platform-bindings.md](references/platform-bindings.md).
 
 ## Routing
 
@@ -86,10 +86,10 @@ Gate handoffs as follows:
 
 When specialists disagree or findings conflict:
 
-1. **Hierarchy of Truth:**
-   `Reproducible runtime/debugger evidence > Packet captures/event logs > Effective INI/NED > Checked-out source > IEEE standard text (for normative requirements) > Agent hypothesis`.
-2. **Normative vs. Implementation:** IEEE text governs intended standard behavior; observed simulation runs and source govern INET's actual current implementation. If INET diverges from the standard intentionally, verify against `architecture-exceptions.md` or existing design documentation.
-3. **Escalation Protocol:**
+1. **Implementation causality:** For claims about what the checked-out model currently does, prefer `reproducible runtime/debugger evidence > packet captures/event logs/results > effective INI/NED > checked-out source > agent hypothesis`.
+2. **Normative authority:** For claims about required IEEE 802.11 behavior, the applicable standard revision and clause are authoritative. Runtime and source evidence establish whether INET implements that requirement; they cannot override it.
+3. **Intentional divergence:** Verify an apparent standards divergence against explicit model documentation, a recorded model limitation, or a user-approved design decision. Architecture and naming exception ledgers govern project structure and naming; do not use them as a standards-deviation ledger.
+4. **Escalation Protocol:**
    - Define a minimal reproduction (1 node/pair, 1 seed, shortest time) that isolates the contested behavior.
    - Run in debug mode (`MODE=debug`, `opp_run_dbg`) with targeted tracing.
-   - The concrete trace or assertion output resolves the finding. If ambiguity persists, record a `QUESTION` for user decision rather than guessing.
+   - A concrete trace or assertion can resolve implementation causality. Resolve normative ambiguity from the applicable standard text; if the intended model behavior remains ambiguous, record a `QUESTION` for user decision rather than guessing.

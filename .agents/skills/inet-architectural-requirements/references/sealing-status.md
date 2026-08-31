@@ -18,7 +18,7 @@ absence from this list *is* the unsealed state — there are no `⬜` rows to ma
 ### Packet subsystem — the packet API
 
 - 🔒 `common/packet/` *(recursive)* — the packet/chunk API and its implementation, the umbrella
-  behind [`common/packet/PacketAPI.h`](../../src/inet/common/packet/PacketAPI.h): chunks
+  behind `src/inet/common/packet/PacketAPI.h`: chunks
   (`chunk/`, incl. `ChunkAPI.h`), `Packet`, `ChunkBuffer`, `ChunkQueue`, `Message`, the reassembly/
   reorder buffers and `PacketFilter`, plus the region-tag, serializer, dissector, printer, and
   recorder subtrees. Frozen as a unit: this is INET's most-depended-upon value-type surface, and its

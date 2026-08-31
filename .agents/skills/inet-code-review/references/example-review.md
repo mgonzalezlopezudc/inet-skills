@@ -9,22 +9,24 @@ The change modifies `RecipientBlockAckAgreementHandler` to persist the received 
 ```diff
 --- a/src/inet/linklayer/ieee80211/mac/blockack/RecipientBlockAckAgreementHandler.cc
 +++ b/src/inet/linklayer/ieee80211/mac/blockack/RecipientBlockAckAgreementHandler.cc
-@@ -85,8 +85,11 @@ void RecipientBlockAckAgreementHandler::processReceivedAddbaRequest(
-     auto agreement = new RecipientBlockAckAgreement(...);
-     agreement->calculateExpirationTime();
--    blockAckAgreements[{addr, tid}] = agreement;
+@@ -85,8 +85,16 @@ void RecipientBlockAckAgreementHandler::processReceivedAddbaRequest(
 +    auto key = std::make_pair(addr, tid);
-+    if (auto it = blockAckAgreements.find(key); it != blockAckAgreements.end()) {
-+        preservedAgreements[key] = it->second;   // keep old for roam-back
++    RecipientBlockAckAgreement *agreement;
++    if (auto it = preservedAgreements.find(key); it != preservedAgreements.end()) {
++        agreement = it->second;              // reuse on roam-back
++        preservedAgreements.erase(it);
 +    }
++    else
++        agreement = new RecipientBlockAckAgreement(...);
+     agreement->calculateExpirationTime();
 +    blockAckAgreements[key] = agreement;
      emit(blockAckAgreementAddedSignal, agreement);
 
-@@ -112,6 +115,9 @@ void RecipientBlockAckAgreementHandler::processReceivedDelba(
+@@ -112,6 +115,8 @@ void RecipientBlockAckAgreementHandler::processReceivedDelba(
++    // Also remove any preserved copy
++    preservedAgreements.erase({addr, tid});
      auto it = blockAckAgreements.find({addr, tid});
      if (it != blockAckAgreements.end()) {
-+        // Also remove any preserved copy
-+        preservedAgreements.erase({addr, tid});
          emit(blockAckAgreementDeletedSignal, it->second);
          delete it->second;
          blockAckAgreements.erase(it);
@@ -38,18 +40,10 @@ The change modifies `RecipientBlockAckAgreementHandler` to persist the received 
 +        } else
 +            ++it;
 +    }
-+}
-+
-+RecipientBlockAckAgreement *RecipientBlockAckAgreementHandler::findPreservedAgreement(
-+        const MacAddress& addr, int tid) {
-+    auto it = preservedAgreements.find({addr, tid});
-+    if (it != preservedAgreements.end())
-+        return it->second;
-+    return nullptr;
  }
 ```
 
-The header adds `preservedAgreements` (a `std::map`) and the `findPreservedAgreement` accessor.
+The header adds `preservedAgreements` (a `std::map`). In this synthetic subsystem, the existing signal declaration and subscribers define added/deleted events as membership changes in the active `blockAckAgreements` map.
 
 ## Layer selection
 
@@ -62,16 +56,16 @@ The header adds `preservedAgreements` (a `std::map`) and the `findPreservedAgree
 
 ## Findings
 
-### [major] Preserved agreements are never deleted — unbounded memory growth
+### [major] DELBA erases an owned preserved agreement without deletion
 
-`RecipientBlockAckAgreementHandler.cc:140` moves agreements into `preservedAgreements` on disassociation but no path ever deletes them. `processReceivedDelba` erases the key but only when a DELBA arrives for the *current* agreement (line 117); a preserved agreement whose peer never reassociates is retained for the life of the simulation. When `handleDisassociation` is called repeatedly for the same peer with different TIDs — or for many peers in a high-mobility scenario — `preservedAgreements` grows without bound.
+`preservedAgreements` owns the raw agreement pointers placed into it, but `processReceivedDelba` erases a preserved entry directly at line 115 without disposing of the object.
 
 **Invariant:** every owned object must be reachable by exactly one cleanup path (general C++ ownership).
-**Trigger:** any scenario where a STA associates, establishes Block Ack, disassociates, and never returns. Reachable with ≥2 APs and one mobile STA.
-**Mechanism:** `preservedAgreements` retains `new`-allocated agreements; no expiration timer, destructor cleanup, or lifecycle-stop handler covers them.
-**Consequence:** monotonic memory growth proportional to `(peers × TIDs × disassociation events)`.
+**Trigger:** establish an agreement, disassociate so it moves to `preservedAgreements`, then receive a delayed DELBA for that peer/TID before reassociation.
+**Mechanism:** `std::map::erase` does not delete the pointed-to object; after the erase no owner can reach the allocation.
+**Consequence:** one agreement allocation leaks per such delayed DELBA even though the map's key count may remain bounded.
 
-Correct this by adding expiration for preserved agreements (e.g., reuse the same inactivity timeout), and by deleting all remaining entries in the destructor and in `handleLifecycleOperation(STOP)`. Add a module test with 3 association/disassociation cycles and assert the count of live agreements returns to zero.
+Correct this by representing map ownership with `std::unique_ptr`, or by explicitly deleting before erase and cleaning up remaining entries at destruction and any applicable lifecycle teardown. Separately decide whether preservation needs expiry based on the supported roaming model; retention alone is not a leak while it remains owned and bounded. Add a module test that delivers DELBA after disassociation, destroys the module, and asserts the agreement live-object count returns to zero.
 
 ---
 
@@ -90,11 +84,11 @@ Emit `blockAckAgreementDeletedSignal` for each agreement moved out of the active
 
 ### [moderate] Preserved agreement uses stale reorder-window state on restoration
 
-`findPreservedAgreement` returns the original `RecipientBlockAckAgreement` object, whose reorder window (`startingSequenceNumber`, received-bitmap) reflects the last frame received before disassociation. If the peer reassociates and resumes transmission with a higher sequence number (as permitted by IEEE 802.11-2020 §10.24.7.7), the stale window will classify new frames as duplicates and drop them until the window advances past the gap.
+The new reuse branch restores the original `RecipientBlockAckAgreement` object, whose reorder window (`startingSequenceNumber`, received-bitmap) reflects the last frame received before disassociation. If the peer's new ADDBA request supplies a different starting sequence number, the preserved window is never reinitialized from that request and can classify frames against the previous agreement context.
 
 **Invariant:** Block Ack reorder-window state must reflect the current agreement context; sequence comparison uses cyclic ordering with the defined half-space (IEEE 802.11 layer, `ieee80211-review-checks.md` §Sequence, retry, and Block Ack state).
-**Trigger:** peer disassociates, advances its sequence counter (e.g., sends to another AP), then reassociates and resumes with a new ADDBA whose starting sequence number is ahead of the preserved window.
-**Mechanism:** `findPreservedAgreement` returns the old object whose window has not been reset; the ADDBA processing path at line 88 installs it as-is.
+**Trigger:** peer disassociates, advances its sequence counter, then reassociates and sends a new ADDBA whose starting sequence number is ahead of the preserved window.
+**Mechanism:** the reuse branch removes the old object from `preservedAgreements` and installs it as active after updating only expiration; it does not reset its reorder window from the new request.
 **Consequence:** frames with sequence numbers in the gap between old window and new starting sequence are treated as "before window start" and silently dropped. Effective throughput drops until the window catches up.
 
 Correct this by resetting the reorder window to the starting sequence number from the new ADDBA request when restoring a preserved agreement. Add a focused module test: establish agreement with SSN=0, send frames 0–10, disassociate, reassociate with SSN=100, send frame 100, and assert it is delivered (not dropped as duplicate).
@@ -102,7 +96,7 @@ Correct this by resetting the reorder window to the starting sequence number fro
 ## Reviewed scope
 
 - Files: `RecipientBlockAckAgreementHandler.cc`, `.h` (diff only).
-- Pre-existing code inspected: `processReceivedAddbaRequest`, `processReceivedDelba`, destructor, `handleLifecycleOperation`, signal declarations.
+- Pre-existing code inspected: `processReceivedAddbaRequest`, `processReceivedDelba`, destruction and lifecycle handlers, signal declarations.
 - Validation: read-only inspection; no runtime execution (findings are structural with clear reachability).
 
 ## Residual risks
@@ -126,17 +120,18 @@ PASS — AR-EXT-NOCORE
 PASS — AR-BUILD-DECLARATIVE
 PASS — AR-QUAL-NAMING
 PASS — AR-QUAL-LOGGING
+PASS — AR-QUAL-DETERMINISM
 FLAG — AR-QUAL-TESTS — no test accompanies the change (see finding #1 verification)
 PASS — AR-QUAL-DISPLAY
 
-REVIEW: 13 PASS, 1 FLAG, 0 QUESTION, 1 N/A
+REVIEW: 14 PASS, 1 FLAG, 0 QUESTION, 1 N/A
 ```
 
 ```
 PASS — AR-WLAN-STD-TRACE
 PASS — AR-WLAN-STD-GATING
 PASS — AR-WLAN-ARCH-BOUNDARIES
-FLAG — AR-WLAN-ARCH-OWNERSHIP — preservedAgreements duplicates agreement ownership (see finding #1)
+PASS — AR-WLAN-ARCH-OWNERSHIP
 PASS — AR-WLAN-ARCH-VARIANTS
 PASS — AR-WLAN-FRAME-REPRESENTATION
 PASS — AR-WLAN-PHY-AUTHORITY
@@ -148,5 +143,5 @@ N/A — AR-WLAN-MAC-MULTIUSER — SU Block Ack agreement path only
 FLAG — AR-WLAN-OBS-EVENTS — missing deletion signal on move-to-preserved (see finding #2)
 FLAG — AR-WLAN-QUAL-TESTS — no focused test for agreement preservation lifecycle
 
-WLAN REVIEW: 9 PASS, 4 FLAG, 0 QUESTION, 1 N/A
+WLAN REVIEW: 10 PASS, 3 FLAG, 0 QUESTION, 1 N/A
 ```
