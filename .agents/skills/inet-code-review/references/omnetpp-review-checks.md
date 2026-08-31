@@ -16,6 +16,7 @@ Apply these checks to OMNeT++ simulation-kernel contracts and model configuratio
 - Enforce deterministic container iteration. Iterating over `std::unordered_map` or `std::unordered_set` with raw pointer keys (`T*`) introduces non-deterministic iteration order across architectures, allocators, and executions. When iteration order affects packet transmission, queue selection, tie-breaking, or state transitions, use ordered containers (`std::map`, `std::vector`) or sort using stable semantic keys (module ID, sequence number, interface index).
 - Use OMNeT++ RNG streams (`getRNG(k)`, `cRNG`, distribution functions) for all stochastic decisions. Bypassing OMNeT++ with raw `rand()`, `std::random_device`, or host system time breaks reproducibility across seeds and runs.
 - Keep wall-clock time (`std::chrono`, `time()`) out of simulation mechanics. Use `simTime()` exclusively for simulation timestamps, timeouts, and intervals; restrict wall-clock time to non-simulation diagnostic profiling.
+- Treat adding, removing, or reordering an RNG draw as a first-class cause of wholesale trajectory divergence: every downstream stochastic decision in that stream re-syncs. When a fingerprint mismatch accompanies such a change, check RNG-draw order before attributing behavioral divergence to the modified logic.
 
 ## Events, messages, and timers
 
@@ -40,6 +41,7 @@ Apply these checks to OMNeT++ simulation-kernel contracts and model configuratio
 ## NED, INI, and MSG integration
 
 - Resolve NED inheritance, default expressions, gate/vector paths, parameters, `typename`, and submodule replacement against the instantiated network.
+- Respect the evaluation semantics of `volatile` parameters. Caching a `volatile` parameter in a member during `initialize()` silently freezes a value defined to be re-evaluated at every read; re-reading a non-volatile parameter mid-operation is equally wrong when the contract requires a stable value. Verify that each read site's timing matches the declared volatility and the intended contract.
 - Resolve INI configuration inheritance and wildcard precedence. Compare explicit overrides with inferred defaults and confirm the setting reaches the intended module instances.
 - Check feature-off and optional-submodule configurations, including missing gates or empty typenames.
 - Change `.msg` sources rather than generated `_m.h` or `_m.cc` files. Trace generated ownership, copying, packing/unpacking, descriptors, and consumers when a field or inheritance relationship changes.
