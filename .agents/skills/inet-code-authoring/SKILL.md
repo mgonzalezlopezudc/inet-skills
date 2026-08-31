@@ -69,7 +69,9 @@ Resolve uncertainty about the mechanism or effective configuration before writin
 
 ## Implement against the contract
 
-- **Modern INET conventions**: use `Packet`, `Chunk`, and `Tag` APIs instead of deprecated `cMessage` encapsulation; use `IntrusivePtr`/`SharedPtr` (`makeShared`) for chunk/packet memory instead of raw owning pointers; route lifecycle states through `handleLifecycleOperation` (`ILifecycle`).
+- **Modern INET conventions**: use `Packet`, `Chunk`, and `Tag` APIs instead of deprecated `cMessage` encapsulation; use `IntrusivePtr`/`SharedPtr` (`makeShared`) for chunk/packet memory instead of raw owning pointers; route lifecycle states through `handleLifecycleOperation` (`ILifecycle`) ensuring clean cancellation of timers and reset on `LF_STOP`/`LF_CRASH` and restoration on `LF_START`.
+- **Simulation determinism**: use OMNeT++ RNG infrastructure (`getRNG(k)`, `cRNG`) and `simTime()`; never iterate over pointer-keyed unordered containers (`std::unordered_map<T*, ...>`) when order affects simulation events or protocol state.
+- **Multi-stage initialization**: when implementing `initialize(int stage)`, always override `numInitStages() const` returning `std::max(stage + 1, Base::numInitStages())` to prevent higher stages from being silently skipped.
 - Make the smallest coherent change that updates every affected semantic path and consumer.
 - Preserve exactly one owner and disposition across normal, early-return, failure, exception, callback, and teardown paths. Establish externally observable state before re-entrant callbacks or signals, and make shared terminal cleanup idempotent when paths can converge.
 - Keep current and pending state, peers, interfaces, flows, TIDs, directions, links, and generations separate according to the owning protocol. Use complete identity tuples and domain-correct boundary or wrap semantics.

@@ -5,10 +5,17 @@ Apply these checks to OMNeT++ simulation-kernel contracts and model configuratio
 ## Module lifecycle and initialization
 
 - Trace the exact initialization stage that establishes each field, subscription, module reference, and published value. Resolve the checked-out version's registered stage dependencies; do not infer order from declaration order or a remembered stage list. Determine whether an event or synchronous call can observe partially initialized state.
+- When overriding `initialize(int stage)`, verify that `numInitStages() const` is also overridden and returns `std::max(stage + 1, Base::numInitStages())`. If `numInitStages()` is omitted or returns a smaller count, higher initialization stages will silently never execute.
 - Check `initialize()` staging, `finish()`, dynamic module creation/deletion, and destructor behavior separately. Do not assume normal end-of-simulation order matches runtime deletion.
 - Respect OMNeT++ deletion order. Cleanup that traverses child modules may be safe in `finish()` or `preDelete()` but unsafe in a destructor after descendants have been destroyed.
 - For cross-module calls, verify module/gate discovery direction, method-entry requirements such as `Enter_Method`, and whether the callee may retain or delete arguments.
 - Check runtime parameter changes or rebuilt module relationships when the model supports them; do not validate initialization only once.
+
+## Simulation determinism and randomness
+
+- Enforce deterministic container iteration. Iterating over `std::unordered_map` or `std::unordered_set` with raw pointer keys (`T*`) introduces non-deterministic iteration order across architectures, allocators, and executions. When iteration order affects packet transmission, queue selection, tie-breaking, or state transitions, use ordered containers (`std::map`, `std::vector`) or sort using stable semantic keys (module ID, sequence number, interface index).
+- Use OMNeT++ RNG streams (`getRNG(k)`, `cRNG`, distribution functions) for all stochastic decisions. Bypassing OMNeT++ with raw `rand()`, `std::random_device`, or host system time breaks reproducibility across seeds and runs.
+- Keep wall-clock time (`std::chrono`, `time()`) out of simulation mechanics. Use `simTime()` exclusively for simulation timestamps, timeouts, and intervals; restrict wall-clock time to non-simulation diagnostic profiling.
 
 ## Events, messages, and timers
 
@@ -44,7 +51,8 @@ Use a filtered module test or one Cmdenv configuration/run/seed when kernel beha
 
 | Mechanism | High-value check |
 | --- | --- |
-| Initialization dependency | normal, delayed/unavailable publication, dynamic creation |
+| Initialization dependency | normal, delayed/unavailable publication, dynamic creation, `numInitStages()` match |
+| Deterministic execution | pointer-key container iteration vs stable ordering across runs |
 | Timer lifecycle | absolute/relative input, replace/retain/reject, stale expiry, shutdown, duplicate terminal event |
 | Same-time progress | finite zero-delay chain, permanently blocked retry, response/timeout collision |
 | Re-entrant signal | listener removes current object or a sibling synchronously |

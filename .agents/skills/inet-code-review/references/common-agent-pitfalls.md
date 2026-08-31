@@ -28,6 +28,10 @@ A common over-reach is to flag code that existed before the reviewed change. The
 
 Agents often flag `(a - b) & 0xFFF` or `seqGt()` style comparisons as "wrapping bugs" or "unchecked arithmetic." In IEEE 802.11, 12-bit sequence numbers use modular arithmetic with a defined half-space. **Verify the comparison against the standard's cyclic ordering definition** before claiming it is wrong.
 
+### Multi-stage initialization stage index assumptions
+
+Agents sometimes flag `stage == 1` or `stage == 2` in `initialize(int stage)` as out-of-order or invalid because they assume OMNeT++ uses only a single stage. In INET, initialization stages are globally coordinated across layers (e.g., `INITSTAGE_LOCAL`, `INITSTAGE_NETWORK_INTERFACE`, `INITSTAGE_APPLICATION`). **Check `src/inet/common/InitStages.h`** to see where the module fits in the multi-stage lifecycle before claiming an initialization stage index is wrong.
+
 ## Missed findings — defects agents tend to overlook
 
 ### Sibling paths not covered by a change
@@ -41,6 +45,14 @@ A new early-return, error, or lifecycle path may skip signal emissions that the 
 ### Stale state after lifecycle stop/restart
 
 Agents verify runtime behavior well but often skip the lifecycle dimension. After `STOP` + `START`, modules should behave as if freshly initialized. **Check whether the change introduces state that persists incorrectly across lifecycle boundaries.**
+
+### Non-deterministic pointer-keyed container iteration
+
+Agents frequently overlook iteration over `std::unordered_map<T*, ...>` or `std::unordered_set<T*>`. Because pointer addresses vary across runs, operating systems, and memory allocators, iterating over pointer-keyed unordered collections during packet forwarding, queue selection, or timer scheduling introduces subtle simulation non-determinism that breaks seed repeatability and cross-platform regressions. **Check whether iterated containers use pointer keys and recommend stable keys or ordered containers (`std::map`).**
+
+### Missing numInitStages() when overriding multi-stage initialize()
+
+When adding multi-stage initialization (`initialize(int stage)`), authors often forget to override `numInitStages() const`. Without this override, the OMNeT++ simulation kernel only calls stage 0 (or the base class's stage count), causing higher initialization stages to be silently skipped at runtime. **Verify that `numInitStages()` returns at least `stage + 1`.**
 
 ### Generated code consumers not updated
 
