@@ -11,7 +11,7 @@ Review the assigned change as an INET maintainer. Find defects independently; do
 - Remain strictly read-only with respect to committed source files, NED/MSG definitions, configuration files, test scripts, fingerprints, exception ledgers, and sealing status files.
 - **Validation execution is permitted and encouraged:** Rebuilding debug artifacts (`MODE=debug`) and running focused unit/module tests or diagnostic simulations to confirm or refute a suspected defect is standard maintainer practice. Writes are limited to generated build, test-result, simulation-result, and diagnostic artifacts.
 
-Read [finding-quality.md](references/finding-quality.md) for the finding threshold and comment format. Read [common-agent-pitfalls.md](references/common-agent-pitfalls.md) for recurring false-positive and missed-finding patterns. If the review format or evidence threshold is unfamiliar, consult [example-review.md](references/example-review.md); do not load the example by default.
+Read [finding-quality.md](references/finding-quality.md) for the finding threshold and comment format. Read [common-agent-pitfalls.md](references/common-agent-pitfalls.md) for recurring false-positive and missed-finding patterns. If the review format or evidence threshold is unfamiliar, optionally consult the [Block Ack example](references/example-review.md) or the [non-WLAN lifecycle example](references/example-review-lifecycle.md); do not load either example by default.
 
 ## Select the review layers
 
@@ -64,6 +64,8 @@ Resolve the user-specified base, head, commit range, PR diff, or working-tree sc
 - Specific commit: `git show <commit-hash>`
 
 Verify the range against current `HEAD`; do not review a stale line range or an assumed PR description.
+
+Treat a supplied pre-write contract, behavior claim, or implementation report as evidence and a hypothesis to test, not as authority. The actual user requirements, checked-out source and effective configuration, runtime evidence, and applicable standards and project contracts govern the review. When an incorrect authoring contract led to incorrect code, report the actionable code defect and identify the contract correction and earliest pipeline gate that must be re-entered. When the code is correct but the contract or handoff describes it incorrectly, report a handoff discrepancy outside the findings list; do not manufacture a code finding.
 
 Inventory changed files and assign the applicable review layers. Classify each change by contract: API, lifecycle, protocol state, packet representation, configuration, serialization, timing, observability, build integration, or test behavior. Note generated inputs and feature gates before inspecting individual hunks.
 

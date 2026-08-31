@@ -61,6 +61,20 @@ bash .agents/skills/inet-architectural-requirements/references/enforcement/check
 
 Use the focused form for a bounded subtree and the repository-wide form for full or cross-cutting audits.
 
+### Mechanical naming check
+
+For added or renamed NED/MSG artifacts, or when changed declarations may affect governed names, run the diff-focused checker from the INET repository root:
+
+```sh
+python3 .agents/skills/inet-architectural-requirements/references/enforcement/check-naming.py
+python3 .agents/skills/inet-architectural-requirements/references/enforcement/check-naming.py --staged
+python3 .agents/skills/inet-architectural-requirements/references/enforcement/check-naming.py src/inet/<focused-file>.ned
+```
+
+With no arguments, the checker scans added lines in tracked working-tree changes, post-change package/file invariants when their matching declarations are removed, and complete added, copied, renamed, or untracked NED/MSG files. `--staged` reads both paths and contents from the index; explicit NED/MSG paths scan complete files. Exit status `0` is clean, `1` reports candidates, and `2` reports invalid usage or repository scope.
+
+The checker enforces only high-confidence mechanical rules: NED package/path agreement, NED/MSG file-to-defined-type agreement, basic type and field/parameter casing, signal/statistic casing, and input/output gate naming. It does not decide semantic role vocabulary, sanctioned legacy spelling, or whether a name expresses the correct model concept. Reconcile each diagnostic with [naming-exceptions.md](references/naming-exceptions.md): report newly introduced deviations, reference an applicable `NS-*` entry, and keep pre-existing `NV-*` findings outside a bounded patch unless the task owns them.
+
 ### Reconciling `check-architecture.sh` output
 
 The script reports non-allowlisted `#include` violations. For each reported violation:

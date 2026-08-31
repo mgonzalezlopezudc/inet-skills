@@ -13,7 +13,7 @@ Keep requirements, decisions, and synthesis in the root thread. Delegate bounded
 graph TD
     Root[Root Thread / Orchestrator] -->|1. Seal & Target| ArchGuard[inet-architectural-requirements]
     ArchGuard -->|Sealed: Request Approval / Unsealed: OK| Contract[inet-code-authoring: Pre-Write Contract]
-    Contract -->|Contract Defined & Invariants Checked| Implement[Single Implementer: Write Code]
+    Contract -->|Returned & Validated by Orchestrator| Implement[Single Implementer: Write Code]
     Implement -->|Stable Diff| Test[Focused Verification: Unit / Module / Debug Run]
     Test -->|Evidence Gathered| Review[inet-code-review + Checklist Verdicts]
     Review -->|Findings Resolved & Approved| Conclude[Conclude / Persist]
@@ -26,6 +26,8 @@ graph TD
 - Do not duplicate assignments or delegate work simpler than the handoff.
 - Do not let extraction-only agents infer causality, normative meaning, or correctness.
 - Stop opening lanes once decisive evidence exists.
+
+Use a soft evidence budget rather than a fixed invocation or token limit. Start with the smallest lane set that can answer the current unresolved questions. Run a lane only when its prompt states both the unresolved question and the evidence expected to resolve it. Parallelize lanes that are already required and independent; run contingent lanes sequentially after reviewing the evidence that determines whether they are needed. Before adding a lane, reuse a suitable active specialist or explain why the existing evidence cannot close the question.
 
 ## Tiers and agents
 
@@ -44,7 +46,7 @@ For active tier assignments, consult [MODELS.md](../../../MODELS.md). For platfo
 - **Standards/model gap:** use `inet-wifi-specialist`; add `inet-navigator` when the implementation path is broad or unclear.
 - **Runtime failure:** lead with `inet-simulation-detective`; add configuration, Wi-Fi, or extraction lanes only for distinct questions.
 - **Patch review:** use `inet-reviewer`, which must use `inet-code-review` for every pull request, branch, commit-range, diff, or working-tree review. It additionally uses `inet-architectural-requirements` for `src/inet/` scope. For a formal architecture, naming, or sealing audit without a concrete correctness diff, use the architecture skill as primary and add code review only if correctness review is also requested.
-- **Production change:** establish the mechanism and change surface, then assign exactly one `inet-implementer`. For a semantic `src/inet/` change, require the implementer to use `inet-code-authoring` and complete its pre-write implementation contract before the first write. Use `inet-regression-guard` for behavior changes and `inet-reviewer` on the stable verified diff for architecture-sensitive, nontrivial, or 802.11 changes.
+- **Production change:** establish the mechanism and change surface, then assign exactly one `inet-implementer`. For a semantic `src/inet/` change, first assign the implementer read-only contract completion using `inet-code-authoring`; require it to return the completed, self-validated contract without writing. Validate that handoff against the authoring checklist, then explicitly authorize the same implementer to write. Use `inet-regression-guard` for behavior changes and `inet-reviewer` on the stable verified diff for architecture-sensitive, nontrivial, or 802.11 changes.
 - **Results/plots:** use `inet-results-analyst`; use `inet-evidence-miner` only for bounded metadata inventory.
 
 ### Trivial Change Fast-Track (Escape Hatch)
@@ -62,7 +64,7 @@ When executing in a single-agent session without sub-agent delegation, transitio
 
 ```text
 [ ] 1. Diagnose & Guard: Verify sealing (check-sealing.sh) and confirm mechanism from source/logs.
-[ ] 2. Pre-Write Contract: Fill full or lightweight template from inet-code-authoring before modifying files.
+[ ] 2. Pre-Write Contract: Fill and self-validate the full or lightweight template from inet-code-authoring; record the validation result before modifying files.
 [ ] 3. Implement: Make minimal coherent change preserving single ownership and clean lifecycle.
 [ ] 4. Focused Verification: Run directly mapped debug-mode tests/simulations with explicit filters.
 [ ] 5. Self-Audit & Checklist: Self-audit diff against common-agent-pitfalls.md and emit architecture checklist.
@@ -71,16 +73,21 @@ When executing in a single-agent session without sub-agent delegation, transitio
 
 ## Assignments and gates
 
-Every delegated prompt must say to follow `AGENTS.md` and the applicable repository skills, not spawn sub-agents, and return to the parent. Specify one deliverable, exact scope and inputs, write authority, exclusions, required evidence, definition of done, and concise return shape. Include paths, symbols, configuration, run/seed, and artifacts when relevant. For semantic `src/inet/` implementation, include the available `inet-code-authoring` contract evidence and require the implementer to complete unresolved items before writing. Reuse a specialist for related follow-up work.
+Every delegated prompt must say to follow `AGENTS.md` and the applicable repository skills, not spawn sub-agents, and return to the parent. Specify one deliverable, exact scope and inputs, write authority, exclusions, required evidence, definition of done, and concise return shape. Include paths, symbols, configuration, run/seed, and artifacts when relevant. For semantic `src/inet/` implementation, do not combine unresolved contract completion and write authority in one assignment. First provide the available `inet-code-authoring` evidence in a read-only contract assignment; after the implementer returns a complete self-validation, the orchestrator validates it and sends a separate follow-up that authorizes the first write. Reuse that implementer for the authorized implementation and related follow-up work.
 
 Gate handoffs as follows:
 
-1. Diagnose → implement: demonstrated mechanism, bounded change surface, architecture/seal decision, any required approval, and, for semantic `src/inet/` changes, the available evidence for every `inet-code-authoring` contract field. The implementer completes unresolved fields and directly mapped verification before the first write.
-2. Implement → verify: stable diff and explicit behavior claim.
-3. Verify → review or conclude: focused debug-mode evidence that exercises the claim; for behavior-affecting production changes, run only the unit, module, and fingerprint tests directly mapped to the changed paths, symbols, or behavioral contracts, using explicit filters and their owning skills. Never run complete or unfiltered suites. When review is required, pass the stable diff, behavior claim, and this evidence to the reviewer.
-4. Correctness review → conclude: for changes routed to `inet-reviewer`, all actionable `inet-code-review` findings are confirmed resolved by the same reviewer after focused reverification, or explicitly accepted by the user with the residual risk recorded. Report reviewed scope, validation, and residual risks.
-5. Architecture review → conclude: required fitness checks and exact semantic checklist verdicts (including `N/A` for inapplicable rules).
-6. Fingerprint update or sealing change: explicit user approval after the evidence is presented.
+1. Diagnose → contract: demonstrated mechanism, bounded change surface, architecture/seal decision, any required approval, and the available evidence for every applicable `inet-code-authoring` contract field.
+2. Contract → implement: the implementer has returned every field complete and self-validated; the orchestrator has independently checked the authoring validation checklist, recorded the result, and explicitly authorized the first write. An unresolved field returns to diagnosis.
+3. Implement → verify: stable diff and explicit behavior claim.
+4. Verify → review or conclude: focused debug-mode evidence that exercises the claim; for behavior-affecting production changes, run only the unit, module, and fingerprint tests directly mapped to the changed paths, symbols, or behavioral contracts, using explicit filters and their owning skills. Never run complete or unfiltered suites. When review is required, pass the stable diff, behavior claim, contract, implementation report, and this evidence to the reviewer.
+5. Correctness review → conclude: for changes routed to `inet-reviewer`, all actionable `inet-code-review` findings are confirmed resolved by the same reviewer after focused reverification, or explicitly accepted by the user with the residual risk recorded. Report reviewed scope, validation, and residual risks.
+6. Architecture review → conclude: required fitness checks and exact semantic checklist verdicts (including `N/A` for inapplicable rules).
+7. Fingerprint update or sealing change: explicit user approval after the evidence is presented.
+
+Gates may move backward when new evidence invalidates an earlier assumption. Preserve the working diff and artifacts while returning to the earliest affected gate; do not use destructive Git reset as recovery. For a build or focused-test failure, remain in verification when an identified runner or artifact problem caused it, return to implementation when the contract remains valid and the diff caused it, or return to diagnosis/contract definition when it exposes a wrong mechanism, owner, change surface, invariant, or verification mapping. Freeze further writes when evidence invalidates the mechanism or contract, revise and revalidate the affected handoff, then resume forward progress. Reverify every downstream claim made stale by the correction.
+
+When context pressure threatens a safe handoff, checkpoint before continuing or transferring ownership. Record the current gate; verified facts and their evidence; working-diff and artifact state; approvals already obtained; invalidated evidence; unresolved questions; and the exact next action or command. Context pressure may reduce optional commentary or defer contingent lanes, but it never waives sealing, contract, focused-verification, approval, or required-review gates.
 
 ## Dispute Escalation and Deadlock Resolution
 

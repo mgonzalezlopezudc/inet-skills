@@ -13,13 +13,13 @@ Follow this 4-step sequence in order for any change under `src/inet/`:
 
 ```mermaid
 graph LR
-    Step1[1. Sealing & Arch Guard] --> Step2[2. Pre-Write Contract]
+    Step1[1. Sealing & Arch Guard] --> Step2[2. Contract & Validation]
     Step2 --> Step3[3. Implement against Contract]
     Step3 --> Step4[4. Self-Audit & Focused Test]
 ```
 
 1. **Sealing Guard:** Run `check-sealing.sh` to confirm target files are unsealed. If sealed, STOP and request explicit permission.
-2. **Implementation Contract:** Define the pre-write contract (full or lightweight template) before modifying files.
+2. **Implementation Contract:** Define and validate the pre-write contract (full or lightweight template) before modifying files.
 3. **Implementation:** Code against the contract adhering to modern INET conventions.
 4. **Self-Audit & Verification:** Audit stable diff against `common-agent-pitfalls.md` and run directly mapped debug-mode tests.
 
@@ -67,6 +67,19 @@ Use this fast-track template only when the change meets the trivial-change crite
 
 Resolve uncertainty about the mechanism or effective configuration before writing. Do not turn unsupported hypotheses, optional hardening, or unrelated pre-existing issues into patch scope.
 
+### Validate the contract before the first write
+
+Do not start implementation until the contract passes all of these checks:
+
+- Every field contains source- or configuration-backed facts, or a reasoned `N/A`; no `TBD`, placeholder, or unsupported assertion remains.
+- The named owner and effective entry/control path were checked in the current tree, and every presently known affected production, generated-input, configuration, registration, documentation, and test path is listed.
+- Every named verification command and explicit filter exists, and any command offered as behavioral evidence reaches the claimed behavior. If no direct check exists, record the precise coverage gap and do not represent a build or neighboring test as behavioral proof.
+- The contract is internally consistent: its invariant, change surface, siblings, boundary semantics, and verification all describe the same behavior claim.
+
+In single-agent mode, self-validate and record the result before writing. In delegated work, the implementer self-validates before handoff and the parent or orchestrator validates the handoff before authorizing the first write. If a field cannot yet pass, return to discovery instead of weakening the field.
+
+When a filled-in field remains unclear, read the optional [verified non-WLAN contract example](references/example-contract.md). Recheck its paths and facts against the active checkout before adapting it.
+
 ## Implement against the contract
 
 - **Modern INET conventions**: use `Packet`, `Chunk`, and `Tag` APIs instead of deprecated `cMessage` encapsulation. `Packet` objects use explicit OMNeT++ ownership transfer through `Packet *`; follow the called API's `take`/`drop`/`send`/delete contract and never place a `Packet` in shared ownership. Chunks and shareable tags use `Ptr`/`makeShared` as their API requires. Use the component's actual lifecycle abstraction—such as `OperationalMixin`'s `handleStartOperation`, `handleStopOperation`, and `handleCrashOperation`, or `ILifecycle::handleOperationStage`—and derive cleanup/restart behavior from that abstraction's contract.
@@ -79,10 +92,42 @@ Resolve uncertainty about the mechanism or effective configuration before writin
 - Change generated-code inputs rather than generated outputs, and keep C++, NED, MSG, configuration, registration, serialization, feature, documentation, and test artifacts consistent where the contract requires them.
 - Make tests reach the production owner and integration boundary; helper-only coverage does not prove the real caller supplies the right identity or handles every terminal result.
 
+### Handle related scope expansion
+
+When implementation reveals a related target or behavior not covered by the validated contract, pause before modifying that new target. Preserve the current work; do not reset it merely to revisit the contract.
+
+1. Classify the discovery as **required** for the behavior claim or **optional** hardening/follow-up. Keep optional work out of the patch.
+2. Add required owners, paths, consumers, sibling/terminal behavior, and any contract deviation to the working contract.
+3. Rerun sealing and applicable architecture checks for every newly added target, then remap the smallest direct verification and explicit filters.
+4. If the expansion materially exceeds the requested scope, existing authority, or delegated ownership, return the updated contract to the user, parent, or orchestrator before continuing. Otherwise revalidate it and resume.
+
 ## Self-audit and hand off
 
-Once the diff is stable, inspect it against the implementation contract, `common-agent-pitfalls.md`, and every selected layer reference. Trace the effective runtime path again, confirm all identified siblings and terminal paths, and verify that each required consumer and artifact changed consistently.
+Once the diff is stable, complete this checklist against the implementation contract, `common-agent-pitfalls.md`, and every selected layer reference:
+
+- [ ] Stable diff matches the validated behavior claim; every deviation and required scope expansion is recorded.
+- [ ] Effective owner/control path, affected consumers, siblings, and terminal paths were retraced in the resulting tree.
+- [ ] Ownership/disposition, reentrancy, lifecycle/state identity, determinism, time/unit/boundary, and generated-input concerns are either checked where applicable or recorded as reasoned `N/A`.
+- [ ] All required C++, NED, MSG, INI, serializer, registration, feature, documentation, and test artifacts remain consistent.
+- [ ] Focused debug-mode commands use explicit filters, reach the production behavior, and have recorded exit status and artifacts; gaps and fingerprint approval needs are explicit.
 
 Use the owning build, test, simulation, packet, result, and fingerprint skills. Follow `AGENTS.md`: use debug mode and explicit filters, run only directly mapped checks, report a coverage gap instead of broadening the suite, and never update fingerprints without explicit user approval.
 
-Return the behavior claim, changed paths, selected layers and high-risk paths checked, focused verification evidence, and residual risks. This self-audit improves the implementation but does not replace an independent `inet-reviewer` when orchestration routes the stable diff to review.
+Return this plain-text envelope. Use `None` only when supported by the audit; do not omit fields.
+
+```text
+### Implementation Report
+- Behavior claim: <what the resulting tree now guarantees>
+- Changed paths: <complete path list>
+- Contract deviations / scope changes: <none, or old -> new scope and authorization>
+- Selected layers / high-risk checks: <references and applicable checks completed>
+- Focused evidence:
+  - Command: <exact command>
+  - Working directory: <path>
+  - Mode / filter: <debug mode and explicit filter>
+  - Exit status: <status>
+  - Artifacts: <paths or none>
+- Residual risks / coverage gaps: <remaining uncertainty, unrun checks, or none>
+```
+
+This self-audit improves the implementation but does not replace an independent `inet-reviewer` when orchestration routes the stable diff to review.
