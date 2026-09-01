@@ -1,6 +1,7 @@
 ## INET and OMNeT++ workflows
 
-Use repository skills for detailed procedures. Keep project-wide policy here and task-specific commands in the skill that owns them.
+Use repository skills for task-specific mechanics. Contributor policy is canonical in the active
+INET checkout under `doc/project/`; point to it here instead of copying it.
 
 ### Delegation
 
@@ -10,15 +11,28 @@ Use `inet-agent-orchestration` for nontrivial work with independent evidence lan
 
 - Before changing anything under `src/inet/`, use `inet-architectural-requirements` to check sealing, architecture, naming, exception-ledger, audit, and review requirements.
 - Before making a semantic change under `src/inet/`, use `inet-code-authoring` to define the implementation contract, apply the relevant preventive correctness checks, and self-audit the stable diff before handoff.
+- Apply the active INET checkout's `doc/project/rule/testing.md`,
+  `doc/project/guide/change-a-baseline.md`, and
+  `doc/project/guide/run-the-gates.md` for test selection, baseline changes, and contributor gates.
+- Apply its `doc/project/guide/diagnose-a-simulation.md` for diagnostic scope, evidence, comparison,
+  and reporting; use the evidence skills for tool-specific commands.
+- Apply its `doc/project/guide/analyze-simulation-results.md` for result comparisons, derived metrics,
+  uncertainty, and reporting; use the result skills for extraction and plotting mechanics.
+
+### Agent execution constraints
+
 - Use Cmdenv for automated and reproducible runs. Use Qtenv only for interactive inspection or when requested.
 - Use command-line overrides for temporary logging, tracing, capture, and result recording; do not edit `omnetpp.ini` only to enable diagnostics.
-- Start investigations with one configuration and one run/seed. Expand only when the task requires a campaign or the narrow case is understood.
-- Base claims about delivery, loss, retransmission, scheduling, or protocol behavior on logs, captures, event logs, results, source inspection, or debugger evidence.
-- Use debug mode for every INET/OMNeT++ build, simulation, and test run, with matching debug runners and libraries (`MODE=debug`, `inet --debug`, `-m debug`, `opp_run_dbg`, and `libINET_dbg.so` as applicable). Never build or execute release-mode artifacts. Use `-j$(nproc)` for parallel builds unless the user requests otherwise.
-- For code changes, run only unit, module, and fingerprint tests that are directly related to the changed paths, symbols, or behavioral contracts. Record that mapping and invoke an explicit filter; never run an unfiltered or broader suite. If no directly related test can be identified, report the coverage gap instead of broadening the test selection.
-- Never update fingerprint CSV files without explicit user approval after explaining the changed trajectory.
-- Report reproducible commands with their working directory, configuration, run/seed, build mode, exit status, and artifact paths when applicable.
+- When an agent builds or executes INET/OMNeT++ during a task, use debug mode with matching runners
+  and libraries (`MODE=debug`, `inet --debug`, `-m debug`, `opp_run_dbg`, and `libINET_dbg.so` as
+  applicable). Use `-j$(nproc)` unless the user requests otherwise. This is an agent execution
+  constraint, not the contributor gate: it does not satisfy the debug-and-release build required by
+  `doc/project/guide/run-the-gates.md`.
 
 ### Persisting reusable lessons
 
-Unless the user directly requested the documentation change, ask before editing `AGENTS.md` or a skill to record a lesson. Propose the target, intended text, and why it is reusable. Store project-wide policy here, workflows in the owning `SKILL.md`, and detailed material in that skill's `references/`; do not persist one-off facts, guesses, logs, or guidance already documented nearby.
+Unless the user directly requested the documentation change, ask before editing `AGENTS.md`,
+`doc/project/`, or a skill to record a lesson. Propose the target, intended text, and why it is
+reusable. Store contributor policy in the active INET checkout's `doc/project/`, repository agent
+routing here, workflows in the owning `SKILL.md`, and detailed mechanics in that skill's
+`references/`; do not persist one-off facts, guesses, logs, or guidance already documented nearby.

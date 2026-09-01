@@ -8,6 +8,10 @@ Project-level documentation and evidence obligations live in
 
 Teach one feature and show what the current example proves.
 
+This contract applies only after the capability and placement gate in the owning `SKILL.md` passes.
+The analyzer's historical location does not override the active checkout's canonical distinction
+among examples, showcases, and tutorials.
+
 ## Evidence vocabulary
 
 | Status | Meaning |
@@ -23,11 +27,11 @@ inference.
 
 ## Ownership
 
-- Prefix level-2 through level-6 headings with `[agent]` or `[script]`.
+- Prefix level-2 through level-6 headings with `[author]` or `[script]`.
 - `[script]` headings and all analysis tables, plots, and frame exchanges must
   be inside analysis-script generated blocks.
-- Agents preserve generated blocks and the script-owned results-session
-  ledger. Agents update only the separate `[agent]` session line.
+- Authors preserve generated blocks and the script-owned results-session
+  ledger. Authors update only the separate `[author]` session line.
 - Use `NOT RECORDED` only for legacy evidence and `NOT RUN` only when no
   evidence was executed.
 
@@ -41,7 +45,7 @@ Place the ledger immediately below the title:
 - PCAP: `<session-id-or-NOT-RUN>`
 <!-- END SCRIPT RESULTS SESSIONS -->
 
-`[agent]` results sessions: `<session-id-or-NOT-RECORDED>`.
+`[author]` results sessions: `<session-id-or-NOT-RECORDED>`.
 ```
 
 ## Required content
@@ -77,7 +81,7 @@ Keep the canonical headings used by the template, but keep sections short.
 
 Generated analysis content is authoritative presentation output. Never
 hand-create an analysis table or plot, run a separate query to fill one in, or
-copy generated rows into agent prose. If scripts cannot generate a needed
+copy generated rows into authored prose. If scripts cannot generate a needed
 view, record the gap and improve the shared analysis machinery.
 
 ## Writing rules

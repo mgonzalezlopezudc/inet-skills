@@ -23,7 +23,7 @@ Agents may assert that a module lookup like `getModuleByPath("^.interfaceTable")
 
 ### Multi-stage initialization stage index assumptions
 
-Agents sometimes flag `stage == 1` or `stage == 2` in `initialize(int stage)` as out-of-order or invalid because they assume OMNeT++ uses only a single stage. In INET, initialization stages are globally coordinated across layers (e.g., `INITSTAGE_LOCAL`, `INITSTAGE_NETWORK_INTERFACE`, `INITSTAGE_APPLICATION`). **Check `src/inet/common/InitStages.h`** to see where the module fits in the multi-stage lifecycle before claiming an initialization stage index is wrong.
+Agents sometimes flag `stage == 1` or `stage == 2` in `initialize(int stage)` as out-of-order or invalid because they assume OMNeT++ uses only a single stage. Apply `doc/project/rule/architecture.md#ar-life-stages`, then **check `src/inet/common/InitStages.h`** to see where the module fits in the global multi-stage lifecycle before claiming an initialization stage index is wrong.
 
 ## Missed findings — defects agents tend to overlook
 
@@ -41,7 +41,10 @@ Agents verify runtime behavior well but often skip the lifecycle dimension. Afte
 
 ### Insufficient effective initialization-stage count
 
-When a class starts handling a later initialization stage, authors may forget that the effective `numInitStages()` must cover it, causing that branch to be skipped. The opposite false positive is demanding a local override even though a base class already returns enough stages. **Trace the inherited count and compare it with the highest named stage handled by the class; require a local override only when the effective count is insufficient.**
+Apply `doc/project/rule/architecture.md#ar-life-stages`. A common missed defect is a later-stage
+branch that OMNeT++ never calls; the opposite false positive is demanding a local override when the
+base count already covers it. **Trace the inherited count and compare it with the highest named
+stage handled by the class.**
 
 ### Generated code consumers not updated
 

@@ -20,7 +20,11 @@ Do not infer these stages from a MAC capture alone.
 
 ## Model compatibility and radio state
 
-Confirm that radio and radio-medium analog representations are compatible: unit-disk, scalar, dimensional, or another installed family. A unit-disk model can isolate topology or MAC behavior but cannot validate realistic link budgets or interference. Dimensional models are required for frequency-dependent effects only when the configured components actually implement them.
+Use the IEEE 802.11 radio/medium inventory in `doc/src/users-guide/ch-80211.rst` and the abstraction,
+compatibility, and fidelity descriptions in `doc/src/users-guide/ch-physicallayer.rst` rather than
+maintaining them here. Resolve the instantiated radio and medium types, confirm that their analog
+representations are compatible, and state which link-budget or interference claims that selected
+abstraction can establish.
 
 Track transmit, receive, sleep/off, switching, and channel-change intervals. A half-duplex radio cannot ordinarily receive while transmitting; verify that it returns to receive state before SIFS responses and completes channel switching before scan observations.
 

@@ -15,8 +15,8 @@ class AnalysisPresentationValidationTest(unittest.TestCase):
 
     def test_section_body_accepts_formatted_heading(self):
         text = (
-            "## [agent] **Scalar and vector analysis**\n\nBody.\n\n"
-            "## [agent] PCAP statistics\n\nPackets.\n"
+            "## [author] **Scalar and vector analysis**\n\nBody.\n\n"
+            "## [author] PCAP statistics\n\nPackets.\n"
         )
         self.assertIn(
             "Body.", section_body(text, "Scalar and vector analysis")
@@ -37,18 +37,18 @@ class AnalysisPresentationValidationTest(unittest.TestCase):
 
     def test_heading_ownership_follows_generated_boundaries(self):
         text = (
-            "## [agent] PCAP statistics\n"
+            "## [author] PCAP statistics\n"
             "<!-- BEGIN GENERATED: pcap -->\n"
             "### [script] Generated table\n"
             "<!-- END GENERATED: pcap -->\n"
-            "## [agent] Verdict\n"
+            "## [author] Verdict\n"
         )
         self.assertEqual(validate_heading_ownership(text), [])
         self.assertTrue(validate_heading_ownership(
-            text.replace("### [script]", "### [agent]")
+            text.replace("### [script]", "### [author]")
         ))
         self.assertTrue(validate_heading_ownership(
-            text.replace("## [agent] Verdict", "## Verdict")
+            text.replace("## [author] Verdict", "## Verdict")
         ))
 
     def test_session_ledger_accepts_separate_owners_and_families(self):
@@ -59,16 +59,16 @@ class AnalysisPresentationValidationTest(unittest.TestCase):
             "- Scalar/vector: `20260726T160000Z`\n"
             "- PCAP: `NOT RUN`\n"
             "<!-- END SCRIPT RESULTS SESSIONS -->\n\n"
-            "`[agent]` results sessions: `20260725T120411Z`, "
+            "`[author]` results sessions: `20260725T120411Z`, "
             "`20260725T230151Z`.\n\n"
-            "## [agent] Evidence status\n"
+            "## [author] Evidence status\n"
         )
         self.assertEqual(validate_session_ledger(text), [])
         self.assertTrue(validate_session_ledger(
             text.replace("- PCAP: `NOT RUN`\n", "")
         ))
 
-    def test_generated_analysis_is_not_treated_as_agent_content(self):
+    def test_generated_analysis_is_not_treated_as_authored_content(self):
         text = (
             "Intro.\n"
             "<!-- BEGIN GENERATED: pcap -->\n"
@@ -81,12 +81,12 @@ class AnalysisPresentationValidationTest(unittest.TestCase):
         self.assertNotIn("| Data |", authored)
         self.assertNotIn("![Packets]", authored)
 
-    def test_rejects_agent_authored_analysis_presentations(self):
+    def test_rejects_author_created_analysis_presentations(self):
         base = (
-            "## [agent] Scalar and vector analysis\n\n"
+            "## [author] Scalar and vector analysis\n\n"
             "{body}\n\n"
-            "## [agent] PCAP statistics\n\nInterpretation.\n\n"
-            "## [agent] Frame exchange analysis\n\nInterpretation.\n"
+            "## [author] PCAP statistics\n\nInterpretation.\n\n"
+            "## [author] Frame exchange analysis\n\nInterpretation.\n"
         )
         table = "| Metric | Value |\n|---|---:|\n| Delay | 1 |\n"
         self.assertTrue(validate_analysis_ownership(base.format(body=table)))
@@ -97,17 +97,17 @@ class AnalysisPresentationValidationTest(unittest.TestCase):
             base.format(body="```sh\nopp_scavetool query results.sca\n```")
         ))
 
-    def test_accepts_script_generated_analysis_with_agent_interpretation(self):
+    def test_accepts_script_generated_analysis_with_author_interpretation(self):
         text = (
-            "## [agent] Scalar and vector analysis\n\n"
+            "## [author] Scalar and vector analysis\n\n"
             "The treatment lowers delay in this scope.\n\n"
             "<!-- BEGIN GENERATED: scalar -->\n"
             "### [script] Results\n"
             "| Metric | Value |\n|---|---:|\n| Delay | 1 |\n"
             "![Delay](delay.png)\n"
             "<!-- END GENERATED: scalar -->\n\n"
-            "## [agent] PCAP statistics\n\nInterpretation.\n\n"
-            "## [agent] Frame exchange analysis\n\nInterpretation.\n"
+            "## [author] PCAP statistics\n\nInterpretation.\n\n"
+            "## [author] Frame exchange analysis\n\nInterpretation.\n"
         )
         self.assertEqual(validate_analysis_ownership(text), [])
 

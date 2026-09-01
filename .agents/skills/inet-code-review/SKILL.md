@@ -53,7 +53,9 @@ To prevent context exhaustion, scale reference loading by diff size and complexi
 ## Reviewing Specialized Change Types
 
 ### Test-Only and Benchmark Changes
-- Verify that tests reach the production owner and integration boundary rather than testing a private helper in isolation.
+- Apply `doc/project/rule/testing.md#tr-focused-evidence` and the production-path distinction in
+  `doc/project/design/test-anatomy.md`; a private-helper test does not prove that the production owner
+  invokes it with the intended inputs.
 - Check that tests clean up dynamically allocated simulation objects (`Packet`, `cMessage`) to avoid false-positive leak reports.
 - Do not flag missing production features as test defects; evaluate whether the test accurately exercises the claimed behavioral contract.
 

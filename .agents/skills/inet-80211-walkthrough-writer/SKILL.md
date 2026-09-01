@@ -1,6 +1,6 @@
 ---
 name: inet-80211-walkthrough-writer
-description: Create, revise, or review concise, evidence-backed walkthrough.md files for INET IEEE 802.11 examples. Use for explaining a Wi-Fi feature from current configuration and script-generated scalar/vector and PCAP evidence, including plots, tables, packet statistics, and frame exchanges.
+description: Create, revise, or review concise, evidence-backed INET IEEE 802.11 walkthroughs when the active checkout provides the shared analyzer and its README. Use for explaining a Wi-Fi feature from current configuration and script-generated scalar/vector and PCAP evidence, including plots, tables, packet statistics, and frame exchanges. Do not use to invent or restore an absent analyzer workflow.
 ---
 
 # Write IEEE 802.11 walkthroughs
@@ -9,6 +9,22 @@ Use `doc/project/requirement/accepted-requirements.md` for project-level documen
 obligations. This skill owns only the IEEE 802.11 walkthrough contract and analyzer workflow.
 
 Read [walkthrough-contract.md](references/walkthrough-contract.md) and [analysis-machinery.md](references/analysis-machinery.md). Start new documents from [walkthrough-template.md](assets/walkthrough-template.md).
+
+## Capability and placement gate
+
+Before drafting or changing a walkthrough:
+
+1. Read the active checkout's `doc/project/design/repository-layout.md` and
+   `doc/project/rule/documentation.md`.
+2. Verify that both `examples/ieee80211/analysis/wifi_analysis.py` and
+   `examples/ieee80211/analysis/README.md` are tracked in the active checkout.
+3. Verify that the requested document location matches the canonical distinction among examples,
+   showcases, and tutorials. A measured argument with prose and charts belongs in `showcases/`, not
+   `examples/`, unless the active project documents explicitly say otherwise.
+
+If either analyzer file is absent or the requested placement conflicts with the project documents,
+stop and report that the checkout does not support this workflow. Do not reconstruct the analyzer
+from Git history, ignored bytecode, generated artifacts, or skill text.
 
 ## Analysis boundary
 

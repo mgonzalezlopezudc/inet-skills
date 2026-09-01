@@ -6,7 +6,9 @@ false-inference checks.
 
 ## Scanning and association
 
-Detailed and simplified INET management modules have different contracts. Confirm the instantiated type before expecting realistic scanning, authentication, association, or roaming frames.
+Read the management-model description in `doc/src/users-guide/ch-80211.rst`, then resolve the
+instantiated management type before choosing which scanning, authentication, association, or
+roaming transitions to trace.
 
 For infrastructure setup, trace state and frames through:
 

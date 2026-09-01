@@ -20,12 +20,10 @@ Do not assume Address 1 is the final destination. Interpret To DS and From DS fi
 
 ## Retry and fragment identity
 
-Correlate retransmissions and fragments with transmitter, receiver, TID when applicable, sequence number, fragment number, and Retry bit.
-
-* Retransmissions of one MPDU normally preserve sequence and fragment identity and set Retry.
-* Fragments of one MSDU share a sequence number and use increasing fragment numbers.
-* Aggregation and QoS may introduce several sequence or reordering contexts.
-* Capture frame numbers are local observation indexes, not packet identities.
+Apply `AR-WLAN-MAC-SEQUENCE` in `doc/project/domain/ieee80211.md` for sequence-space ownership and
+retry/fragment identity. Instantiate that identity in the capture with transmitter, receiver,
+applicable TID, sequence number, fragment number, and Retry bit. Capture frame numbers remain local
+observation indexes, not packet identities.
 
 ## Duration and carrier-sense evidence
 

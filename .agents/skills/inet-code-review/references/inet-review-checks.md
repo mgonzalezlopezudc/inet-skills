@@ -43,7 +43,8 @@ Read `doc/project/design/packet-anatomy.md` and the applicable `AR-PKT`, `AR-COM
 
 ## Focused verification
 
-Choose the canonical test category first, then use the smallest INET check that reaches the
+Choose the canonical test category and apply
+`doc/project/rule/testing.md#tr-focused-evidence`, then use the smallest INET check that reaches the
 production integration:
 
 | Mechanism | High-value check |

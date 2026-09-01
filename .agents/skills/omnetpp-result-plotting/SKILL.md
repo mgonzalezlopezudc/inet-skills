@@ -5,6 +5,10 @@ description: Create reproducible, non-interactive plots and derived summaries fr
 
 # Plot OMNeT++ results
 
+Define observational units, conditions, comparisons, derived metrics, uncertainty, and disclosures
+under `doc/project/guide/analyze-simulation-results.md`. This skill adds the native Python API and
+rendering mechanics.
+
 Load results with `from omnetpp.scave import results`; do not manually parse `.sca`/`.vec` files or substitute CSV loading. Run in the configured OMNeT++ environment.
 
 ## Workflow
@@ -33,19 +37,12 @@ Load results with `from omnetpp.scave import results`; do not manually parse `.s
 4. Reject empty results, missing columns, incompatible units, unexpected duplicates, invalid vector arrays/timestamps, or missing conditions/repetitions.
 5. Reduce to one justified observational unit, then plot. Keep extraction, transformation, and rendering separate in the saved script.
 
-## Statistical rules
+Read [analysis-patterns.md](references/analysis-patterns.md) for implementations of confidence
+intervals, vector reduction, time weighting, ECDFs, counter rates, or large-vector handling after
+the canonical analysis contract is defined.
 
-- Treat independent runs—not packets, nodes, or samples—as repetitions.
-- Preserve one estimate per run before confidence intervals.
-- Include every varying experiment parameter in the condition key.
-- Use time-weighted means for piecewise-constant event signals.
-- Do not invent warm-up periods or units; use configuration and metadata.
-- Aggregate modules only with a metric-defined operation.
-- State weighting, exclusions, conversions, uncertainty, and display-only downsampling.
-
-Read [analysis-patterns.md](references/analysis-patterns.md) for confidence intervals, vector reduction, time weighting, ECDFs, counter rates, or large-vector handling.
-
-Choose line plots for continuous samples, steps for piecewise-constant state, scatter for per-event samples, uncertainty summaries for parameter studies, and ECDF/histogram for distributions. Do not connect categorical or unrelated observations.
+Choose plot geometry under section 6 of `doc/project/guide/analyze-simulation-results.md`; keep only
+the native Python rendering implementation in this skill.
 
 For a direct vector plot:
 

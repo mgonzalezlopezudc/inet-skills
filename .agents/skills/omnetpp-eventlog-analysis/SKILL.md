@@ -5,7 +5,9 @@ description: Reconstruct OMNeT++ simulator-level message and event causality fro
 
 # Analyze OMNeT++ event logs
 
-Use an event log when simulator scheduling or message movement is the missing evidence. Enable it only for a narrow reproduction:
+Apply the scope, correlation, and evidence contract in
+`doc/project/guide/diagnose-a-simulation.md`. Use an event log when simulator scheduling or message
+movement is the missing evidence, and enable it only for the selected reproduction:
 
 ```sh
 --record-eventlog=true
@@ -20,4 +22,4 @@ Restrict time only if the failure still occurs. Event-log format varies by OMNeT
 4. Correlate Cmdenv by event/time and PCAP by timestamp when relevant.
 5. Use LLDB only after identifying the source path or state requiring inspection.
 
-Return the shortest causal chain and distinguish direct event-log evidence, correlated evidence, and inference.
+Return the shortest event-log causal chain and classify it under the canonical diagnosis guide.

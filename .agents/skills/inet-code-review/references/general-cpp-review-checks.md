@@ -12,7 +12,9 @@ owned by those project rules.
 - When dispatch widens from a concrete type to a base type, enumerate the now-admitted subclasses. Test the most-derived type before a base type when runtime type tests overlap.
 - Check preconditions, postconditions, sentinel values, and error propagation at both sides of a changed API. Do not infer that a local null guard preserves the caller's semantic contract.
 - Use assertions for internal invariants, not assumptions about unusual but supported external input. A frame, message, or callback admitted by the public contract must be handled, rejected, or reported deliberately instead of aborting only because it arrived out of the expected order.
-- Verify that tests reach the production caller and integration boundary. A helper-only test can pass while the real owner bypasses the helper or supplies the wrong identity.
+- Apply the production-path distinction in `doc/project/design/test-anatomy.md` and select evidence
+  under `doc/project/rule/testing.md#tr-focused-evidence`. A helper-only test can pass while the real
+  owner bypasses the helper or supplies the wrong identity.
 
 ## Ownership and lifetime
 

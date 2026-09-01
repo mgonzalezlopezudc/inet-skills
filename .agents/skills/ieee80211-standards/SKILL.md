@@ -8,20 +8,35 @@ description: Search and inspect IEEE 802.11 standards stored in this repository.
 Use `doc/project/domain/ieee80211.md` and `doc/project/rule/quality.md` for INET's normative
 traceability requirements. This skill adds corpus search, PDF fallback, and citation evidence.
 
-Check status by running from the repository root: `inet_process_standards status`. If it reports a missing or stale corpus, run `inet_process_standards build --standards-dir $HOME$/omnetpp_ws/inet-standards --output $HOME/omnetpp_ws/inet-standards/processed`, recheck status, and repeat the search. 
-
-For search and show, run from the repository root using the options `--standards-dir $HOME$/omnetpp_ws/inet-standards --output $HOME/omnetpp_ws/inet-standards/processed --json`
+Use the tracked launcher `./bin/inet_process_standards` from the `inet-skills` repository root; do
+not rely on a similarly named command from `PATH`. Locate the standards checkout from the current
+workspace or repository context rather than assuming a home-directory layout, and confirm its root:
 
 ```sh
-inet_process_standards search "<clause, table, field, or distinctive phrase>"
-inet_process_standards show <document:chunk:id>
+git -C <standards-checkout> rev-parse --show-toplevel
+./bin/inet_process_standards status \
+  --standards-dir <standards-root> --output <standards-root>/processed
+```
+
+If status reports a missing or stale corpus, build it, recheck status, and repeat the search:
+
+```sh
+./bin/inet_process_standards build \
+  --standards-dir <standards-root> --output <standards-root>/processed
+./bin/inet_process_standards search "<clause, table, field, or distinctive phrase>" \
+  --standards-dir <standards-root> --output <standards-root>/processed --json
+./bin/inet_process_standards show <document:chunk:id> \
+  --standards-dir <standards-root> --output <standards-root>/processed --json
 ```
 
 Search definitions and cross-references when one chunk is insufficient, and confirm the result belongs to the requested standard revision.
 
-The generated corpus is under `$HOME/omnetpp_ws/inet-standards/processed/`. It is ignored build output: do not edit or commit it.
+The generated corpus is `<standards-root>/processed/`. It is ignored build output: do not edit or
+commit it.
 
-Consult a source PDF under `$HOME/omnetpp_ws/inet-standards/` only when the corpus cannot answer the question, visual structure or page verification matters, extraction appears wrong, or the user requests the original. Record the document revision, clause or annex, and page.
+Consult a source PDF under `<standards-root>/` only when the corpus cannot answer the question,
+visual structure or page verification matters, extraction appears wrong, or the user requests the
+original. Record the document revision, clause or annex, and page.
 
 Report the revision, clause/table/figure, normative/informative status, corpus chunk identifiers,
 material cross-references or ambiguity, and whether PDF inspection was needed.

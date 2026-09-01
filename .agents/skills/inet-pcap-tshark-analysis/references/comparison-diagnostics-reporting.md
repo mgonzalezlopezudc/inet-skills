@@ -5,9 +5,14 @@
 * Diagnose empty or undecoded captures
 * Build automated assertions
 
+Apply the observation-boundary, evidence-classification, and reporting rules in
+`doc/project/guide/diagnose-a-simulation.md`. This reference adds capture comparison and TShark
+diagnostic mechanics.
+
 ## Compare observation points
 
-Capture both endpoints when investigating delivery, loss, or retransmission. Use separate files for each node and interface.
+Once the canonical guide identifies the required observation points, use separate files for each
+node and interface.
 
 Do not match packets by `frame.number`; each capture has independent numbering. Correlate with the strongest available identity:
 
@@ -17,7 +22,8 @@ Do not match packets by `frame.number`; each capture has independent numbering. 
 * Payload length or contents.
 * Simulation timestamp.
 
-A packet present at the sender but absent at the receiver proves only that it was not observed at the receiver's selected capture point. Add an intermediate capture, targeted log, result counter, or event log to locate the first missing transition.
+Add an intermediate capture, targeted log, result counter, or event log when the selected observation
+points do not locate the first missing transition.
 
 ## Account for duplicate observations
 
@@ -47,28 +53,14 @@ test -s "$FILTERED"
 capinfos "$FILTERED"
 ```
 
-Report capture points and files, recorder options that affect interpretation, filters, matching frames and `frame.time_epoch` values, packet identifiers, observation-point differences, decoding limitations, and whether each conclusion is direct packet evidence, another evidence source, or a TShark heuristic.
+Add capture points and files, recorder options that affect interpretation, filters, matching frames
+and `frame.time_epoch` values, packet identifiers, observation-point differences, decoding
+limitations, and TShark heuristics to the canonical diagnosis report.
 
 ## Walkthrough Tables for IEEE 802.11 Examples
 
-When asked to generate or analyze 802.11 frame type statistics, packet sizes,
-or estimated airtime percentages inside an example walkthrough, use the
-shared scenario-oriented interface:
-
-```sh
-python3 examples/ieee80211/analysis/wifi_analysis.py run <scenario> \
-  --suite <suite> --evidence pcap --runs 1 \
-  --session-id <YYYYMMDDTHHMMSSZ>
-python3 examples/ieee80211/analysis/wifi_analysis.py report <scenario> \
-  --suite <suite> --session-id <YYYYMMDDTHHMMSSZ>
-```
-
-`run` creates raw captures and their immutable manifest only. `report` reuses
-that session to validate and analyze the captures without editing a
-walkthrough. Only an explicit publication command may update marker-bounded
-walkthrough content:
-
-```sh
-python3 examples/ieee80211/analysis/wifi_analysis.py publish <scenario> \
-  --suite <suite> --session-id <YYYYMMDDTHHMMSSZ> --update
-```
+Route any request to generate or publish walkthrough tables through
+`inet-80211-walkthrough-writer`. Its capability and canonical-placement gate must pass before any
+analyzer command is used. If the active checkout lacks the tracked analyzer and README, report that
+the workflow is unsupported; do not reconstruct it or substitute direct TShark output for the
+script-owned presentation.

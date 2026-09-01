@@ -23,7 +23,7 @@ REQUIRED_HEADINGS = (
     "cross-layer findings and verdict",
     "limitations and inconclusive claims",
 )
-OWNERSHIP_PREFIX = re.compile(r"^\[(agent|script)\]\s+", re.IGNORECASE)
+OWNERSHIP_PREFIX = re.compile(r"^\[(author|script)\]\s+", re.IGNORECASE)
 SESSION_ID = re.compile(r"^\d{8}T\d{6}Z$")
 SCRIPT_SESSIONS_BEGIN = "<!-- BEGIN SCRIPT RESULTS SESSIONS -->"
 SCRIPT_SESSIONS_END = "<!-- END SCRIPT RESULTS SESSIONS -->"
@@ -90,10 +90,10 @@ def validate_heading_ownership(text: str) -> list[str]:
         if owner is None:
             errors.append(
                 f"line {line_number}: section heading has no "
-                "[agent] or [script] prefix"
+                "[author] or [script] prefix"
             )
             continue
-        expected = "script" if generated else "agent"
+        expected = "script" if generated else "author"
         if owner.group(1).lower() != expected:
             errors.append(
                 f"line {line_number}: [{owner.group(1).lower()}] heading "
@@ -146,20 +146,20 @@ def validate_session_ledger(text: str) -> list[str]:
                 f"script {family} results-session value is invalid: "
                 f"{match.group(1)}"
             )
-    agent = re.search(
-        r"^`\[agent\]` results sessions:\s+(.+?)\.\s*$",
+    author = re.search(
+        r"^`\[author\]` results sessions:\s+(.+?)\.\s*$",
         top,
         re.MULTILINE,
     )
-    if agent is None:
-        errors.append("top agent results-session line is missing")
+    if author is None:
+        errors.append("top author results-session line is missing")
     else:
-        values = ", ".join(re.findall(r"`([^`]+)`", agent.group(1)))
+        values = ", ".join(re.findall(r"`([^`]+)`", author.group(1)))
         if not values or not _valid_session_value(
             values, allow_not_recorded=True
         ):
             errors.append(
-                "agent results-session line must contain session IDs, "
+                "author results-session line must contain session IDs, "
                 "NOT RUN, or NOT RECORDED"
             )
     return errors
@@ -224,7 +224,7 @@ def strip_generated_blocks(text: str) -> str:
 
 
 def validate_analysis_ownership(text: str) -> list[str]:
-    """Reject agent-authored analysis presentations and direct substitutes."""
+    """Reject author-created analysis presentations and direct substitutes."""
     errors: list[str] = []
     for label in (
         "Scalar and vector analysis",

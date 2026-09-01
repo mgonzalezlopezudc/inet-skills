@@ -6,6 +6,9 @@
 * Bound capture cost
 * Validate the artifact
 
+Select and interpret observation points under `doc/project/guide/diagnose-a-simulation.md`. This
+reference adds PcapRecorder configuration mechanics.
+
 ## Select the capture point
 
 Inspect the instantiated NED model and effective INI configuration before adding a recorder. Determine:

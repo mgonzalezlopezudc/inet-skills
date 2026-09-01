@@ -6,9 +6,11 @@ log, event-log, result, and LLDB skills. This reference contains only Wi-Fi-spec
 
 ## Capture representation and limits
 
-Capture at the sender, receiver, AP, or wired AP interface needed to prove the disputed transition. For native MAC analysis, configure `PcapRecorder.dumpProtocols` for the installed IEEE 802.11 MAC representation and keep files separate by observation point.
-
-For every diagnostic Wi-Fi capture command, include `--**.checksumMode="computed"` and `--**.fcsMode="computed"` from the first run unless the effective configuration already sets both. This prevents capture serialization from failing on declared or unavailable checksum/FCS data. Preserve these overrides in the evidence report because they can affect packet-processing behavior.
+Apply the `PcapRecorder` representation and computed checksum/FCS guidance in
+`doc/src/users-guide/ch-collecting-results.rst`, and use `inet-pcap-tshark-analysis` for concrete
+recorder commands. For native MAC analysis, select the installed IEEE 802.11 representation and
+keep observation points in separate files. Preserve computed-mode overrides with the reproduction
+because they can affect packet-processing behavior.
 
 Confirm whether the capture contains native 802.11, Ethernet-converted frames, radiotap-like metadata, bad frames, and transmit or receive observations. A MAC capture usually cannot prove:
 

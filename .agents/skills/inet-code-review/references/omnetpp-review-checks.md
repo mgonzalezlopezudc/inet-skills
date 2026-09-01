@@ -10,7 +10,10 @@ Apply the lifecycle, observability, configuration, determinism, and testing rule
 ## Module lifecycle and initialization
 
 - Trace the exact initialization stage that establishes each field, subscription, module reference, and published value. Resolve the checked-out version's registered stage dependencies; do not infer order from declaration order or a remembered stage list. Determine whether an event or synchronous call can observe partially initialized state.
-- When overriding `initialize(int stage)`, identify the highest named stage the class actually handles and trace the effective `numInitStages()` through inheritance. A local override is required only when the inherited stage count does not cover that stage. Valid implementations return a fixed count such as `NUM_INIT_STAGES`, or preserve a base count with a constant expression such as `std::max(Base::numInitStages(), HIGHEST_STAGE + 1)`; the runtime `stage` parameter is not in scope in `numInitStages()`.
+- Apply `doc/project/rule/architecture.md#ar-life-stages`. Identify the highest named stage the class
+  actually handles and trace the effective `numInitStages()` through inheritance. Require a local
+  override only when the inherited count does not cover that stage, and verify that any override is
+  a stage-independent constant expression that also preserves the base requirement.
 - Check `initialize()` staging, `finish()`, dynamic module creation/deletion, and destructor behavior separately. Do not assume normal end-of-simulation order matches runtime deletion.
 - Respect OMNeT++ deletion order. Cleanup that traverses child modules may be safe in `finish()` or `preDelete()` but unsafe in a destructor after descendants have been destroyed.
 - For cross-module calls, verify module/gate discovery direction, method-entry requirements such as `Enter_Method`, and whether the callee may retain or delete arguments.
@@ -46,7 +49,9 @@ Apply the lifecycle, observability, configuration, determinism, and testing rule
 
 ## Focused verification
 
-Use a filtered module test or one Cmdenv configuration/run/seed when kernel behavior is necessary to prove the path. High-value cases include:
+Select evidence under `doc/project/rule/testing.md#tr-focused-evidence`. Use a filtered module test
+or one Cmdenv configuration/run/seed when kernel behavior is necessary to prove the path. High-value
+cases include:
 
 | Mechanism | High-value check |
 | --- | --- |

@@ -36,17 +36,18 @@ When a result is surprising, compare it with three controls:
 
 ## Update baselines
 
-Follow `doc/project/guide/change-a-baseline.md` before updating any recorded expectation, plus any
-approval requirement imposed by `AGENTS.md`.
+Follow `doc/project/guide/change-a-baseline.md`, including its approval requirement, before updating
+any recorded expectation.
 
 - **Fingerprint** — call `update_fingerprint_test_results(...)`. It uses `FingerprintStore.update_fingerprint`, writes `fingerprint.json`, and reports `INSERT`, `UPDATE`, or `KEEP`. Record the affected entries and result codes.
 - **Statistical** — call `update_statistical_test_results(...)`. It copies the current `.sca` result into the baseline directory. Record the exact files and quantify the delta.
 
 Treat `fingerprint.json`, baseline `.sca` files, and `dependency.json` as test artifacts when comparing `clean` with `topic`.
 
-Put an approved baseline delta in its own commit directly after the source commit that caused it.
-Rerun the same scoped test on the baseline commit and record the causal source commit and reason in
-the message, as required by the canonical procedure.
+Put an approved baseline delta in the same commit as the source change that caused it. Rerun the
+same scoped test on that commit and record the causal behavior change and reason in its message. Use
+a standalone baseline commit only when no single source commit caused the movement, as required by
+the canonical procedure.
 
 Detailed results are temporary: use them to write the causal account in the logbook, then discard them unless repository policy requires retention.
 

@@ -36,9 +36,9 @@ Instead of treating LLM agents as general-purpose autocomplete tools, this suite
 * **Utility**: **Critical** for maintaining INET's architectural integrity.
 * **Effectiveness**:
   * **Strengths**:
-    * **Sealing Guard**: The proactive [source-seal helper](.agents/skills/inet-architectural-requirements/scripts/check-source-seals.sh), backed by the canonical `doc/project/audit/seal-list.md`, prevents accidental modification of core modules without explicit user authorization.
+    * **Sealing Guard**: The proactive `doc/project/enforcement/check-source-seals.sh` gate in the active INET checkout, backed by the canonical `doc/project/audit/seal-list.md`, prevents accidental modification of core modules without explicit user authorization.
     * **Ledger Reconciliation**: Codifying known violations and sanctioned exceptions (`AS-*`, `AV-*`, `NS-*`, `NV-*`) prevents agents from hallucinating pre-existing code debt as new errors introduced by a patch.
-    * **Automated Tool Integration**: The skill routes canonical project gates and adds focused [architecture](.agents/skills/inet-architectural-requirements/scripts/check-additional-architecture.sh) and [NED/MSG naming](.agents/skills/inet-architectural-requirements/scripts/check-ned-msg-naming.py) checks for mechanics absent from those gates.
+    * **Automated Tool Integration**: The skill routes the active INET checkout's canonical `doc/project/enforcement/check-architecture.sh` and `doc/project/enforcement/check-ned-msg-naming.py` gates without carrying fallback copies.
     * **Selective Reference Loading**: The change-type routing matrix in the [skill](.agents/skills/inet-architectural-requirements/SKILL.md) selects the relevant canonical rule identifiers without duplicating their text.
   * **Friction Points / Limitations**:
     * Context pressure remains high if an agent ignores the routing matrix and loads full requirement files.

@@ -45,8 +45,9 @@ For every behavior-changing commit, add these four labelled fields in this order
 2. **Why the result changed** — the causal mechanism, tied to the lines introduced by this commit.
 3. **Why it's acceptable** — why the new behavior is correct or intended, and why unrelated behavior should not have moved.
 4. **Baseline update** — the exact entries or artifacts re-recorded, the method and result codes when
-   available, the required approval, and the SHA of the separate baseline commit required by
-   `doc/project/guide/change-a-baseline.md`.
+   available, the required approval, and the SHA of the causal source commit that contains the
+   update. If no single source commit caused the movement, record the standalone baseline commit and
+   explain why it has no causal source commit, following `doc/project/guide/change-a-baseline.md`.
 
 Detailed result files may be temporary. Before discarding them, preserve the exact invocation, decisive evidence, causal explanation, exit status, and any durable artifact paths in the logbook.
 

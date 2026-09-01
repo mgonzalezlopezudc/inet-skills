@@ -1,8 +1,9 @@
 # Scope and reproducibility
 
-Apply the canonical amendment-gating and reproducibility rules in `doc/project/domain/ieee80211.md`
-and `doc/project/rule/testing.md`. This reference adds the four-way diagnostic gate and artifact
-controls.
+Apply the canonical amendment-gating and model-evidence distinctions in
+`doc/project/domain/ieee80211.md`, and the reproducibility rules in
+`doc/project/guide/diagnose-a-simulation.md`. This reference adds instantiated-model inspection and
+diagnostic artifact mechanics.
 
 ## Inspect the instantiated model
 
@@ -18,22 +19,13 @@ Use `inet-ned-ini-analysis` when inheritance, wildcard precedence, or `typename`
 
 ## Establish feature gates
 
-Before diagnosing a standards violation, distinguish four questions:
-
-| Question | Evidence |
-| --- | --- |
-| Does the scenario require the feature? | Expected exchange or test contract |
-| Does the applicable standard define it? | `ieee80211-standards` |
-| Does this INET checkout implement it? | NED types and source paths |
-| Is it enabled in this run? | Effective configuration and runtime evidence |
-
-Apply this gate to RTS/CTS, QoS/EDCA, fragmentation, A-MSDU/A-MPDU, Block Ack, power save, roaming, HT/VHT/HE/EHT, OFDMA, multi-user behavior, and multi-link behavior. Treat unsupported behavior differently from incorrect behavior.
+Apply `AR-WLAN-STD-GATING` from `doc/project/domain/ieee80211.md`. Use `ieee80211-standards` for its
+normative-evidence lane, `inet-ned-ini-analysis` for its effective-configuration lane, and source
+inspection for the checked-out implementation lane.
 
 ## Preserve comparable runs
 
-For a canonical reproducible comparison, also hold the NED path, effective configuration, traffic,
-and diagnostic overrides constant unless one is the variable under test.
-
 Use command-line overrides for temporary capture, logging, event-log, and result diagnostics. Create a dedicated debug configuration only when repeated investigation would otherwise be error-prone.
 
-Record generated captures, logs, event logs, and result files by configuration and run. Do not compare independent randomized trajectories as though they were the same reproduction.
+Name generated captures, logs, event logs, and result files by configuration and run, then report
+them through the canonical diagnosis guide.

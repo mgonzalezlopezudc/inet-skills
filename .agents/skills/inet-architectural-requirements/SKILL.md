@@ -60,31 +60,33 @@ Use `inet-code-review` as well when correctness review is requested. Keep correc
 before canonical checklist verdicts and cross-reference a shared mechanism instead of reporting it
 twice.
 
-## Skill-specific helpers
+## Canonical enforcement gates
 
-Run canonical gates from the INET repository root as selected by
-`doc/project/guide/run-the-gates.md`. These helpers add mechanics not present in that gate suite:
+Run the canonical gates from the INET repository root as selected by
+`doc/project/guide/run-the-gates.md`. Policy checkers live in the active checkout under
+`doc/project/enforcement/`; this skill does not carry fallback copies. Before invoking one, verify
+that the canonical path exists. If it does not, report `error: canonical gate missing` with the
+expected path and stop; never silently substitute a checker bundled with this skill.
 
 ```sh
 # Resolve proposed or changed source paths against the canonical seal registry.
-bash .agents/skills/inet-architectural-requirements/scripts/check-source-seals.sh <affected-files...>
-bash .agents/skills/inet-architectural-requirements/scripts/check-source-seals.sh --diff
+doc/project/enforcement/check-source-seals.sh <affected-files...>
+doc/project/enforcement/check-source-seals.sh --diff
 
 # Check the declaration-level NED/MSG naming subset on the working tree, index, or explicit files.
-python3 .agents/skills/inet-architectural-requirements/scripts/check-ned-msg-naming.py
-python3 .agents/skills/inet-architectural-requirements/scripts/check-ned-msg-naming.py --staged
-python3 .agents/skills/inet-architectural-requirements/scripts/check-ned-msg-naming.py src/inet/<file>.ned
+python3 doc/project/enforcement/check-ned-msg-naming.py
+python3 doc/project/enforcement/check-ned-msg-naming.py --staged
+python3 doc/project/enforcement/check-ned-msg-naming.py src/inet/<file>.ned
 
-# Add the socket-contract and deterministic-source scans missing from the canonical architecture gate.
-bash .agents/skills/inet-architectural-requirements/scripts/check-additional-architecture.sh \
-  src/inet/<focused-subtree>
+# Check dependency direction, socket contracts, and deterministic source patterns.
+doc/project/enforcement/check-architecture.sh src/inet/<focused-subtree>
 ```
 
 `check-source-seals.sh` returns `0` only when every target is unsealed, `1` when any target is
 sealed, and `2` for invalid scope or usage. A sealed result is a hard stop pending explicit user
-permission. The naming and additional-architecture helpers return `0` for clean, `1` for candidates,
-and `2` for invalid scope or usage; reconcile their candidates with the canonical rule and exception
-ledger before classifying them. The helpers never authorize a seal, ledger, or allowlist change.
+permission. The NED/MSG naming and architecture gates return `0` for clean, `1` for candidates, and
+`2` for invalid scope or usage; reconcile their candidates with the canonical rule and exception
+ledger before classifying them. The gates never authorize a seal, ledger, or allowlist change.
 
 Report the reviewed scope, canonical identifiers applied, gate commands and statuses, findings and
 ledger dispositions, required approvals, and the final compliance verdict.

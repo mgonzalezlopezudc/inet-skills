@@ -5,6 +5,9 @@ description: Analyze INET and OMNeT++ Cmdenv logs. Use to find module behavior, 
 
 # Analyze Cmdenv logs
 
+Apply the scope, evidence, correlation, and reporting contract in
+`doc/project/guide/diagnose-a-simulation.md`. This skill adds Cmdenv logging and search mechanics.
+
 Save diagnostic output and target only the relevant module subtree. Useful overrides are:
 
 ```sh
@@ -27,4 +30,5 @@ rg -n -C 20 'event=<number>|time=<time>' <log>
 
 For runtime failures, distinguish initialization from event processing and move to `inet-lldb-debugging` when source state is required. For packet behavior, trace enqueue/dequeue, transmit/receive, drop, timeout/retry, and state transitions; confirm headers with PCAP and aggregates with results when needed.
 
-Do not confuse OMNeT++ event numbers with TShark frame numbers or infer causality from one isolated line. Return the shortest evidence-backed timeline and label inference.
+Return the shortest relevant log timeline, then classify and correlate it under the canonical
+diagnosis guide.

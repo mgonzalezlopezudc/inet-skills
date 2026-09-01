@@ -5,6 +5,10 @@ description: Inspect, filter, query, and export OMNeT++ scalar and vector result
 
 # Analyze OMNeT++ results
 
+Apply `doc/project/guide/analyze-simulation-results.md` for comparison, measurement, and reporting
+rules. For causal investigations, also apply `doc/project/guide/diagnose-a-simulation.md`. This skill
+adds `opp_scavetool` discovery and export mechanics.
+
 Select `.sca`/`.vec` inputs by run metadata and verify they exist. Do not assume every file in a directory belongs to the requested run.
 
 ```sh
@@ -19,4 +23,6 @@ Use `-F CSV-R` for raw tabular data or `-F CSV-S` for scalar summary; `-F CSV` i
 3. Apply the narrowest selection and report ambiguous or empty matches.
 4. Export only required items and vector intervals.
 
-Distinguish scalars, vectors, statistics, and histograms. Before comparing runs, verify compatible iteration variables, units, warm-up, recording settings, binaries, and seeds. Use timestamps with captures/logs/event logs for causal questions; aggregates alone may hide the transition.
+Distinguish scalars, vectors, statistics, and histograms. Use timestamps with captures, logs, or
+event logs when the canonical diagnosis guide requires causal correlation; aggregates alone may hide
+the transition.

@@ -1,7 +1,9 @@
 # Shared IEEE 802.11 analysis machinery
 
 `examples/ieee80211/analysis/wifi_analysis.py` is the walkthrough's
-authoritative analysis interface. Read
+authoritative analysis interface only when it and the adjacent README are tracked in the active
+checkout and the owning skill's placement gate passes. If either file is absent, stop; do not
+reconstruct the workflow from history, ignored artifacts, or this reference. Read
 `examples/ieee80211/analysis/README.md`, then run from the repository root:
 
 ```sh
@@ -27,7 +29,7 @@ The shared analyzer and its suite-owned components generate:
 - PCAP packet statistics, tables, plots, and provenance; and
 - representative frame-exchange timelines/tables.
 
-Agents interpret these outputs. They do not reproduce them with direct
+Authors interpret these outputs. They do not reproduce them with direct
 `opp_scavetool`, TShark, plotting libraries, spreadsheets, manual
 calculations, or hand-authored Markdown.
 

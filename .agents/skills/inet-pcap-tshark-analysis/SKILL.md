@@ -6,8 +6,9 @@ description: Record and analyze packet exchanges in INET simulations using PcapR
 # Analyze INET packet captures
 
 Use the wire and observation boundary in `doc/project/design/packet-anatomy.md` and
-`doc/project/rule/architecture.md`. This skill adds recorder placement, TShark inspection, and
-multi-point correlation.
+`doc/project/rule/architecture.md`, and the evidence contract in
+`doc/project/guide/diagnose-a-simulation.md`. This skill adds recorder placement, TShark inspection,
+and multi-point correlation mechanics.
 
 ## Workflow
 
@@ -21,8 +22,8 @@ multi-point correlation.
    ```
 
 5. Use offline display filters with `-Y` and `-T fields` for exact timelines/headers.
-6. Capture both endpoints when delivery, loss, or retransmission is disputed.
-7. Correlate `frame.time_epoch` with Cmdenv simulation time and event numbers; never equate event numbers with `frame.number`.
+6. Record the observation points required by the canonical diagnosis guide in separate files.
+7. Correlate `frame.time_epoch` with Cmdenv simulation time using the identifiers selected there.
 
 `moduleNamePatterns` is relative to the recorder's node; `dumpProtocols` selects representation, not observation point. A successful simulation does not prove that recording occurred.
 
@@ -34,4 +35,5 @@ Read as needed:
 - [tshark-inspection.md](references/tshark-inspection.md): fields, timelines, TCP analysis, and correlation.
 - [comparison-diagnostics-reporting.md](references/comparison-diagnostics-reporting.md): multi-point comparison and empty/undecoded captures.
 
-Do not claim delivery from a sender capture or loss from absence at one point. Label direct packet evidence, dissector heuristics, correlated evidence, and inference.
+Interpret observation points and classify conclusions under the canonical diagnosis guide; report
+TShark dissector heuristics explicitly.

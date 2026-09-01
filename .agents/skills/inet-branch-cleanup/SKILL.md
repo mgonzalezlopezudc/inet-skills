@@ -30,7 +30,8 @@ Cleanup is complete only when:
 
 1. `git diff <topic-sha> <clean-sha> --` is empty for every source and non-baseline file.
 2. Any baseline difference from `topic` reflects the clean branch's actual behavior and follows
-   `doc/project/guide/change-a-baseline.md`, including its separate baseline commit.
+   `doc/project/guide/change-a-baseline.md`: it travels in the causal source commit, or stands alone
+   only when no single source commit caused the movement.
 3. The coverage ledger contains no unassigned material and every temporary detour has closed.
 4. Every output commit has the promised build and `opp_repl` evidence, apart from any explicitly approved relaxation, and the final directly related test contract passes.
 
@@ -58,8 +59,9 @@ Do not create per-group fossil branches. The group table and the `clean` history
 ## Phase 2 — Plan the output commits
 
 Derive commit boundaries, order, subjects, and rationales from the canonical `PR-*` policy. For each
-output commit, additionally record its type, feeding groups, and expected test effect. Insert any
-approved baseline-only commit exactly where that policy requires it.
+output commit, additionally record its type, feeding groups, and expected test effect. Include an
+approved baseline update in the source commit that causes it. Plan a standalone baseline commit only
+when no single source commit caused the movement.
 
 Dependent edits may require an intermediate file state found in neither `base` nor `topic`. Such a state is legitimate when it gives a commit one clear purpose: the coverage ledger still pins the final result to `topic`.
 
@@ -90,14 +92,16 @@ For each approved output commit:
 3. Apply the commit-type oracle:
    - **Refactor / chore / docs** — the selected behavior signal must remain identical to the previous safe point. A mismatch means the commit is misclassified or defective. Stop; do not hide it with a baseline update.
    - **Fix / feature** — the signal may change only in the predicted scope and for an explained
-     reason. Record the delta; an approved baseline update is a separate following commit under the
-     canonical procedure.
+     reason. Record the delta and include any approved re-recording in this causal source commit,
+     following the canonical procedure.
 4. Recompute the ledger. Confirm that it moved by exactly the intended slice and that no unrelated file changed.
 5. On a clean pass, record the commit as a **safe point**, append its evidence to the logbook, and continue.
 
 Apply `PR-SERIES-BUILDS` to every output commit. A predicted baseline mismatch is evidence to carry
-into its approved baseline-only successor, not permission to hide an unrelated failure. Any other
-test-red relaxation needs explicit approval, a logged justification, and a named restoring commit.
+into the causal source commit's approved baseline update, not permission to leave the commit red or
+hide an unrelated failure. A standalone baseline commit is valid only for movement with no single
+causal source commit. Any other test-red relaxation needs explicit approval, a logged justification,
+and a named restoring commit.
 
 ## Failure and rework
 

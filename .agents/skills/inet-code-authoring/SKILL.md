@@ -73,12 +73,18 @@ When a filled-in field remains unclear, read the optional [verified non-WLAN con
 - Apply the packet, lifecycle, determinism, artifact, and testing rules selected from `doc/project/`.
   For the called packet API, establish its concrete `Packet *` ownership transfer and its
   `take`/`drop`/`send`/delete contract; use `Ptr`/`makeShared` only where the checked API requires it.
-- **Multi-stage initialization**: trace the effective `numInitStages()` through inheritance and identify the highest named initialization stage this class handles. Add or update a local override only when the inherited count does not cover that stage; return a fixed count such as `NUM_INIT_STAGES`, or `std::max(Base::numInitStages(), HIGHEST_STAGE + 1)` when the codebase convention requires preserving a base count. The runtime `stage` parameter is not available inside `numInitStages()`.
+- For multi-stage initialization, apply
+  `doc/project/rule/architecture.md#ar-life-stages`. As the preventive trace, identify the highest
+  named stage handled by the class and compare it with the effective inherited `numInitStages()`;
+  add or update a local override only when that effective count does not cover the stage.
 - Establish externally observable state before re-entrant callbacks or signals, and make shared
   terminal cleanup idempotent when paths can converge.
 - Keep current and pending state, peers, interfaces, flows, TIDs, directions, links, and generations separate according to the owning protocol. Use complete identity tuples and domain-correct boundary or wrap semantics.
 - Keep absolute deadlines distinct from relative durations and preserve units and conversion ownership across NED, C++, model fields, serializers, and wire encodings.
-- Make tests reach the production owner and integration boundary; helper-only coverage does not prove the real caller supplies the right identity or handles every terminal result.
+- Select and report tests under `doc/project/rule/testing.md#tr-focused-evidence`. Apply the
+  production-path distinction in `doc/project/design/test-anatomy.md`: helper-only coverage does not
+  prove that the real caller invokes the helper, supplies the intended identity, or handles every
+  terminal result.
 
 ### Handle related scope expansion
 
