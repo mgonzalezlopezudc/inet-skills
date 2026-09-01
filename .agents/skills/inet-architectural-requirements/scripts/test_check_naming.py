@@ -9,7 +9,7 @@ import unittest
 from pathlib import Path
 
 
-CHECKER = Path(__file__).resolve().parents[1] / "references/enforcement/check-naming.py"
+CHECKER = Path(__file__).resolve().parent / "check-ned-msg-naming.py"
 
 
 class NamingCheckerTest(unittest.TestCase):

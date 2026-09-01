@@ -1,5 +1,9 @@
 # Management, forwarding, and feature gates
 
+Apply the canonical component-ownership and amendment-gating rules in
+`doc/project/domain/ieee80211.md`. This reference adds management/forwarding traces and concrete
+false-inference checks.
+
 ## Scanning and association
 
 Detailed and simplified INET management modules have different contracts. Confirm the instantiated type before expecting realistic scanning, authentication, association, or roaming frames.
@@ -37,7 +41,8 @@ Apply power-save expectations only after confirming implementation. Track radio 
 
 ## Modern feature gate
 
-For HT, VHT, HE, EHT, DMG/EDMG, S1G, OCB, or vehicular behavior, prove both implementation and configuration before applying standards invariants. In particular, do not infer:
+After passing the canonical feature gate for HT, VHT, HE, EHT, DMG/EDMG, S1G, OCB, or vehicular
+behavior, do not infer:
 
 * Actual MIMO or beamforming from a spatial-stream count.
 * A-MPDU from generic aggregation.

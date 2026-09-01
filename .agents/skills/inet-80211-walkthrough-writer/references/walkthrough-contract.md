@@ -1,9 +1,12 @@
 # IEEE 802.11 walkthrough contract
 
+Project-level documentation and evidence obligations live in
+`doc/project/requirement/accepted-requirements.md`, `doc/project/rule/documentation.md`, and
+`doc/project/rule/testing.md`. This reference adds the analyzer-owned walkthrough format.
+
 ## Goal
 
-Teach one feature and show what the current example proves. A useful
-walkthrough is brief, reproducible, and honest about gaps.
+Teach one feature and show what the current example proves.
 
 ## Evidence vocabulary
 
@@ -84,11 +87,10 @@ view, record the gap and improve the shared analysis machinery.
 - Expand an acronym only if it recurs or is needed to follow the evidence.
 - Avoid raw artifact inventories, configuration dumps, generic Wi-Fi
   background, implementation trivia, and repeated conclusions.
-- Do not compare with older walkthroughs, evidence, INI files, or
-  implementations unless asked.
 - Do not make population claims from one run or event-level causal claims
   across separate sessions.
-- Use relative paths. Keep commands directly runnable.
+- State the repository working directory and keep commands directly runnable there.
+- Use repository-relative paths for artifacts and links; do not publish absolute `/home` paths.
 
 ## Ready-to-publish check
 

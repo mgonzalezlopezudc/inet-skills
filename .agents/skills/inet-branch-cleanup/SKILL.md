@@ -11,7 +11,9 @@ This is a repository-mutating workflow. Start it only when the user has requeste
 
 Commits may be split, merged, reordered, or newly authored, even below hunk level. That freedom is kept honest by the **coverage ledger**, which proves that the cleanup lost nothing and introduced no permanent changes of its own.
 
-`inet-pull-request-authoring` owns the normative rules for commit boundaries, series order, messages, and reviewability. Before classifying change groups or planning output commits, use that skill, read its authoritative pull-request reference in full, and apply the relevant `PR-SPLIT-*`, `PR-SERIES-*`, and `PR-MSG-*` requirements by their stable identifiers. This skill adds reconstruction mechanics and must not override that policy.
+Before classifying change groups or planning output commits, use `inet-pull-request-authoring` and
+read `doc/project/rule/pull-request.md`. This skill adds reconstruction mechanics and does not
+restate or override the canonical `PR-*` policy.
 
 The cleanup workflow and acceptance contract are INET-specific because they use `opp_repl` as the test oracle. Before starting a cleanup, read both [references/state-log.md](references/state-log.md) and [references/opp-repl-contract.md](references/opp-repl-contract.md).
 
@@ -27,11 +29,13 @@ Record these inputs verbatim before changing history:
 Cleanup is complete only when:
 
 1. `git diff <topic-sha> <clean-sha> --` is empty for every source and non-baseline file.
-2. Any baseline difference from `topic` reflects the clean branch's actual behavior, is explained in the commit that caused it, and has the approval required by repository policy.
+2. Any baseline difference from `topic` reflects the clean branch's actual behavior and follows
+   `doc/project/guide/change-a-baseline.md`, including its separate baseline commit.
 3. The coverage ledger contains no unassigned material and every temporary detour has closed.
 4. Every output commit has the promised build and `opp_repl` evidence, apart from any explicitly approved relaxation, and the final directly related test contract passes.
 
-The baseline exception is narrow. Identical source implies identical behavior; baselines merely describe that behavior. If `topic` left a baseline stale, `clean` may correct the test artifact, but it may never use this exception to change source.
+The baseline exception is narrow: it may correct a stale test artifact under the canonical baseline
+procedure, but it may never authorize a source difference from `topic`.
 
 ## Phase 0 — Understand the total change
 
@@ -53,7 +57,9 @@ Do not create per-group fossil branches. The group table and the `clean` history
 
 ## Phase 2 — Plan the output commits
 
-Derive commit boundaries, order, subjects, and rationales from the `PR-*` policy rather than defining a second commit policy here. For each output commit, additionally record its type, feeding groups, and expected test effect. Apply `PR-SPLIT-BASELINE` when an approved baseline changes so that the rebuilt commit remains independently green.
+Derive commit boundaries, order, subjects, and rationales from the canonical `PR-*` policy. For each
+output commit, additionally record its type, feeding groups, and expected test effect. Insert any
+approved baseline-only commit exactly where that policy requires it.
 
 Dependent edits may require an intermediate file state found in neither `base` nor `topic`. Such a state is legitimate when it gives a commit one clear purpose: the coverage ledger still pins the final result to `topic`.
 
@@ -83,11 +89,15 @@ For each approved output commit:
 2. Build and run the directly related scoped `opp_repl` test. A build failure is an error, and a zero-test selection is not evidence.
 3. Apply the commit-type oracle:
    - **Refactor / chore / docs** — the selected behavior signal must remain identical to the previous safe point. A mismatch means the commit is misclassified or defective. Stop; do not hide it with a baseline update.
-   - **Fix / feature** — the signal may change only in the predicted scope and for an explained reason. Update any permitted baseline in the same commit.
+   - **Fix / feature** — the signal may change only in the predicted scope and for an explained
+     reason. Record the delta; an approved baseline update is a separate following commit under the
+     canonical procedure.
 4. Recompute the ledger. Confirm that it moved by exactly the intended slice and that no unrelated file changed.
 5. On a clean pass, record the commit as a **safe point**, append its evidence to the logbook, and continue.
 
-Every output commit should build and pass. Relax this only when reordering, regrouping, or a temporary detour would be worse. A test-red commit requires explicit approval, a logged justification, and a named later commit that must restore the expected result. Keep the build green whenever possible; a build-red commit is almost never acceptable.
+Apply `PR-SERIES-BUILDS` to every output commit. A predicted baseline mismatch is evidence to carry
+into its approved baseline-only successor, not permission to hide an unrelated failure. Any other
+test-red relaxation needs explicit approval, a logged justification, and a named restoring commit.
 
 ## Failure and rework
 
@@ -99,7 +109,10 @@ When a commit fails or surprises the oracle, compare it with `topic`, `base`, an
 
 Prefer append-only progress. Before rewriting an already validated commit, preserve the current tip as `cleanup/<name>/checkpoint-<ISO8601>`, then rebuild forward. Checkpoint branches are fossils: never repoint, rename, or delete them. Use branches, not tags, as the authoritative safe-point references.
 
-Ask for human input at the initial grouping and commit plan, on unexplained or ambiguous behavior changes, before changing the approved groups or order, before leaving a commit test-red, before updating fingerprints when approval is required, and at final delivery. Do not pause for a clean pass that matches the approved expectation.
+Ask for human input at the initial grouping and commit plan, on unexplained or ambiguous behavior
+changes, before changing the approved groups or order, before an exceptional test-red commit, when
+the canonical baseline procedure or repository policy requires approval, and at final delivery.
+Do not pause for a clean pass that matches the approved expectation.
 
 ## Phase 5 — Finalize
 

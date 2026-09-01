@@ -5,21 +5,29 @@ description: Plan, write, or audit reviewable INET commits and pull requests. Us
 
 # INET pull request authoring
 
-Prepare a change so that its commits are independently reviewable and its pull request explains the complete change. Before deciding commit boundaries or order, writing or revising commit messages, drafting a pull request description, or auditing any of those artifacts, read [references/pull-requests.md](references/pull-requests.md) in full. Treat that document as the authoritative policy and identify its requirements by their stable `PR-*` identifiers.
+Read `doc/project/rule/pull-request.md` in the active INET checkout before planning, authoring, or
+auditing commits or a pull request. It is the sole authority for `PR-*` policy. Use
+`doc/project/guide/review-a-pull-request.md` for an existing series and
+`doc/project/guide/contribute-a-change.md` when preparing a new change.
 
-This skill owns the normative policy for INET commit content, commit-series structure, commit messages, and pull-request content. It may propose a better series, but it does not define or execute the mechanics for reconstructing existing history. When the user asks to split, merge, reorder, or re-author existing commits on a new branch, use `inet-branch-cleanup`; that skill consumes this policy.
-
-The copied reference preserves links relative to its original `doc/architecture/` location. When a `PR-REQ-ARCH` check needs the linked architecture, naming, exception-ledger, or sealing policy, read the current project documents through `inet-architectural-requirements`; do not alter the reference copy to redirect those links.
+This skill adds planning and reporting structure. It does not reconstruct history: route requests
+to split, merge, reorder, or re-author existing commits through `inet-branch-cleanup`.
 
 ## Establish the review surface
 
-Determine the target branch and the exact change being prepared or audited. When commits already exist, inspect both the complete branch diff and every individual commit diff and message; aggregate branch state cannot establish per-commit compliance. When planning an uncommitted change, identify its independent decisions, prerequisites, mechanical operations, moves, behavior-preserving preparation, behavior changes, expected-result updates, and unrelated work before proposing boundaries.
+Determine the target branch and exact review surface. For existing history, preserve both the whole
+branch diff and the per-commit diffs/messages as evidence. For an uncommitted change, inventory the
+independent decisions and dependencies before proposing boundaries.
 
-Keep evidence scoped to the requested change. Do not create commits, update expected results, publish a pull request, or otherwise mutate the repository unless the user requested that mutation. Route requested history reconstruction through `inet-branch-cleanup`. Preserve any repository-specific approval requirements, especially those governing fingerprints, sealed paths, and exception ledgers.
+Keep evidence scoped to the requested change. Do not create commits, change baselines, publish a
+pull request, or otherwise mutate the repository unless the user requested that mutation. Resolve
+baselines through `doc/project/guide/change-a-baseline.md` and architecture/sealing disclosures
+through the documents referenced by the applicable `PR-*` rule.
 
 ## Plan or author the series
 
-Apply the reference at all four levels: commit content, commit-series structure, commit messages, and pull-request content.
+Apply the canonical policy at all four levels: commit content, series structure, messages, and the
+pull-request description.
 
 For a proposed series, provide each commit's:
 
@@ -30,18 +38,17 @@ For a proposed series, provide each commit's:
 - directly applicable build and test evidence;
 - expected behavior or baseline effect.
 
-Order prerequisites before their consumers and ensure the tree after every proposed commit is coherent and testable. Draft message bodies from the reason and observable context for the change, not by narrating the diff. Draft the pull request description with the topic and motivation, reading order when needed, exact test commands and outcomes, architectural surface, baseline updates, exception identifiers, and sealing permission required by the reference and repository policy.
+The proposed fields are an output schema, not a second policy. Derive their contents and ordering
+from the applicable `PR-*` identifiers, and cite those identifiers in an audit.
 
 ## Audit existing artifacts
 
-Evaluate each commit separately before evaluating the series and pull request as a whole. Report only evidence-backed results. For every defect, cite the violated `PR-*` identifier, point to the commit, message, hunk, or missing pull-request section that establishes it, and give a concrete correction direction. Distinguish a policy violation from missing evidence and from an open question.
+Report only evidence-backed results. For each defect, cite the violated `PR-*` identifier, point to
+the commit, message, hunk, or missing description section that establishes it, and give a concrete
+correction direction. Distinguish a violation from missing evidence and from an open question.
 
-Finish with a concise compliance summary covering:
+Finish with a concise result for every applicable `PR-*` identifier, followed by missing evidence or
+approvals.
 
-- commit boundaries and per-commit consistency;
-- dependency order and linearity;
-- message subjects and bodies;
-- pull-request topic, story, architecture disclosures, tests, baselines, and cleanliness;
-- approvals or evidence still required.
-
-Do not substitute a pull-request-level summary or passing final tree for the reference's per-commit requirements.
+Do not substitute a pull-request-level summary or passing final tree for the canonical per-commit
+requirements.

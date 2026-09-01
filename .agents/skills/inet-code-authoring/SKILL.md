@@ -7,21 +7,9 @@ description: Design and implement semantic INET C++, NED, MSG, INI, and test cha
 
 Prevent defects while defining and implementing a change. Keep `inet-code-review` independent and read-only; reuse its maintained correctness references without adopting its finding format or reviewer role.
 
-## Implementation Workflow Sequence
-
-Follow this 4-step sequence in order for any change under `src/inet/`:
-
-```mermaid
-graph LR
-    Step1[1. Sealing & Arch Guard] --> Step2[2. Contract & Validation]
-    Step2 --> Step3[3. Implement against Contract]
-    Step3 --> Step4[4. Self-Audit & Focused Test]
-```
-
-1. **Sealing Guard:** Run `check-sealing.sh` to confirm target files are unsealed. If sealed, STOP and request explicit permission.
-2. **Implementation Contract:** Define and validate the pre-write contract (full or lightweight template) before modifying files.
-3. **Implementation:** Code against the contract adhering to modern INET conventions.
-4. **Self-Audit & Verification:** Audit stable diff against `common-agent-pitfalls.md` and run directly mapped debug-mode tests.
+Follow `doc/project/guide/contribute-a-change.md` and its canonical seals, rules, gates, and test
+policy. This skill adds a pre-write correctness contract and a post-write self-audit; it does not
+repeat project policy.
 
 ## Load the preventive checks
 
@@ -82,14 +70,14 @@ When a filled-in field remains unclear, read the optional [verified non-WLAN con
 
 ## Implement against the contract
 
-- **Modern INET conventions**: use `Packet`, `Chunk`, and `Tag` APIs instead of deprecated `cMessage` encapsulation. `Packet` objects use explicit OMNeT++ ownership transfer through `Packet *`; follow the called API's `take`/`drop`/`send`/delete contract and never place a `Packet` in shared ownership. Chunks and shareable tags use `Ptr`/`makeShared` as their API requires. Use the component's actual lifecycle abstraction—such as `OperationalMixin`'s `handleStartOperation`, `handleStopOperation`, and `handleCrashOperation`, or `ILifecycle::handleOperationStage`—and derive cleanup/restart behavior from that abstraction's contract.
-- **Simulation determinism**: use OMNeT++ RNG infrastructure (`getRNG(k)`, `cRNG`) and `simTime()`. When iteration order can affect events, protocol state, selection, or tie-breaking, do not depend on unordered-container order; sort by a stable semantic key first. Never use pointer addresses as behavioral ordering keys, including through ordered pointer-keyed containers such as `std::map<T *, ...>`.
+- Apply the packet, lifecycle, determinism, artifact, and testing rules selected from `doc/project/`.
+  For the called packet API, establish its concrete `Packet *` ownership transfer and its
+  `take`/`drop`/`send`/delete contract; use `Ptr`/`makeShared` only where the checked API requires it.
 - **Multi-stage initialization**: trace the effective `numInitStages()` through inheritance and identify the highest named initialization stage this class handles. Add or update a local override only when the inherited count does not cover that stage; return a fixed count such as `NUM_INIT_STAGES`, or `std::max(Base::numInitStages(), HIGHEST_STAGE + 1)` when the codebase convention requires preserving a base count. The runtime `stage` parameter is not available inside `numInitStages()`.
-- Make the smallest coherent change that updates every affected semantic path and consumer.
-- Preserve exactly one owner and disposition across normal, early-return, failure, exception, callback, and teardown paths. Establish externally observable state before re-entrant callbacks or signals, and make shared terminal cleanup idempotent when paths can converge.
+- Establish externally observable state before re-entrant callbacks or signals, and make shared
+  terminal cleanup idempotent when paths can converge.
 - Keep current and pending state, peers, interfaces, flows, TIDs, directions, links, and generations separate according to the owning protocol. Use complete identity tuples and domain-correct boundary or wrap semantics.
 - Keep absolute deadlines distinct from relative durations and preserve units and conversion ownership across NED, C++, model fields, serializers, and wire encodings.
-- Change generated-code inputs rather than generated outputs, and keep C++, NED, MSG, configuration, registration, serialization, feature, documentation, and test artifacts consistent where the contract requires them.
 - Make tests reach the production owner and integration boundary; helper-only coverage does not prove the real caller supplies the right identity or handles every terminal result.
 
 ### Handle related scope expansion
@@ -107,11 +95,14 @@ Once the diff is stable, complete this checklist against the implementation cont
 
 - [ ] Stable diff matches the validated behavior claim; every deviation and required scope expansion is recorded.
 - [ ] Effective owner/control path, affected consumers, siblings, and terminal paths were retraced in the resulting tree.
-- [ ] Ownership/disposition, reentrancy, lifecycle/state identity, determinism, time/unit/boundary, and generated-input concerns are either checked where applicable or recorded as reasoned `N/A`.
-- [ ] All required C++, NED, MSG, INI, serializer, registration, feature, documentation, and test artifacts remain consistent.
-- [ ] Focused debug-mode commands use explicit filters, reach the production behavior, and have recorded exit status and artifacts; gaps and fingerprint approval needs are explicit.
+- [ ] The applicable canonical project rules and selected preventive references are each checked or
+      recorded as reasoned `N/A`.
+- [ ] Focused commands reach the production behavior and have recorded exit status and artifacts;
+      gaps and approval needs are explicit.
 
-Use the owning build, test, simulation, packet, result, and fingerprint skills. Follow `AGENTS.md`: use debug mode and explicit filters, run only directly mapped checks, report a coverage gap instead of broadening the suite, and never update fingerprints without explicit user approval.
+Use the owning build, test, simulation, packet, result, and fingerprint skills. Obtain project test
+and baseline policy from `doc/project/rule/testing.md` and
+`doc/project/guide/change-a-baseline.md`; apply the additional execution constraints in `AGENTS.md`.
 
 Return this plain-text envelope. Use `None` only when supported by the audit; do not omit fields.
 

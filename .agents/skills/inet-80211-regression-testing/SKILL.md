@@ -5,7 +5,9 @@ description: Design, run, and interpret focused IEEE 802.11 regression tests in 
 
 # IEEE 802.11 regression testing
 
-A passing run is evidence, not coverage. Verify the frame exchange, timing, counters, and feature gate the change is meant to protect.
+Select the claim, test category, and WLAN obligations through `doc/project/rule/testing.md`,
+`doc/project/design/test-anatomy.md`, and `doc/project/domain/ieee80211.md`. This skill adds the
+Wi-Fi-specific reproduction and invariant choices.
 
 1. State the behavior and protocol-visible invariant under test.
 2. Build the smallest deterministic scenario that exercises it.
@@ -16,6 +18,9 @@ A passing run is evidence, not coverage. Verify the frame exchange, timing, coun
 
 Useful invariants include association state, expected ACK/retry/drop behavior, protection policy, sequence/retry evolution, QoS mapping, aggregation/Block Ack progress, receiver power/SNIR/error decisions, AP forwarding addresses, and active HE/EHT feature gates.
 
-For changed 802.11 production behavior, apply `AR-WLAN-QUAL-TESTS` from `inet-architectural-requirements`. Run only unit, module, and fingerprint tests directly related to the changed code and behavioral contracts; `inet-agent-orchestration` owns this completion gate, and the unit and fingerprint skills own the filtered debug-mode commands.
+Use `inet-unit-tests` and `inet-fingerprint-regression` for the filtered commands selected by the
+canonical test policy; orchestration owns the handoff gate when agents are delegated.
 
-Do not accept throughput improvement as proof of the targeted mechanism, update fingerprints before explaining the first changed event, or use an ideal radio as final verification unless it is the intended abstraction.
+Do not accept throughput improvement as proof of the targeted mechanism or use an ideal radio as
+final verification unless it is the intended abstraction. Handle fingerprints through the
+canonical baseline procedure.

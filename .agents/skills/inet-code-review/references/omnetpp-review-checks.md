@@ -1,6 +1,11 @@
 # OMNeT++ review checks
 
-Apply these checks to OMNeT++ simulation-kernel contracts and model configuration. Keep INET packet and protocol semantics in the INET layer and Wi-Fi behavior in the IEEE 802.11 layer.
+Apply the lifecycle, observability, configuration, determinism, and testing rules from
+`doc/project/` first. This reference adds OMNeT++ kernel and configuration failure modes.
+
+## Determinism diagnostics
+
+- When a fingerprint mismatch accompanies added, removed, or reordered stochastic work, inspect RNG-draw order first: shifting one draw can change every downstream decision on that stream and obscure the local mechanism that initiated the divergence.
 
 ## Module lifecycle and initialization
 
@@ -10,13 +15,6 @@ Apply these checks to OMNeT++ simulation-kernel contracts and model configuratio
 - Respect OMNeT++ deletion order. Cleanup that traverses child modules may be safe in `finish()` or `preDelete()` but unsafe in a destructor after descendants have been destroyed.
 - For cross-module calls, verify module/gate discovery direction, method-entry requirements such as `Enter_Method`, and whether the callee may retain or delete arguments.
 - Check runtime parameter changes or rebuilt module relationships when the model supports them; do not validate initialization only once.
-
-## Simulation determinism and randomness
-
-- Enforce deterministic behavioral iteration. The iteration order of any unordered container is not a simulation contract, regardless of key type. When order affects packet transmission, queue selection, tie-breaking, RNG draws, or state transitions, collect and sort by stable semantic keys (for example sequence number or interface index) before acting. Pointer-address ordering is also unstable across processes, including in ordered containers such as `std::map<T *, ...>`; replacing an unordered pointer container with an ordered pointer container does not fix the trajectory.
-- Use OMNeT++ RNG streams (`getRNG(k)`, `cRNG`, distribution functions) for all stochastic decisions. Bypassing OMNeT++ with raw `rand()`, `std::random_device`, or host system time breaks reproducibility across seeds and runs.
-- Keep wall-clock time (`std::chrono`, `time()`) out of simulation mechanics. Use `simTime()` exclusively for simulation timestamps, timeouts, and intervals; restrict wall-clock time to non-simulation diagnostic profiling.
-- Treat adding, removing, or reordering an RNG draw as a first-class cause of wholesale trajectory divergence: every downstream stochastic decision in that stream re-syncs. When a fingerprint mismatch accompanies such a change, check RNG-draw order before attributing behavioral divergence to the modified logic.
 
 ## Events, messages, and timers
 
@@ -31,7 +29,7 @@ Apply these checks to OMNeT++ simulation-kernel contracts and model configuratio
 
 ## Signals, callbacks, and observability
 
-- Test protocol or state-machine behavior when an observation listener is absent, registered later, or invoked in a different order. Report a correctness finding only when a supported behavior changes; route observer-neutrality noncompliance without a proven behavioral consequence to `AR-OBS-SIGNALS`.
+- Exercise protocol or state-machine behavior with observation listeners absent, registered later, and invoked in a different order; verify that every supported arrangement preserves behavior.
 - Assume signal listeners and callbacks can synchronously re-enter the emitter. Establish state or detach all affected objects before notifying when a listener can remove them.
 - Verify paired semantic signal contracts. Emit removal only for an object whose addition was observable, preserve exactly-once counts, and order state establishment before re-entrant emission.
 - Check signal type, source module, subscription scope, details object lifetime, and whether emitted pointers remain valid for the documented callback duration.
@@ -40,11 +38,10 @@ Apply these checks to OMNeT++ simulation-kernel contracts and model configuratio
 
 ## NED, INI, and MSG integration
 
-- Resolve NED inheritance, default expressions, gate/vector paths, parameters, `typename`, and submodule replacement against the instantiated network.
 - Respect the evaluation semantics of `volatile` parameters. Caching a `volatile` parameter in a member during `initialize()` silently freezes a value defined to be re-evaluated at every read; re-reading a non-volatile parameter mid-operation is equally wrong when the contract requires a stable value. Verify that each read site's timing matches the declared volatility and the intended contract.
-- Resolve INI configuration inheritance and wildcard precedence. Compare explicit overrides with inferred defaults and confirm the setting reaches the intended module instances.
 - Check feature-off and optional-submodule configurations, including missing gates or empty typenames.
-- Change `.msg` sources rather than generated `_m.h` or `_m.cc` files. Trace generated ownership, copying, packing/unpacking, descriptors, and consumers when a field or inheritance relationship changes.
+- Trace generated ownership, copying, packing/unpacking, descriptors, and consumers when a `.msg`
+  field or inheritance relationship changes.
 - For every semantically consumed generated field, audit factories, success/reject paths, copies, and reconstruction paths for deliberate initialization or copying. If an optional field's schema default is also a valid value, require explicit presence or an out-of-domain sentinel only when the consumer must distinguish absence. Example: constructing a radio command to change bitrate must not make a default channel value look like an explicit channel request.
 
 ## Focused verification
@@ -54,7 +51,6 @@ Use a filtered module test or one Cmdenv configuration/run/seed when kernel beha
 | Mechanism | High-value check |
 | --- | --- |
 | Initialization dependency | normal, delayed/unavailable publication, dynamic creation, `numInitStages()` match |
-| Deterministic execution | unordered iteration and pointer-address ordering vs stable semantic ordering across runs |
 | Timer lifecycle | absolute/relative input, replace/retain/reject, stale expiry, shutdown, duplicate terminal event |
 | Same-time progress | finite zero-delay chain, permanently blocked retry, response/timeout collision |
 | Re-entrant signal | listener removes current object or a sibling synchronously |
@@ -62,4 +58,6 @@ Use a filtered module test or one Cmdenv configuration/run/seed when kernel beha
 | Configuration resolution | inherited default, explicit override, wildcard collision, feature off |
 | MSG change | copy, parsim pack/unpack, and derived type dispatch |
 
-When the change can alter event trajectories, identify the exact fingerprint rows and ingredients. A passing fingerprint is regression evidence, not proof of semantic correctness. Explain the first causal divergence before attributing a mismatch, and never update fingerprint CSV files during review. Example: inserting an otherwise inert submodule may change module IDs or event-number ingredients without changing packet behavior, while a changed TXOP calculation that sends one fewer frame has a behavioral first divergence.
+For trajectory changes, take fingerprint meaning and baseline handling from
+`doc/project/design/test-anatomy.md` and `doc/project/guide/change-a-baseline.md`; use
+`inet-fingerprint-regression` for the operational diagnosis.

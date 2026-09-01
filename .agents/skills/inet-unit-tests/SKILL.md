@@ -28,8 +28,8 @@ For module tests, use the same explicit debug mode and filtering rule:
 inet_run_module_tests -m debug -f '<directly-related-filter>'
 ```
 
-Before invoking either runner, map each selected test to a changed path, symbol, or behavioral contract. Run only that directly related set with an explicit `-f` filter; never omit the filter or broaden it to an unrelated directory or suite. Tests added or modified by the change are directly related. If no existing test can be mapped to the change, report the coverage gap instead of running a broader selection. When piping through `tee`, preserve the runner's exit status with `pipefail`.
-
-A build/test failure or unavailable directly related test is incomplete validation.
+Select the test category and coverage under `doc/project/rule/testing.md`. The runner invocation must
+still carry an explicit `-f` regex for that selected set. When piping through `tee`, preserve the
+runner's exit status with `pipefail`.
 
 Distinguish INET-library build failures, test-executable build failures, and assertion failures. Report the first relevant failure rather than counting cascades as independent causes.

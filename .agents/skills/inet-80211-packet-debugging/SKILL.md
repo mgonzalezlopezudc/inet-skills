@@ -5,6 +5,9 @@ description: Debug IEEE 802.11 PHY and MAC packet exchanges in OMNeT++/INET usin
 
 # Debug IEEE 802.11 packet exchanges
 
+Apply `doc/project/domain/ieee80211.md` for the model's canonical WLAN boundaries, owners, and
+verification obligations. This skill adds the evidence path for locating a runtime divergence.
+
 Find the first divergent transition:
 
 ```text
@@ -25,7 +28,8 @@ Use the owning skills for simulation execution, NED/INI resolution, Cmdenv logs,
 6. Inspect checked-out source for the exact policy/state-machine decision.
 7. Use LLDB only after identifying a suspicious module, event, packet, or source path.
 
-Treat the applicable IEEE revision as authority for normative behavior and checked-out source plus observed runs as authority for implementation behavior. Do not assume a standard feature is implemented or enabled.
+Use `ieee80211-standards` for normative questions and checked-out source plus observed runs for
+implementation questions. Do not assume a standard feature is implemented or enabled.
 
 ## References
 

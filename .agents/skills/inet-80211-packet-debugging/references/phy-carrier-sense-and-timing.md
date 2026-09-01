@@ -1,5 +1,9 @@
 # PHY, carrier sense, and timing
 
+Apply the PHY authority/timing rules in `doc/project/domain/ieee80211.md` and the signal/fidelity
+rules in `doc/project/rule/architecture.md` first. This reference adds the diagnostic transition
+and isolation procedures.
+
 ## Locate the first failed PHY transition
 
 For a missing or corrupted frame, determine in order:
@@ -55,9 +59,9 @@ Investigate which signal caused PHY busy, which decodable frame set NAV, the rep
 
 ## Mode, airtime, and response timing
 
-Do not calculate airtime as payload bits divided by nominal bitrate. Use the installed mode and duration calculators so preamble, signaling, coding, symbol rounding, headers, FCS, padding, and aggregation are included.
-
-Derive SIFS, slot time, DIFS/AIFS, ACK/CTS timeouts, and other timing from the active mode set. Check response mode compatibility and radio switching. For a failed SIFS exchange, distinguish late scheduling, incompatible response rate, response collision, receiver still transmitting, and timeout expiry.
+Use the canonical mode authority for airtime and timing. In a failed exchange, compare its installed
+calculator inputs and outputs, response-mode compatibility, and radio switching; distinguish late
+scheduling, incompatible response rate, collision, receiver still transmitting, and timeout expiry.
 
 For backoff, reconstruct the chosen counter, eligible idle slots, freeze/resume intervals, transmission time, success/failure, contention-window update, and retry counter. Close transmission times alone do not prove a backoff defect.
 

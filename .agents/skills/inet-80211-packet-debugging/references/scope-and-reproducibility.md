@@ -1,5 +1,9 @@
 # Scope and reproducibility
 
+Apply the canonical amendment-gating and reproducibility rules in `doc/project/domain/ieee80211.md`
+and `doc/project/rule/testing.md`. This reference adds the four-way diagnostic gate and artifact
+controls.
+
 ## Inspect the instantiated model
 
 Reason from the effective NED and INI configuration, not from a similarly named example. Identify only the components involved in the question:
@@ -27,7 +31,8 @@ Apply this gate to RTS/CTS, QoS/EDCA, fragmentation, A-MSDU/A-MPDU, Block Ack, p
 
 ## Preserve comparable runs
 
-Start with one configuration, run number, and seed. When comparing before and after, keep the seed, build mode, NED path, effective configuration, traffic, and diagnostic overrides equivalent unless the changed item is the variable under test.
+For a canonical reproducible comparison, also hold the NED path, effective configuration, traffic,
+and diagnostic overrides constant unless one is the variable under test.
 
 Use command-line overrides for temporary capture, logging, event-log, and result diagnostics. Create a dedicated debug configuration only when repeated investigation would otherwise be error-prone.
 

@@ -1,6 +1,8 @@
 # IEEE 802.11 evidence tools
 
-Use the generic capture, log, event-log, result, and LLDB skills for their workflows. This reference contains only Wi-Fi-specific additions.
+Use the canonical observation and trace boundaries from `doc/project/design/packet-anatomy.md`,
+`doc/project/rule/architecture.md`, and `doc/project/domain/ieee80211.md`, then the generic capture,
+log, event-log, result, and LLDB skills. This reference contains only Wi-Fi-specific additions.
 
 ## Capture representation and limits
 

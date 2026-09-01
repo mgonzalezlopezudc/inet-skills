@@ -1,6 +1,8 @@
 # General C++ review checks
 
-Apply these checks to C++ contracts regardless of OMNeT++, INET, or protocol semantics. Use higher-layer references to establish how a path is reached; keep the defect here when the violated invariant is a language, API, lifetime, or algorithm contract.
+Apply `doc/project/rule/architecture.md`, `doc/project/rule/quality.md`, and
+`doc/project/rule/testing.md` first. This reference adds C++ failure modes and concrete checks not
+owned by those project rules.
 
 ## API and polymorphism
 
@@ -26,12 +28,12 @@ Do not label retention as a leak until the current owner and every cleanup point
 
 ## State and algorithms
 
-- Identify one authoritative owner for each fact. When fields mirror one value, verify every writer and reader or derive secondary state from the authority.
 - Keep current, pending, and historical state distinct when they have different transition rules. Check stale completion after a new generation begins.
 - Challenge containers and loops with empty, singleton, several-element, full, and removal-during-iteration cases. Snapshot a shrinking bound or drain explicitly when removals change the collection size.
 - For loops, recursion, retry chains, and selectors, identify a monotonic progress measure. Every nonterminal branch must change it or terminate; eligibility remaining true is not progress. Example: a frame selector that recursively retries while its child can never produce a frame is unbounded even if each individual call is small.
 - Check integer boundaries, narrowing, signedness, overflow, underflow, and wraparound against the represented domain. Use domain ordering rather than ordinary integer ordering for cyclic spaces.
-- Check lookup and ordering logic for duplicate keys, ties, unstable iteration order, missing values, and user-provided sparse inputs. Do not let container order stand in for semantic identity.
+- Check lookup and ordering logic for duplicate keys, ties, missing values, and user-provided sparse
+  inputs after applying the canonical determinism rule.
 - Keep predicates and read-like queries observational with respect to simulation and owned object state: repeated, skipped, reordered, or short-circuited evaluation must not change the result of later work. Avoid default-inserting lookups such as `operator[]` when absence is semantically different from a default value. Example: an eligibility predicate that consumes a retry token makes queue inspection alter later transmission behavior.
 - For each long-lived container keyed by external identity (peer, address, packet, transaction, flow), establish whether supported model cardinality provides a real bound. Require eviction, expiry, or explicit capacity only when the container can otherwise grow with repeated traffic or churn; do not flag an intentional registry whose domain and lifetime are demonstrably bounded.
 - Verify that multi-field state changes are atomic from every observer's perspective, including synchronous callbacks.

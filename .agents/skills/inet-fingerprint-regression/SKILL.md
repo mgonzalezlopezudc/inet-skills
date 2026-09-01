@@ -5,7 +5,9 @@ description: Diagnose and manage INET fingerprint regression tests. Use to run f
 
 # INET fingerprint regression
 
-A changed fingerprint means the simulation trajectory changed; it is not a fix or automatically harmless.
+Read `doc/project/design/test-anatomy.md` for what a fingerprint establishes and
+`doc/project/guide/change-a-baseline.md` before changing recorded expectations. This skill adds the
+filtered runner and first-divergence workflow.
 
 After compiled INET source or generated-code inputs change, build debug mode from the repository root:
 
@@ -26,7 +28,8 @@ For a mismatch:
 1. Record the test, configuration, run/seed, old/new fingerprints, and first mismatch.
 2. Check expected changes to event ordering, timing, packets/tags, random streams, recordings, or topology.
 3. Use logs, event logs, captures, or results to explain the first divergence.
-4. Update CSV expectations only after the change is accepted and the user explicitly approves it.
+4. If the divergence is accepted, follow the canonical baseline procedure and any additional
+   approval requirement in `AGENTS.md`.
 5. Rerun only the same directly related fingerprint tests.
 
 Keep debug runner and libraries consistent. Compare identical binaries, NED paths, seeds, overrides, and source state unless the difference is intentional. Any mismatch, execution failure, unavailable required suite, or zero-test run is incomplete validation.

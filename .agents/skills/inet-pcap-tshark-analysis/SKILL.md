@@ -5,7 +5,9 @@ description: Record and analyze packet exchanges in INET simulations using PcapR
 
 # Analyze INET packet captures
 
-A capture proves observations at selected capture points, not internal routing, queueing, MAC/PHY decisions, or drops.
+Use the wire and observation boundary in `doc/project/design/packet-anatomy.md` and
+`doc/project/rule/architecture.md`. This skill adds recorder placement, TShark inspection, and
+multi-point correlation.
 
 ## Workflow
 

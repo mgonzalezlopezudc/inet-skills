@@ -1,6 +1,8 @@
 # IEEE 802.11 review checks
 
-Apply these checks only when the changed contract reaches IEEE 802.11 MAC, PHY, management, configuration, or packet behavior. Also apply the general C++, OMNeT++, and INET layers needed to prove the mechanism. Use the applicable standard revision and clause to prove behavioral claims; missing source or test traceability by itself belongs to `AR-WLAN-STD-TRACE`.
+Apply `doc/project/domain/ieee80211.md` and
+`doc/project/enforcement/checklist/ieee80211.md` first. This reference adds concrete correctness
+traps and high-value cases beyond those canonical WLAN rules.
 
 ## Semantic path coverage
 

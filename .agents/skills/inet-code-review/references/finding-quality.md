@@ -1,6 +1,9 @@
 # Reviewer finding quality
 
-The reviewer’s job is to discover defects the author should act on. A local oddity, possible future improvement, or unexplained feeling is not yet a finding.
+Use the scope, precision, question, and report rules in
+`doc/project/enforcement/checklist/general.md` and
+`doc/project/guide/review-a-pull-request.md`. This reference adds the proof and correction detail for
+actionable correctness findings.
 
 ## Finding proof standard
 

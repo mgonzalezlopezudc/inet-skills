@@ -1,5 +1,8 @@
 # IEEE 802.11 frame interpretation
 
+Use `doc/project/domain/ieee80211.md` for frame representation and sequence ownership. This
+reference adds capture interpretation and PHY/MAC failure-stage distinctions.
+
 Correctly identify the management, control, or data subtype before reasoning about the exchange. Management state depends on Beacon, Probe, Authentication, Association, Reassociation, Disassociation, Deauthentication, and Action frames; protection and acknowledgment use RTS, CTS, ACK, Block Ack Request, and Block Ack; QoS and null-data subtypes have different delivery and ACK semantics.
 
 ## Address fields

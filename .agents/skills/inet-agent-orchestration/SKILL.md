@@ -7,6 +7,10 @@ description: Route and coordinate project-scoped specialist agents across Codex,
 
 Keep requirements, decisions, and synthesis in the root thread. Delegate bounded evidence or execution outcomes when independent lanes reduce risk or latency.
 
+For production changes and pull-request reviews, obtain project policy and gate order from
+`doc/project/guide/contribute-a-change.md` or `doc/project/guide/review-a-pull-request.md`. This
+skill adds agent routing, ownership, and handoff mechanics only.
+
 ## Architecture and Workflow Pipeline
 
 ```mermaid
@@ -49,27 +53,18 @@ For active tier assignments, consult [MODELS.md](../../../MODELS.md). For platfo
 - **Production change:** establish the mechanism and change surface, then assign exactly one `inet-implementer`. For a semantic `src/inet/` change, first assign the implementer read-only contract completion using `inet-code-authoring`; require it to return the completed, self-validated contract without writing. Validate that handoff against the authoring checklist, then explicitly authorize the same implementer to write. Use `inet-regression-guard` for behavior changes and `inet-reviewer` on the stable verified diff for architecture-sensitive, nontrivial, or 802.11 changes.
 - **Results/plots:** use `inet-results-analyst`; use `inet-evidence-miner` only for bounded metadata inventory.
 
-### Trivial Change Fast-Track (Escape Hatch)
+### Trivial change fast-track
 For mechanically obvious changes meeting all of the following:
 1. Total diff <= 5 lines in a single file;
 2. No behavioral contract, protocol state machine, or API signature modified;
 3. No sibling dispatch branches or lifecycle interactions affected;
-4. Path is unsealed (verified via `check-sealing.sh`);
+4. Path is unsealed under `doc/project/audit/seal-list.md` (the source-path helper in
+   `inet-architectural-requirements` may resolve it);
 
 the orchestrator or implementer may skip formal multi-agent routing and use the lightweight contract flow in `inet-code-authoring`.
 
-## Single-Agent Execution Mode
-
-When executing in a single-agent session without sub-agent delegation, transition through the gates sequentially in the root thread using this checklist:
-
-```text
-[ ] 1. Diagnose & Guard: Verify sealing (check-sealing.sh) and confirm mechanism from source/logs.
-[ ] 2. Pre-Write Contract: Fill and self-validate the full or lightweight template from inet-code-authoring; record the validation result before modifying files.
-[ ] 3. Implement: Make minimal coherent change preserving single ownership and clean lifecycle.
-[ ] 4. Focused Verification: Run directly mapped debug-mode tests/simulations with explicit filters.
-[ ] 5. Self-Audit & Checklist: Self-audit diff against common-agent-pitfalls.md and emit architecture checklist.
-[ ] 6. Conclude: Present stable diff, verified claim, and residual risk.
-```
+In a single-agent session, follow the canonical contribution workflow in the root thread and add
+the pre-write contract and self-audit from `inet-code-authoring`.
 
 ## Assignments and gates
 
@@ -80,10 +75,14 @@ Gate handoffs as follows:
 1. Diagnose → contract: demonstrated mechanism, bounded change surface, architecture/seal decision, any required approval, and the available evidence for every applicable `inet-code-authoring` contract field.
 2. Contract → implement: the implementer has returned every field complete and self-validated; the orchestrator has independently checked the authoring validation checklist, recorded the result, and explicitly authorized the first write. An unresolved field returns to diagnosis.
 3. Implement → verify: stable diff and explicit behavior claim.
-4. Verify → review or conclude: focused debug-mode evidence that exercises the claim; for behavior-affecting production changes, run only the unit, module, and fingerprint tests directly mapped to the changed paths, symbols, or behavioral contracts, using explicit filters and their owning skills. Never run complete or unfiltered suites. When review is required, pass the stable diff, behavior claim, contract, implementation report, and this evidence to the reviewer.
+4. Verify → review or conclude: evidence selected under `doc/project/rule/testing.md` and the
+   execution constraints in `AGENTS.md`. When review is required, pass the stable diff, behavior
+   claim, contract, implementation report, and evidence to the reviewer.
 5. Correctness review → conclude: for changes routed to `inet-reviewer`, all actionable `inet-code-review` findings are confirmed resolved by the same reviewer after focused reverification, or explicitly accepted by the user with the residual risk recorded. Report reviewed scope, validation, and residual risks.
-6. Architecture review → conclude: required fitness checks and exact semantic checklist verdicts (including `N/A` for inapplicable rules).
-7. Fingerprint update or sealing change: explicit user approval after the evidence is presented.
+6. Architecture review → conclude: required fitness checks and the exact semantic verdict format from
+   the applicable canonical checklist.
+7. Baseline or sealing change: the procedure and authorization required by `doc/project/` plus any
+   additional approval required by `AGENTS.md`.
 
 Gates may move backward when new evidence invalidates an earlier assumption. Preserve the working diff and artifacts while returning to the earliest affected gate; do not use destructive Git reset as recovery. For a build or focused-test failure, remain in verification when an identified runner or artifact problem caused it, return to implementation when the contract remains valid and the diff caused it, or return to diagnosis/contract definition when it exposes a wrong mechanism, owner, change surface, invariant, or verification mapping. Freeze further writes when evidence invalidates the mechanism or contract, revise and revalidate the affected handoff, then resume forward progress. Reverify every downstream claim made stale by the correction.
 

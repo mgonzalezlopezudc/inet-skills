@@ -36,12 +36,12 @@ Instead of treating LLM agents as general-purpose autocomplete tools, this suite
 * **Utility**: **Critical** for maintaining INET's architectural integrity.
 * **Effectiveness**:
   * **Strengths**:
-    * **Sealing Guard**: The proactive check against [.agents/skills/inet-architectural-requirements/references/sealing-status.md](.agents/skills/inet-architectural-requirements/references/sealing-status.md) prevents accidental modification of core modules without explicit user authorization.
+    * **Sealing Guard**: The proactive [source-seal helper](.agents/skills/inet-architectural-requirements/scripts/check-source-seals.sh), backed by the canonical `doc/project/audit/seal-list.md`, prevents accidental modification of core modules without explicit user authorization.
     * **Ledger Reconciliation**: Codifying known violations and sanctioned exceptions (`AS-*`, `AV-*`, `NS-*`, `NV-*`) prevents agents from hallucinating pre-existing code debt as new errors introduced by a patch.
-    * **Automated Tool Integration**: Direct integration with [.agents/skills/inet-architectural-requirements/references/enforcement/check-architecture.sh](.agents/skills/inet-architectural-requirements/references/enforcement/check-architecture.sh) gives objective, reproducible include-dependency validation.
-    * **Selective Reference Loading**: The [.agents/skills/inet-architectural-requirements/references/quick-reference-index.md](.agents/skills/inet-architectural-requirements/references/quick-reference-index.md) prevents context window saturation from the large ~50 KB requirement documents.
+    * **Automated Tool Integration**: The skill routes canonical project gates and adds focused [architecture](.agents/skills/inet-architectural-requirements/scripts/check-additional-architecture.sh) and [NED/MSG naming](.agents/skills/inet-architectural-requirements/scripts/check-ned-msg-naming.py) checks for mechanics absent from those gates.
+    * **Selective Reference Loading**: The change-type routing matrix in the [skill](.agents/skills/inet-architectural-requirements/SKILL.md) selects the relevant canonical rule identifiers without duplicating their text.
   * **Friction Points / Limitations**:
-    * Context pressure remains high if an agent ignores the quick reference and loads full requirement files.
+    * Context pressure remains high if an agent ignores the routing matrix and loads full requirement files.
 
 #### C. `inet-code-authoring`
 * **Utility**: **High** for implementers and feature designers.

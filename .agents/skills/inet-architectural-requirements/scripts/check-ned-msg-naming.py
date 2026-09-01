@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check high-confidence mechanical INET naming rules in NED and MSG files."""
+"""Check the mechanical NED/MSG subset of doc/project/rule/naming.md."""
 
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 
-RECONCILE = " [reconcile: .agents/skills/inet-architectural-requirements/references/naming-exceptions.md]"
+RECONCILE = " [reconcile: doc/project/audit/naming-exceptions.md]"
 PASCAL_RE = re.compile(r"^[A-Z][A-Za-z0-9]*$")
 CAMEL_RE = re.compile(r"^[a-z][A-Za-z0-9]*$")
 LOWER_RE = re.compile(r"^[a-z][a-z0-9]*$")

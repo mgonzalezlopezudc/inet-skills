@@ -1,5 +1,9 @@
 # MAC, retry, aggregation, and rate control
 
+Apply the canonical exchange, sequence, QoS, ownership, and PHY-boundary rules in
+`doc/project/domain/ieee80211.md`. This reference adds per-attempt reconstruction and failure
+diagnostics.
+
 ## Reconstruct one transmission attempt
 
 For the disputed MPDU, build this state sequence:

@@ -5,6 +5,9 @@ description: Create, revise, or review concise, evidence-backed walkthrough.md f
 
 # Write IEEE 802.11 walkthroughs
 
+Use `doc/project/requirement/accepted-requirements.md` for project-level documentation and evidence
+obligations. This skill owns only the IEEE 802.11 walkthrough contract and analyzer workflow.
+
 Read [walkthrough-contract.md](references/walkthrough-contract.md) and [analysis-machinery.md](references/analysis-machinery.md). Start new documents from [walkthrough-template.md](assets/walkthrough-template.md).
 
 ## Analysis boundary
@@ -23,7 +26,8 @@ Do not replace or supplement these with `opp_scavetool`, TShark, ad hoc code, ma
 2. State one learning question and a small set of testable claims.
 3. Use the shared analyzer to inspect, run, report, and publish without mixing sessions.
 4. Explain the feature, why the scenario exposes it, what each generated result means, the limits of the evidence, and the first useful diagnostic for failure.
-5. Remove history, inventories, repetition, speculation, and unnecessary jargon unless requested.
+5. Apply the canonical documentation rules where they govern, then remove speculation and
+   unnecessary jargon unless requested.
 6. Validate:
 
 ```sh

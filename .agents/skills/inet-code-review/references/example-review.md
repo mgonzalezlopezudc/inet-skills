@@ -1,6 +1,7 @@
 # Example review — Block Ack agreement lifetime change
 
-This is a worked example showing the expected depth, format, and evidence standard for an INET code review. The diff is realistic but synthetic; the findings illustrate the layered review approach and composition with the architectural checklist.
+This is a worked correctness-review example. The diff is realistic but synthetic; canonical
+architecture and WLAN checklist output is intentionally not copied here.
 
 ## Reviewed change (synthetic)
 
@@ -103,45 +104,3 @@ Correct this by resetting the reorder window to the starting sequence number fro
 
 - The change does not update the originator side (`OriginatorBlockAckAgreementHandler`). If the originator also persists agreements, the same leak and signal issues likely apply. Not reviewed (outside diff scope).
 - No test accompanies the change; existing fingerprint coverage does not exercise reassociation with active Block Ack agreements.
-
-## Architecture checklist (composed with `inet-architectural-requirements`)
-
-```
-PASS — AR-ORG-VIS-SPLIT
-PASS — AR-ORG-KERNEL
-PASS — AR-MOD-COMPOSITION
-N/A — AR-COM-SOCKETS — MAC component below transport socket interface
-PASS — AR-COM-DIRECT
-PASS — AR-OBS-NED-TRUTH
-PASS — AR-OBS-INTROSPECTION
-PASS — AR-CFG-INFER / DRY
-PASS — AR-CFG-PARAMS
-PASS — AR-EXT-NOCORE
-PASS — AR-BUILD-DECLARATIVE
-PASS — AR-QUAL-NAMING
-PASS — AR-QUAL-LOGGING
-PASS — AR-QUAL-DETERMINISM
-FLAG — AR-QUAL-TESTS — no test accompanies the change (see finding #1 verification)
-PASS — AR-QUAL-DISPLAY
-
-REVIEW: 14 PASS, 1 FLAG, 0 QUESTION, 1 N/A
-```
-
-```
-PASS — AR-WLAN-STD-TRACE
-PASS — AR-WLAN-STD-GATING
-PASS — AR-WLAN-ARCH-BOUNDARIES
-PASS — AR-WLAN-ARCH-OWNERSHIP
-PASS — AR-WLAN-ARCH-VARIANTS
-PASS — AR-WLAN-FRAME-REPRESENTATION
-PASS — AR-WLAN-PHY-AUTHORITY
-PASS — AR-WLAN-PHY-TIMING
-PASS — AR-WLAN-MAC-EXCHANGE
-FLAG — AR-WLAN-MAC-SEQUENCE — stale reorder window on restoration (see finding #3)
-PASS — AR-WLAN-MAC-QOS
-N/A — AR-WLAN-MAC-MULTIUSER — SU Block Ack agreement path only
-FLAG — AR-WLAN-OBS-EVENTS — missing deletion signal on move-to-preserved (see finding #2)
-FLAG — AR-WLAN-QUAL-TESTS — no focused test for agreement preservation lifecycle
-
-WLAN REVIEW: 10 PASS, 3 FLAG, 0 QUESTION, 1 N/A
-```

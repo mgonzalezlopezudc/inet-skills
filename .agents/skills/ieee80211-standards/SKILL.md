@@ -5,6 +5,9 @@ description: Search and inspect IEEE 802.11 standards stored in this repository.
 
 # IEEE 802.11 standards corpus
 
+Use `doc/project/domain/ieee80211.md` and `doc/project/rule/quality.md` for INET's normative
+traceability requirements. This skill adds corpus search, PDF fallback, and citation evidence.
+
 Check status by running from the repository root: `inet_process_standards status`. If it reports a missing or stale corpus, run `inet_process_standards build --standards-dir $HOME$/omnetpp_ws/inet-standards --output $HOME/omnetpp_ws/inet-standards/processed`, recheck status, and repeat the search. 
 
 For search and show, run from the repository root using the options `--standards-dir $HOME$/omnetpp_ws/inet-standards --output $HOME/omnetpp_ws/inet-standards/processed --json`
@@ -20,4 +23,5 @@ The generated corpus is under `$HOME/omnetpp_ws/inet-standards/processed/`. It i
 
 Consult a source PDF under `$HOME/omnetpp_ws/inet-standards/` only when the corpus cannot answer the question, visual structure or page verification matters, extraction appears wrong, or the user requests the original. Record the document revision, clause or annex, and page.
 
-Distinguish normative requirements from notes, examples, and informative text. Report the revision, clause/table/figure, corpus chunk identifiers, material cross-references or ambiguity, and whether PDF inspection was needed.
+Report the revision, clause/table/figure, normative/informative status, corpus chunk identifiers,
+material cross-references or ambiguity, and whether PDF inspection was needed.

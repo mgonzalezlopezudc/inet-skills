@@ -4,6 +4,9 @@ Use `opp_repl` as the per-commit oracle: it checks whether a commit behaves as i
 
 ## Choose the test scope
 
+Choose the test category under `doc/project/rule/testing.md`; this reference adds only the
+`opp_repl` mechanics for the selected cleanup contract.
+
 Record the requested test types in priority order. Unless the cleanup specifies otherwise, use fingerprint tests first, statistical tests second, and run number 0 only. Add chart tests or more runs only when the task opts in or directly related coverage requires them.
 
 Use `dependency.json` to map:
@@ -33,14 +36,17 @@ When a result is surprising, compare it with three controls:
 
 ## Update baselines
 
-Obtain explicit user approval before updating fingerprint expectations, as required by repository policy.
+Follow `doc/project/guide/change-a-baseline.md` before updating any recorded expectation, plus any
+approval requirement imposed by `AGENTS.md`.
 
 - **Fingerprint** — call `update_fingerprint_test_results(...)`. It uses `FingerprintStore.update_fingerprint`, writes `fingerprint.json`, and reports `INSERT`, `UPDATE`, or `KEEP`. Record the affected entries and result codes.
 - **Statistical** — call `update_statistical_test_results(...)`. It copies the current `.sca` result into the baseline directory. Record the exact files and quantify the delta.
 
 Treat `fingerprint.json`, baseline `.sca` files, and `dependency.json` as test artifacts when comparing `clean` with `topic`.
 
-Put an approved baseline delta in the same commit as the fix or feature that caused it. Amend the commit, then rerun the same scoped test so that the amended commit itself is proven green. A baseline-only commit is a last resort and needs an explanation.
+Put an approved baseline delta in its own commit directly after the source commit that caused it.
+Rerun the same scoped test on the baseline commit and record the causal source commit and reason in
+the message, as required by the canonical procedure.
 
 Detailed results are temporary: use them to write the causal account in the logbook, then discard them unless repository policy requires retention.
 

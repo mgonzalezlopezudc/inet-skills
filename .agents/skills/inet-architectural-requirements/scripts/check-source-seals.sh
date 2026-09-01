@@ -1,35 +1,31 @@
 #!/usr/bin/env bash
 #
-# Check if any modified or target files overlap with sealed paths in INET.
-# Reference: sealing-status.md and sealing.md
+# Check whether modified or target source files overlap the canonical INET seal registry.
+# Policy: doc/project/rule/sealing.md
+# Registry: doc/project/audit/seal-list.md
 #
-# Usage (from the INET repository root or skill directory):
-#   bash check-sealing.sh [file1 file2 ...]
-#   bash check-sealing.sh --diff           # check git working tree and staged diff
-#   bash check-sealing.sh --staged         # check staged changes only
+# Usage (from the INET repository root):
+#   bash .agents/skills/inet-architectural-requirements/scripts/check-source-seals.sh [file...]
+#   bash .agents/skills/inet-architectural-requirements/scripts/check-source-seals.sh --diff
+#   bash .agents/skills/inet-architectural-requirements/scripts/check-source-seals.sh --staged
 #
 # Exit status:
 #   0 = All target files are unsealed (or no files provided)
 #   1 = One or more target files are SEALED (explicit approval required)
-#   2 = Error (e.g. sealing-status.md not found)
+#   2 = Error (e.g. the canonical registry is unavailable)
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-STATUS_FILE="${SCRIPT_DIR}/../sealing-status.md"
+REPOSITORY_ROOT="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+STATUS_FILE="${REPOSITORY_ROOT}/doc/project/audit/seal-list.md"
 
-if [ ! -f "$STATUS_FILE" ]; then
-  # Fallback search if called from elsewhere
-  STATUS_FILE="$(find . -name "sealing-status.md" | head -n 1)"
-fi
-
-if [ -z "$STATUS_FILE" ] || [ ! -f "$STATUS_FILE" ]; then
-  echo "error: sealing-status.md not found." >&2
+if [ -z "$REPOSITORY_ROOT" ] || [ ! -f "$STATUS_FILE" ]; then
+  echo "error: run from an INET checkout containing doc/project/audit/seal-list.md" >&2
   exit 2
 fi
 
-# Extract sealed patterns from sealing-status.md
-# Matches lines like: - 🔒 `common/packet/` *(recursive)*
+# Extract path cells only from the canonical "Sealed paths" section. Document-seal rows and
+# generated index entries are deliberately outside this source-path guard.
 SEALED_PATTERNS=()
 while IFS= read -r line; do
   if [[ "$line" =~ \`([^\`]+)\` ]]; then
@@ -37,9 +33,11 @@ while IFS= read -r line; do
     SEALED_PATTERNS+=("$pattern")
   fi
 done < <(awk '
+  /^## Sealed paths$/ { in_paths = 1; next }
+  /^## Sealed documents$/ { in_paths = 0 }
   /<!--/ { in_comment = 1 }
-  !in_comment && /^[[:space:]]*-[[:space:]]*🔒/ { print }
-  /-->/ { in_comment = 0 }
+  /-->/ { in_comment = 0; next }
+  in_paths && !in_comment && /^\| 🔒 \|/ { print }
 ' "$STATUS_FILE")
 
 if [ ${#SEALED_PATTERNS[@]} -eq 0 ]; then
@@ -47,23 +45,55 @@ if [ ${#SEALED_PATTERNS[@]} -eq 0 ]; then
   exit 0
 fi
 
-# Collect target files
+# Select input mode and reject option typos before collecting target files.
+mode="paths"
+if [ $# -eq 0 ]; then
+  mode="diff"
+elif [[ "${1:-}" == --* ]]; then
+  case "$1" in
+    --diff)
+      mode="diff"
+      ;;
+    --staged)
+      mode="staged"
+      ;;
+    *)
+      echo "error: unknown option: '$1'" >&2
+      exit 2
+      ;;
+  esac
+  if [ $# -ne 1 ]; then
+    echo "error: $1 does not accept file arguments" >&2
+    exit 2
+  fi
+else
+  for arg in "$@"; do
+    if [[ "$arg" == --* ]]; then
+      echo "error: unknown option in file list: '$arg'" >&2
+      exit 2
+    fi
+  done
+fi
+
+# Collect target files.
 TARGET_FILES=()
 
-if [ $# -eq 0 ] || [ "${1:-}" = "--diff" ]; then
+if [ "$mode" = "diff" ]; then
   if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     while IFS= read -r -d '' f; do
       TARGET_FILES+=("$f")
-    done < <(git diff --name-only -z HEAD 2>/dev/null)
+    # Disable rename detection so both the old sealed path and new path are checked.
+    done < <(git diff --no-renames --name-only -z HEAD 2>/dev/null)
     while IFS= read -r -d '' f; do
       TARGET_FILES+=("$f")
     done < <(git ls-files --others --exclude-standard -z 2>/dev/null)
   fi
-elif [ "${1:-}" = "--staged" ]; then
+elif [ "$mode" = "staged" ]; then
   if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
     while IFS= read -r -d '' f; do
       TARGET_FILES+=("$f")
-    done < <(git diff --name-only -z --cached 2>/dev/null)
+    # Disable rename detection so both the old sealed path and new path are checked.
+    done < <(git diff --no-renames --name-only -z --cached 2>/dev/null)
   fi
 else
   for arg in "$@"; do
