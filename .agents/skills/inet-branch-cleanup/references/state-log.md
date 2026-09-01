@@ -1,4 +1,4 @@
-# Cleanup analysis and state log
+# INET cleanup analysis and state log
 
 The cleanup must be resumable from disk alone. Keep two files under `ai-logs/executions/`, not `ai-logs/plans/`:
 
@@ -51,4 +51,3 @@ Detailed result files may be temporary. Before discarding them, preserve the exa
 ## Finalization
 
 Record the final ordered commit list with types, the exact tree-equality command and exit status, all permitted baseline differences, confirmation that no material is unassigned and no detour remains open, the final test command and result, the middle-safe-point spot checks, and the mapping from every behavior-changing commit to its explanation and baseline update.
-

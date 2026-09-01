@@ -1,15 +1,19 @@
 ---
-name: git-branch-cleanup
-description: Clean up an opp_repl-tested topic branch by rebuilding its total diff as a new sequence of reviewable commits while keeping the final source tree identical. Use when commits need to be split, merged, reordered, or re-authored; do not use without opp_repl or for a rebase onto a new upstream.
+name: inet-branch-cleanup
+description: Rebuild an opp_repl-tested INET topic branch as a new reviewable commit series while preserving its final source tree. Use when the user asks to split, merge, reorder, or re-author existing commits; do not use for planning or auditing alone, without opp_repl, or for rebasing onto a new upstream.
 ---
 
-# Git branch cleanup
+# INET branch cleanup
 
 Build a new `clean` branch from a fixed `base`. The original `topic` branch never moves: its final tree is the target and the oracle. Cleanup changes only the shape of the history so that a reviewer can distinguish refactors, fixes, features, and chores and validate each one in isolation.
 
+This is a repository-mutating workflow. Start it only when the user has requested history reconstruction. Use `inet-pull-request-authoring` for commit planning, message writing, or compliance auditing that does not require rebuilding the branch.
+
 Commits may be split, merged, reordered, or newly authored, even below hunk level. That freedom is kept honest by the **coverage ledger**, which proves that the cleanup lost nothing and introduced no permanent changes of its own.
 
-The Git workflow is domain-agnostic, but its test oracle and acceptance contract assume `opp_repl`. Before starting a cleanup, read both [references/state-log.md](references/state-log.md) and [references/opp-repl-contract.md](references/opp-repl-contract.md).
+`inet-pull-request-authoring` owns the normative rules for commit boundaries, series order, messages, and reviewability. Before classifying change groups or planning output commits, use that skill, read its authoritative pull-request reference in full, and apply the relevant `PR-SPLIT-*`, `PR-SERIES-*`, and `PR-MSG-*` requirements by their stable identifiers. This skill adds reconstruction mechanics and must not override that policy.
+
+The cleanup workflow and acceptance contract are INET-specific because they use `opp_repl` as the test oracle. Before starting a cleanup, read both [references/state-log.md](references/state-log.md) and [references/opp-repl-contract.md](references/opp-repl-contract.md).
 
 ## Inputs and acceptance criteria
 
@@ -49,16 +53,7 @@ Do not create per-group fossil branches. The group table and the `clean` history
 
 ## Phase 2 — Plan the output commits
 
-For each output commit, record its type, subject, intent, feeding groups, and expected test effect. A fix must name the bug and its visible symptom. A feature should be one cohesive commit or a short dependency-ordered series.
-
-Prefer this order unless dependencies make a per-subsystem cluster clearer:
-
-1. behavior-preserving refactors, chores, and docs;
-2. isolated bug fixes;
-3. new features;
-4. baseline-only commits only as a documented last resort.
-
-Fold each baseline update into the fix or feature that causes it. This keeps the commit independently green and makes its behavior change part of the reviewable story.
+Derive commit boundaries, order, subjects, and rationales from the `PR-*` policy rather than defining a second commit policy here. For each output commit, additionally record its type, feeding groups, and expected test effect. Apply `PR-SPLIT-BASELINE` when an approved baseline changes so that the rebuilt commit remains independently green.
 
 Dependent edits may require an intermediate file state found in neither `base` nor `topic`. Such a state is legitimate when it gives a commit one clear purpose: the coverage ledger still pins the final result to `topic`.
 
@@ -114,5 +109,7 @@ When the ledger contains no unassigned material:
 2. Confirm that no temporary detour remains open.
 3. Run every directly related `opp_repl` test named in the final contract; do not broaden the run into unrelated suites.
 4. Spot-check a risk-based sample of middle safe points with their directly related tests.
-5. Read the history from top to bottom: each commit must have one clear intent, and every behavior-changing commit must carry its explanation and baseline delta.
+5. Use `inet-pull-request-authoring` to audit the history from top to bottom against the applicable `PR-SPLIT-*`, `PR-SERIES-*`, and `PR-MSG-*` requirements.
 6. Finish the logbook with the ordered commit list, tree proof, test results, baseline exceptions, safe-point spot checks, and behavior-change-to-evidence mapping.
+
+Cleanup ends with the reconstructed series and its evidence. Draft or publish a pull request only when the user explicitly requests it; pass the finalized history and logbook evidence to `inet-pull-request-authoring` for that work.

@@ -1,4 +1,4 @@
-# `opp_repl` cleanup test contract
+# INET `opp_repl` cleanup test contract
 
 Use `opp_repl` as the per-commit oracle: it checks whether a commit behaves as its label claims.
 
