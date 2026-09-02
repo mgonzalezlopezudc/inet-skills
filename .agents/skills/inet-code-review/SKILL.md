@@ -17,7 +17,7 @@ canonical rules, ledgers, and semantic checklist selected through
 - Remain strictly read-only with respect to committed source files, NED/MSG definitions, configuration files, test scripts, fingerprints, exception ledgers, and sealing status files.
 - **Validation execution is permitted and encouraged:** Rebuilding debug artifacts (`MODE=debug`) and running focused unit/module tests or diagnostic simulations to confirm or refute a suspected defect is standard maintainer practice. Writes are limited to generated build, test-result, simulation-result, and diagnostic artifacts.
 
-Read [finding-quality.md](references/finding-quality.md) for the finding threshold and comment format. Read [common-agent-pitfalls.md](references/common-agent-pitfalls.md) for recurring false-positive and missed-finding patterns. If the review format or evidence threshold is unfamiliar, optionally consult the [Block Ack example](references/example-review.md) or the [non-WLAN lifecycle example](references/example-review-lifecycle.md); do not load either example by default.
+Read [finding-quality.md](references/finding-quality.md) for the finding threshold and comment format. Read [common-agent-pitfalls.md](references/common-agent-pitfalls.md) for recurring false-positive and missed-finding patterns. Read [high-value-flag-checks.md](references/high-value-flag-checks.md) for every review; apply each check whose labels intersect the selected review layers and whose subject is touched by the changed contract. If the review format or evidence threshold is unfamiliar, optionally consult the [Block Ack example](references/example-review.md) or the [non-WLAN lifecycle example](references/example-review-lifecycle.md); do not load either example by default.
 
 ## Select the review layers
 
@@ -37,15 +37,15 @@ Read every selected layer reference before evaluating the change. Keep findings 
 To prevent context exhaustion, scale reference loading by diff size and complexity:
 
 - **Small Diff (< 100 lines, focused single subsystem):**
-  1. `finding-quality.md` + `common-agent-pitfalls.md`
+  1. `finding-quality.md` + `common-agent-pitfalls.md` + `high-value-flag-checks.md`
   2. The single primary layer reference (e.g. `inet-review-checks.md` or `omnetpp-review-checks.md`)
   3. Load secondary layers only if cross-layer mechanisms (e.g. signal -> memory leak) appear.
 - **Medium Diff (100–500 lines, multi-file feature or fix):**
-  1. `finding-quality.md` + `common-agent-pitfalls.md`
+  1. `finding-quality.md` + `common-agent-pitfalls.md` + `high-value-flag-checks.md`
   2. All directly relevant layer references
   3. Applicable canonical project rule and checklist sections
 - **Large / Cross-Cutting Diff (> 500 lines or subsystem overhaul):**
-  1. `finding-quality.md` + `common-agent-pitfalls.md`
+  1. `finding-quality.md` + `common-agent-pitfalls.md` + `high-value-flag-checks.md`
   2. Load layer references on demand per hunk/module group
   3. Run the gates selected by `doc/project/guide/run-the-gates.md` before detailed semantic
      inspection.
@@ -90,6 +90,13 @@ Apply the proof threshold and classification from [finding-quality.md](reference
 Use the canonical semantic checklist for rule compliance; do not turn a checklist question or a
 pre-existing deviation into a correctness finding.
 
+After the defect pass, make a separate flag pass using
+[high-value-flag-checks.md](references/high-value-flag-checks.md). Resolve a flag into an actionable
+finding only when the trigger, violated contract, mechanism, and consequence meet the finding proof
+standard. Otherwise retain it as an explicitly uncertain investigation or design question. Omit
+checks that are demonstrably inapplicable; do not manufacture a concern merely because a label
+matches.
+
 ## Validate proportionally
 
 Use read-only inspection first. When execution materially strengthens a finding or clears a realistic
@@ -110,5 +117,9 @@ Put actionable findings first, ordered by severity. For each finding provide:
 Write each finding so the author can understand and reproduce it without reading the rest of the review. Do not bury defects inside a general summary or checklist.
 
 After findings, report reviewed scope, validation performed, and residual risks or untested paths.
+Report unresolved, consequential flags under a separate `Flags for investigation` heading, with the
+applicable labels, exact review surface, evidence already checked, and the specific uncertainty or
+author decision that remains. Do not assign defect severity to a flag. If no such flags remain, omit
+the section.
 Put canonical architecture/WLAN checklist output last. If no actionable findings remain, say so
 directly; do not invent low-value comments to avoid an empty review.
