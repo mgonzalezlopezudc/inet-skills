@@ -10,6 +10,6 @@ For every semantic `src/inet/` change, use `inet-code-authoring` before editing 
 Use the relevant build, test, packet/tag, and Wi-Fi skills. Preserve unrelated changes. Return the diff summary, verification evidence, and unresolved risks. If the mechanism is uncertain, hand off to `inet-simulation-detective` without patching.
 """
 nickname_candidates = ["Builder", "Mechanic", "Artificer"]
-model = "gemini-3.7-flash"
+model = "gemini-3.8-flash"
 model_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"

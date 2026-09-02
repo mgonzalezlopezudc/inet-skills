@@ -4,7 +4,7 @@ This is an overview of active tier assignments. Tiers describe routing roles, so
 
 | Tier | Codex | Antigravity | Kimi |
 | --- | --- | --- | --- |
-| Ant | GPT-5.6 Luna, high | Gemini 3.7 Flash, low | Kimi K3, low |
-| Fish | GPT-5.6 Luna, max | Gemini 3.7 Flash, medium | Kimi K3, high |
-| Dog | GPT-5.6 Luna, max | Gemini 3.7 Flash, medium | Kimi K3, high |
-| Chimp | GPT-5.6 Sol, xhigh | Gemini 3.7 Flash, high | Kimi K3, max |
+| Ant | GPT-5.6 Luna, high | Gemini 3.8 Flash, low | Kimi K3, low |
+| Fish | GPT-5.6 Luna, max | Gemini 3.8 Flash, medium | Kimi K3, high |
+| Dog | GPT-5.6 Luna, max | Gemini 3.8 Flash, medium | Kimi K3, high |
+| Chimp | GPT-5.6 Sol, xhigh | Gemini 3.8 Flash, high | Kimi K3, max |

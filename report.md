@@ -29,7 +29,7 @@ Instead of treating LLM agents as general-purpose autocomplete tools, this suite
     * **Clear Tier Taxonomy (Chimp / Dog / Fish / Ant)**: Explicitly connects cognitive demands (standards ambiguity vs. pattern matching vs. search extraction) to reasoning efforts and roles.
     * **Sequential Gating**: The 6-stage handoff gate (Diagnose $\rightarrow$ Implement $\rightarrow$ Verify $\rightarrow$ Review $\rightarrow$ Conclude) prevents the classic agent mistake of rushing to edit code before understanding the mechanism.
   * **Friction Points / Limitations**:
-    * **Model Drift**: Binding specific model strings (e.g., `gemini-3.7-flash`, `kimi-code/k3`) inside `SKILL.md` can become stale when model tiers evolve.
+    * **Model Drift**: Binding specific model strings (e.g., `gemini-3.8-flash`, `kimi-code/k3`) inside `SKILL.md` can become stale when model tiers evolve.
     * **Single-Agent Fallback**: While it excels at routing across specialized agents, it can be slightly heavyweight when an agent runs as a standalone root agent without sub-agent spawning capabilities.
 
 #### B. `inet-architectural-requirements`
@@ -97,7 +97,7 @@ Instead of treating LLM agents as general-purpose autocomplete tools, this suite
 #### 2. Recommended Removals / Simplifications
 
 1. **Decouple Specific Model Names from `inet-agent-orchestration/SKILL.md`**:
-   Move the specific model string tables (`gemini-3.7-flash`, `kimi-code/k3`) out of `SKILL.md` into [MODELS.md](MODELS.md) or delegate to the runtime configuration.
+   Move the specific model string tables (`gemini-3.8-flash`, `kimi-code/k3`) out of `SKILL.md` into [MODELS.md](MODELS.md) or delegate to the runtime configuration.
    *Why*: Model names change frequently across IDE versions and platforms, causing skill instructions to quickly become outdated.
 2. **Trim Redundant Sealing Text in `inet-code-authoring`**:
    `inet-code-authoring` contains repetitive warnings regarding sealing approval. A single reference pointing to `inet-architectural-requirements` for sealing is sufficient and saves token budget.

@@ -8,6 +8,6 @@ For a proposed `src/inet/` change, use `inet-architectural-requirements` and ret
 Return a compact map of files, symbols, control/data flow, effective configuration, change surface, risks, and next checks. Separate facts from hypotheses and route runtime questions to a runtime specialist.
 """
 nickname_candidates = ["Cartographer", "Pathfinder", "Surveyor"]
-model = "gemini-3.7-flash"
+model = "gemini-3.8-flash"
 model_reasoning_effort = "medium"
 sandbox_mode = "read-only"

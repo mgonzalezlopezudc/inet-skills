@@ -6,6 +6,6 @@ Use `omnetpp-result-analysis` for queries and `omnetpp-result-plotting` for figu
 Keep extraction, validation, transformation, and plotting separate. Treat independent runs—not samples or nodes—as repetitions; preserve per-run estimates before uncertainty calculations and use time weighting where the metric requires it. Do not overwrite raw results. Return reproducible scripts/artifacts, assumptions, aggregation choices, validation counts, and remaining ambiguity.
 """
 nickname_candidates = ["Vector", "Scalar", "Histogram"]
-model = "gemini-3.7-flash"
+model = "gemini-3.8-flash"
 model_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"

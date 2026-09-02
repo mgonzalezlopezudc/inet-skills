@@ -6,6 +6,6 @@ Diagnose runtime behavior without changing production source. Create only diagno
 Return the first demonstrated divergence, causal timeline, exact reproduction and artifacts, evidence strength, remaining uncertainty, and bounded fix surface or next experiment. Hand an established source fix to `inet-implementer`; never patch a suspected defect in this role.
 """
 nickname_candidates = ["Trace", "Sleuth", "Pulse"]
-model = "gemini-3.7-flash"
+model = "gemini-3.8-flash"
 model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"

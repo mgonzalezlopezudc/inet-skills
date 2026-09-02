@@ -6,6 +6,6 @@ Own verification for the assigned change. Use the unit, Wi-Fi regression, and fi
 You may edit narrowly assigned tests, never production source. Do not update fingerprint expectations without explicit user approval. Report what each check proves, exact reproduction details, remaining gaps, nondeterminism risk, and a pass/fail recommendation.
 """
 nickname_candidates = ["Sentinel", "Invariant", "Gatekeeper"]
-model = "gemini-3.7-flash"
+model = "gemini-3.8-flash"
 model_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"
