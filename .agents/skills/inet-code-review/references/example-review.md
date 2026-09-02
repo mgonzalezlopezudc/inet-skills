@@ -1,7 +1,7 @@
 # Example review — Block Ack agreement lifetime change
 
-This is a worked correctness-review example. The diff is realistic but synthetic; canonical
-architecture and WLAN checklist output is intentionally not copied here.
+This is a worked example of `doc/project/guide/review-a-code-change.md`. The diff is realistic but
+synthetic; canonical architecture and WLAN checklist output is intentionally not copied here.
 
 ## Reviewed change (synthetic)
 
@@ -98,9 +98,15 @@ Correct this by resetting the reorder window to the starting sequence number fro
 
 - Files: `RecipientBlockAckAgreementHandler.cc`, `.h` (diff only).
 - Pre-existing code inspected: `processReceivedAddbaRequest`, `processReceivedDelba`, destruction and lifecycle handlers, signal declarations.
-- Validation: read-only inspection; no runtime execution (findings are structural with clear reachability).
+- Validation: read-only inspection. Runtime verification was not run, so the focused reproductions
+  named above are `not verified`.
 
 ## Residual risks
 
 - The change does not update the originator side (`OriginatorBlockAckAgreementHandler`). If the originator also persists agreements, the same leak and signal issues likely apply. Not reviewed (outside diff scope).
 - No test accompanies the change; existing fingerprint coverage does not exercise reassociation with active Block Ack agreements.
+
+## Canonical checklist output
+
+Omitted from this mechanics example. In an actual review, any checklist `FLAG` for a mechanism
+already proved above would reference the corresponding correctness finding rather than repeat it.

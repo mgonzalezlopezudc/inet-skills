@@ -1,7 +1,8 @@
 # Common agent pitfalls
 
-Recurring failure modes not already stated by the canonical rules and semantic checklists in
-`doc/project/`. Apply those documents first; this reference adds concrete reviewer traps.
+Recurring failure modes not already stated by the canonical review procedure, rules, and semantic
+checklists in `doc/project/`. Apply `doc/project/guide/review-a-code-change.md` and the selected
+canonical documents first; this reference adds concrete reviewer traps.
 
 ## False positives — findings agents file that are not defects
 
@@ -58,8 +59,14 @@ When a callback or listener receives an object, agents often assume it is borrow
 
 ### Minor issues filed as blockers
 
-An undeclared `@unit` on a dimensionless count or a missing `@display` icon is a real convention violation but not a blocker. Use the severity calibration in [finding-quality.md](finding-quality.md) — blocker is for unavoidable corruption, crash, or invalid wire behavior.
+An undeclared `@unit` on a dimensionless count or a missing `@display` icon is a convention question
+or rule violation, not automatically a severe correctness defect. Derive finding severity only as
+specified by `doc/project/guide/review-a-code-change.md`.
 
 ### Architectural noncompliance reported as a correctness finding
 
-A missing serializer or a visualization dependency in protocol code is an architectural rule violation, not a correctness defect (unless it causes runtime misbehavior). **Route these to the architectural checklist** (`AR-OBS-INTROSPECTION`, `AR-ORG-VIS-SPLIT`, etc.) rather than the correctness findings section.
+A missing serializer or a visualization dependency in protocol code is an architectural rule
+violation, not a correctness defect unless it causes runtime misbehavior. **Route these to the
+architectural checklist** (`AR-OBS-INTROSPECTION`, `AR-ORG-VIS-SPLIT`, etc.). When one mechanism is
+both, report the correctness finding once and make the checklist `FLAG` reference it as required by
+`doc/project/guide/review-a-code-change.md`.

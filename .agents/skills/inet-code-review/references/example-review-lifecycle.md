@@ -1,6 +1,9 @@
 # Example review — UDP application timer lifetime
 
-This concise non-WLAN example demonstrates a lifecycle and ownership finding. The proposed diff is synthetic, but every named path, class, method, API, and existing test filter was verified against INET commit `f07d0e7662dbd3d671495109326821716be82668`.
+This concise non-WLAN example follows `doc/project/guide/review-a-code-change.md` and demonstrates a
+lifecycle and ownership finding. The proposed diff is synthetic, but every named path, class,
+method, API, and existing test filter was verified against INET commit
+`f07d0e7662dbd3d671495109326821716be82668`.
 
 ## Reviewed change (synthetic)
 
@@ -39,8 +42,13 @@ Keep the reusable timer owned by the application across lifecycle stop/start and
   opp_run_opp_tests -m debug --no-concurrent -f 'udpapp_lifecycle_6'
   ```
 
-The existing case should pass on the clean baseline and fail under the synthetic diff at or before teardown. The added stop/start variant should fail at the first post-restart timer access and pass once single ownership and timer recreation/reuse are correct.
+The existing case should pass on the clean baseline and fail under the synthetic diff at or before
+teardown. The added stop/start variant should fail at the first post-restart timer access and pass
+once single ownership and timer recreation/reuse are correct. Neither command was executed for this
+example, so runtime behavior is `not verified`.
 
 ## Review result
 
-One major actionable finding. No IEEE 802.11 checklist applies. Residual risk: the existing filtered test proves shutdown and teardown but not restart, so the correction needs the focused stop/start extension described above.
+One major actionable finding. No IEEE 802.11 checklist applies. Residual risk: the existing filtered
+test covers shutdown and teardown but not restart, so the correction needs the focused stop/start
+extension described above.

@@ -11,15 +11,12 @@ Follow `doc/project/guide/contribute-a-change.md` and its canonical seals, rules
 policy. This skill adds a pre-write correctness contract and a post-write self-audit; it does not
 repeat project policy.
 
+Use the changed-contract inventory in `doc/project/guide/review-a-code-change.md` as a preventive
+self-audit aid, without adopting reviewer verdicts, finding severity, or report formatting.
+
 ## Load the preventive checks
 
-Read [common-agent-pitfalls.md](../inet-code-review/references/common-agent-pitfalls.md) for every
-semantic production change. Read
-[high-value-flag-checks.md](../inet-code-review/references/high-value-flag-checks.md) for every
-semantic C++, NED, MSG, INI, or test change. Apply each flag check whose labels intersect the
-selected layers and whose subject is touched by the changed contract. Select additional layers by
-the changed runtime contract, not only by file extension, and read every selected reference before
-editing:
+Read [common-agent-pitfalls.md](../inet-code-review/references/common-agent-pitfalls.md) for every semantic production change. Select additional layers by the changed runtime contract, not only by file extension, and read every selected reference before editing:
 
 | Layer | Select when the change involves | Preventive checks |
 | --- | --- | --- |
@@ -27,6 +24,10 @@ editing:
 | OMNeT++ | modules, initialization, events, messages, signals, NED, INI, MSG, statistics, or simulation trajectories | [omnetpp-review-checks.md](../inet-code-review/references/omnetpp-review-checks.md) |
 | INET | packets, chunks, tags, protocol integration, lifecycle operations, queues, serializers, feature composition, or INET tests | [inet-review-checks.md](../inet-code-review/references/inet-review-checks.md) |
 | IEEE 802.11 | Wi-Fi MAC/PHY behavior, management, association, channel access, Block Ack, capabilities, rates, modes, or configuration | [ieee80211-review-checks.md](../inet-code-review/references/ieee80211-review-checks.md) |
+
+The `RP-*` labels in these references identify non-normative investigation prompts, not new
+authoring requirements. Use them to name preventive checks when useful; take every implementation
+obligation from the applicable canonical project rule.
 
 Apply layers cumulatively when a higher-layer behavior relies on lower-layer contracts. For normative IEEE 802.11 behavior, also use `ieee80211-standards` and identify the applicable revision and clause before choosing the implementation.
 
@@ -60,13 +61,6 @@ Use this fast-track template only when the change meets the trivial-change crite
 ```
 
 Resolve uncertainty about the mechanism or effective configuration before writing. Do not turn unsupported hypotheses, optional hardening, or unrelated pre-existing issues into patch scope.
-
-Use the flag checks as preventive design questions. Before the first write, resolve each applicable
-flag with source, configuration, standard, or focused runtime evidence; encode any required response
-in the implementation contract. If a flag identifies an intentional policy choice, record the
-choice and its compatibility or observability consequences. Leave optional hardening out of scope,
-and carry any consequential unresolved flag into the residual-risk handoff instead of silently
-choosing an answer.
 
 ### Validate the contract before the first write
 
@@ -116,8 +110,6 @@ Once the diff is stable, complete this checklist against the implementation cont
 - [ ] Effective owner/control path, affected consumers, siblings, and terminal paths were retraced in the resulting tree.
 - [ ] The applicable canonical project rules and selected preventive references are each checked or
       recorded as reasoned `N/A`.
-- [ ] Every applicable high-value flag check is resolved by the resulting contract and evidence, or
-      is disclosed as an unresolved design question or residual risk.
 - [ ] Focused commands reach the production behavior and have recorded exit status and artifacts;
       gaps and approval needs are explicit.
 
@@ -132,7 +124,7 @@ Return this plain-text envelope. Use `None` only when supported by the audit; do
 - Behavior claim: <what the resulting tree now guarantees>
 - Changed paths: <complete path list>
 - Contract deviations / scope changes: <none, or old -> new scope and authorization>
-- Selected layers / high-risk flag checks: <references and applicable checks completed>
+- Selected layers / high-risk checks: <references and applicable checks completed>
 - Focused evidence:
   - Command: <exact command>
   - Working directory: <path>
