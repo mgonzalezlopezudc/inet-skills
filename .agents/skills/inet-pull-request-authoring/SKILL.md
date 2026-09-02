@@ -10,8 +10,10 @@ auditing commits or a pull request. It is the sole authority for `PR-*` policy. 
 `doc/project/guide/review-a-pull-request.md` for an existing series and
 `doc/project/guide/contribute-a-change.md` when preparing a new change.
 
-This skill adds planning and reporting structure. It does not reconstruct history: route requests
-to split, merge, reorder, or re-author existing commits through `inet-branch-cleanup`.
+This skill adds planning and reporting structure. It does not reconstruct history: route fixed-base
+requests to split, merge, reorder, or re-author existing commits through `inet-branch-cleanup`, and
+route high-risk `opp_repl`-backed rebases onto changed upstream history through
+`inet-branch-rebase`.
 
 ## Establish the review surface
 

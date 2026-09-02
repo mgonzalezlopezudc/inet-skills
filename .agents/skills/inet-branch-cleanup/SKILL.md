@@ -7,7 +7,7 @@ description: Rebuild an opp_repl-tested INET topic branch as a new reviewable co
 
 Build a new `clean` branch from a fixed `base`. The original `topic` branch never moves: its final tree is the target and the oracle. Cleanup changes only the shape of the history so that a reviewer can distinguish refactors, fixes, features, and chores and validate each one in isolation.
 
-This is a repository-mutating workflow. Start it only when the user has requested history reconstruction. Use `inet-pull-request-authoring` for commit planning, message writing, or compliance auditing that does not require rebuilding the branch.
+This is a repository-mutating workflow. Start it only when the user has requested history reconstruction. Use `inet-pull-request-authoring` for commit planning, message writing, or compliance auditing that does not require rebuilding the branch. Use `inet-branch-rebase` for a high-risk, `opp_repl`-backed rebase onto changed upstream history; use an ordinary Git workflow for a low-risk one-shot rebase.
 
 Commits may be split, merged, reordered, or newly authored, even below hunk level. That freedom is kept honest by the **coverage ledger**, which proves that the cleanup lost nothing and introduced no permanent changes of its own.
 
