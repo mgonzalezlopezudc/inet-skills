@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET PCAP/TShark Analysis"
+  short_description: "Record and analyze INET packet captures"
+  default_prompt: "Use $inet-pcap-tshark-analysis to record or inspect this INET packet exchange and correlate the relevant capture points."

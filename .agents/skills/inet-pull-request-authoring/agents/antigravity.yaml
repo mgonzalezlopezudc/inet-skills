@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Pull Request Authoring"
+  short_description: "Plan and audit reviewable commits and pull requests"
+  default_prompt: "Use $inet-pull-request-authoring to plan or audit the commit series and pull request for this INET change."

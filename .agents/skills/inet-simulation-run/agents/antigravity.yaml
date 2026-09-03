@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Simulation Runner"
+  short_description: "Run reproducible INET simulations"
+  default_prompt: "Use $inet-simulation-run to run this simulation reproducibly and diagnose any initialization or runtime failure."

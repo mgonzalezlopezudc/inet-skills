@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Architectural Requirements"
+  short_description: "Apply INET architecture and sealing rules"
+  default_prompt: "Use $inet-architectural-requirements to evaluate this INET change against the applicable architecture, naming, and sealing requirements."

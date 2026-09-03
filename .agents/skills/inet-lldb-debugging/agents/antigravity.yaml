@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET LLDB Debugging"
+  short_description: "Debug INET simulations at C++ source level"
+  default_prompt: "Use $inet-lldb-debugging to reproduce and inspect this INET runtime failure at C++ source level."

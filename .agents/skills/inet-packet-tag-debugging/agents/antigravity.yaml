@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Packet and Tag Debugging"
+  short_description: "Trace INET packet, chunk, and tag behavior"
+  default_prompt: "Use $inet-packet-tag-debugging to find where this packet, chunk, or tag state first changes incorrectly."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Debug Builds"
+  short_description: "Build and diagnose matching INET debug artifacts"
+  default_prompt: "Use $inet-build-debug-modes to build or diagnose the matching INET debug artifacts for this task."

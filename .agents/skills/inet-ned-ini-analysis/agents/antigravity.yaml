@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET NED/INI Analysis"
+  short_description: "Trace effective NED and INI configuration"
+  default_prompt: "Use $inet-ned-ini-analysis to resolve the effective NED types, INI inheritance, and parameter values for this configuration."
