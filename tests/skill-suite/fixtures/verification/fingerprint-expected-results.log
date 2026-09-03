@@ -1,0 +1,5 @@
+case expected-failure: FAILED (expected)
+case expected-error: ERROR (expected)
+case ordinary-pass: PASS
+Ran 3 tests in 0.4s
+Test results equals to expected results

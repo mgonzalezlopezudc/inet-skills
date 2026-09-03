@@ -38,3 +38,9 @@ For a mismatch:
 Keep the debug runner and libraries consistent within this invocation. Apply the comparison and
 evidence rules in `doc/project/guide/diagnose-a-simulation.md`; any execution failure or zero-test
 run remains incomplete tool output.
+
+For a machine-readable handoff, preserve the raw runner output and use the skill-suite
+`.agents/scripts/normalize_verification.py --runner fingerprint` adapter with the exact command, working
+directory, mode, selector, configuration, run, seed, exit code, and artifacts. Set changed-result
+expectation and approval from recorded facts; the adapter deliberately leaves `UPDATE` or `INSERT`
+as `INCONCLUSIVE` and does not decide whether the new baseline is correct.

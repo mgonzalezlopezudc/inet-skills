@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Regression Testing"
+  short_description: "Design protocol-neutral INET regressions"
+  default_prompt: "Use $inet-regression-testing to turn this behavior claim into a minimal deterministic regression with direct evidence."

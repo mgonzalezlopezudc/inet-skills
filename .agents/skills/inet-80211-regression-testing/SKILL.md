@@ -1,27 +1,44 @@
 ---
 name: inet-80211-regression-testing
-description: Design, run, and interpret focused IEEE 802.11 regression tests in INET. Use to create or diagnose deterministic Wi-Fi reproductions, choose seeds, compare before/after behavior, validate HE/EHT or MAC/PHY fixes, add unit or simulation coverage, or avoid overfitting an 802.11 change to one run.
+description: Add IEEE 802.11-specific invariants, standards obligations, HE/EHT feature gates, and packet-exchange evidence to an INET regression design. Use with inet-regression-testing for Wi-Fi MAC/PHY behavior, management, retries, aggregation, Block Ack, association, or negotiated capability coverage; do not use for protocol-neutral regression design alone.
 ---
 
 # IEEE 802.11 regression testing
 
-Select the claim, test category, and WLAN obligations through `doc/project/rule/testing.md`,
-`doc/project/design/test-anatomy.md`, and `doc/project/domain/ieee80211.md`; apply
-`doc/project/guide/diagnose-a-simulation.md` to runtime comparisons. This skill adds Wi-Fi-specific
-scenario and invariant choices.
+First use `inet-regression-testing` for the behavior claim, invariant, category, minimal deterministic
+reproduction, production-path evidence, and bounded campaign decision. This specialization adds only
+the obligations that make that generic design valid for Wi-Fi.
 
-1. State the behavior and protocol-visible invariant under test.
-2. Build the smallest deterministic scenario that exercises it under the canonical test policy.
-3. Compare before/after under the canonical diagnosis guide, using debug binaries for agent-run
-   executions as required by `AGENTS.md`.
-4. Record the invariant with the most direct source: assertion, PCAP, targeted log, event log, or result.
-5. Expand seeds or parameters under the campaign criteria in the canonical diagnosis guide.
-6. Use `inet-fingerprint-regression` for trajectory changes and `inet-ned-ini-analysis` for configuration uncertainty.
+Read `doc/project/domain/ieee80211.md`. For a normative claim, use `ieee80211-standards` to identify
+the applicable standard revision, clause, role, and negotiated conditions before fixing the expected
+exchange. Distinguish normative behavior from an intentional documented model limitation.
 
-Useful invariants include association state, expected ACK/retry/drop behavior, protection policy, sequence/retry evolution, QoS mapping, aggregation/Block Ack progress, receiver power/SNIR/error decisions, AP forwarding addresses, and active HE/EHT feature gates.
+## WLAN invariant selection
 
-Use `inet-unit-tests` and `inet-fingerprint-regression` for the filtered commands selected by the
-canonical test policy; orchestration owns the handoff gate when agents are delegated.
+Choose the smallest protocol-visible invariant that establishes the claim:
 
-Judge feature-gating and mechanism evidence under `AR-WLAN-STD-GATING` in the canonical IEEE 802.11
-domain rules. Handle fingerprints through the canonical baseline procedure.
+- management state and the corresponding request/response or timeout path;
+- transmitter sequence/retry state and the expected ACK, Block Ack, retry, or drop outcome;
+- QoS/TID mapping, aggregation window progress, reorder state, or fragment state;
+- protection and channel-access decisions, including the relevant virtual/physical carrier sense;
+- receiver power, SNIR, interference, synchronization, or error decision at the intended radio;
+- AP forwarding address roles and duplicate-suppression identity;
+- the negotiated HT/VHT/HE/EHT capability and operation elements that enable the mechanism.
+
+For HE/EHT behavior, prove both the configured request and the active feature gate selected by the
+effective NED/INI configuration. Under `AR-WLAN-STD-GATING`, show that the mode is standards-derived,
+advertised or negotiated where required, and applied at the production decision point. A helper test
+of a capability predicate is not evidence that the frame path uses it.
+
+## Packet-exchange evidence
+
+Prefer a module/protocol assertion when it directly observes the state transition. Use PCAP evidence
+for transmitted frame roles, addresses, sequence control, ACK/Block Ack, aggregation, and retry
+evolution; pair it with targeted logs or source-level evidence when the causal decision is internal
+or a failed/corrupted reception is absent from the capture. Record capture point, simulation time
+window, configuration, run, and seed.
+
+Use `inet-ned-ini-analysis` when feature activation is uncertain,
+`inet-80211-packet-debugging` when the exchange mechanism is unresolved, and
+`inet-fingerprint-regression` only for unintended trajectory coverage under the canonical baseline
+procedure.

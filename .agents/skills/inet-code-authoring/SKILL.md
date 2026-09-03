@@ -14,9 +14,30 @@ repeat project policy.
 Use the changed-contract inventory in `doc/project/guide/review-a-code-change.md` as a preventive
 self-audit aid, without adopting reviewer verdicts, finding severity, or report formatting.
 
-## Load the preventive checks
+## Choose the context tier
 
-Read [common-agent-pitfalls.md](../inet-code-review/references/common-agent-pitfalls.md) for every semantic production change. Select additional layers by the changed runtime contract, not only by file extension, and read every selected reference before editing:
+Select the smallest tier that covers the changed contract. File count is a clue, not the decision:
+cross-layer runtime behavior and uncertainty raise the tier; a wide independently checkable rename
+can remain mechanical.
+
+- **Small** — one understood owner and one runtime layer, with a bounded caller/consumer surface.
+  Read only the primary preventive reference for that layer from the table below.
+- **Medium** — several owners or a runtime contract that actually crosses layers. Read
+  [common-agent-pitfalls.md](../inet-code-review/references/common-agent-pitfalls.md), the primary
+  layer reference, and only the additional layer references crossed by the effective control path.
+- **Large** — broad semantic change, uncertain ownership, protocol/lifecycle state, or multiple
+  generated and configuration consumers. Read `common-agent-pitfalls.md` and every reference for a
+  layer the established runtime contract crosses. Do not load unrelated layers merely because the
+  diff contains their file extensions.
+- **Wide mechanical** — repetitive and behavior-preserving, with a stated invariant that can be
+  independently checked. Read [mechanical-migrations.md](references/mechanical-migrations.md).
+  Reclassify as semantic if the transformation changes runtime meaning or that invariant cannot be
+  established before writing.
+
+The preventive references are maintained by `inet-code-review`; this skill depends on that skill's
+reference package but does not adopt its independent-review role or finding format.
+
+Select layers by the changed runtime contract, not only by file extension:
 
 | Layer | Select when the change involves | Preventive checks |
 | --- | --- | --- |
@@ -29,7 +50,10 @@ The `RP-*` labels in these references identify non-normative investigation promp
 authoring requirements. Use them to name preventive checks when useful; take every implementation
 obligation from the applicable canonical project rule.
 
-Apply layers cumulatively when a higher-layer behavior relies on lower-layer contracts. For normative IEEE 802.11 behavior, also use `ieee80211-standards` and identify the applicable revision and clause before choosing the implementation.
+Apply layers cumulatively only when a higher-layer behavior actually relies on lower-layer
+contracts in the changed control path. For normative IEEE 802.11 behavior, also use
+`ieee80211-standards` and identify the applicable revision and clause before choosing the
+implementation.
 
 ## Define the implementation contract
 
@@ -47,9 +71,13 @@ Before editing, write a compact working contract or return it in the parent hand
 - Mapped Verification: <smallest direct unit/module/fingerprint test command>
 ```
 
-### Lightweight Contract Template (Trivial / Bounded Fixes Only)
+### Lightweight Contract Template (Localized Changes Only)
 
-Use this fast-track template only when the change meets the trivial-change criteria (single file, <= 5 lines, no state-machine/API/lifecycle changes):
+Use this template only for a trivial bounded, behavior-preserving change with an understood owner
+and no externally observable effect. Any change to a computation, algorithm, ownership, API,
+serialization, timing, state machine, lifecycle, protocol decision, configuration, generated-input
+meaning, or observability requires the full semantic contract. Diff size alone cannot qualify a
+change.
 
 ```text
 ### Lightweight Pre-Write Contract
@@ -59,6 +87,10 @@ Use this fast-track template only when the change meets the trivial-change crite
 - Affected Siblings: <confirmation that sibling paths are clean or unshared>
 - Direct Verification: <smallest test or build check command>
 ```
+
+For a wide mechanical change, use the contract and checks in `mechanical-migrations.md`. The full
+semantic template remains mandatory for behavioral API migrations, renames that change dispatch or
+registration, and generated-input changes that alter runtime meaning.
 
 Resolve uncertainty about the mechanism or effective configuration before writing. Do not turn unsupported hypotheses, optional hardening, or unrelated pre-existing issues into patch scope.
 
@@ -104,7 +136,8 @@ When implementation reveals a related target or behavior not covered by the vali
 
 ## Self-audit and hand off
 
-Once the diff is stable, complete this checklist against the implementation contract, `common-agent-pitfalls.md`, and every selected layer reference:
+Once the diff is stable, complete this checklist against the implementation contract and every
+reference selected by the context tier:
 
 - [ ] Stable diff matches the validated behavior claim; every deviation and required scope expansion is recorded.
 - [ ] Effective owner/control path, affected consumers, siblings, and terminal paths were retraced in the resulting tree.

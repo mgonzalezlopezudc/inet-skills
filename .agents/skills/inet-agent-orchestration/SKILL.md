@@ -1,6 +1,6 @@
 ---
 name: inet-agent-orchestration
-description: Route and coordinate project-scoped specialist agents across Codex, Antigravity, and Kimi for nontrivial OMNeT++/INET and IEEE 802.11 work. Use for multi-stage debugging, standards-to-implementation analysis, C++/NED/MSG changes, Wi-Fi packet or PHY/MAC investigations, regression design, result analysis, patch review, or any task with multiple independent evidence lanes or specialist handoffs.
+description: Coordinate project-scoped specialist agents across Codex, Antigravity, and Kimi when OMNeT++/INET work requires delegation, multiple independent evidence lanes, or formal specialist handoffs. Use for genuinely multi-lane diagnosis, standards-to-implementation analysis, delegated implementation and verification, or independent specialist review; do not use merely because a single-agent task is nontrivial.
 ---
 
 # INET agent orchestration
@@ -11,7 +11,29 @@ For production changes and pull-request reviews, obtain project policy and gate 
 `doc/project/guide/contribute-a-change.md` or `doc/project/guide/review-a-pull-request.md`. This
 skill adds agent routing, ownership, and handoff mechanics only.
 
-## Architecture and Workflow Pipeline
+## Execution paths
+
+Choose by change invariant and handoff need, not by raw line count.
+
+1. **Localized path** — a trivial, bounded change with an understood owner and no delegation need.
+   Keep it in one agent and use the lightweight contract in `inet-code-authoring`. Resolve seals and
+   run the smallest direct check. Any API, state-machine, lifecycle, protocol, configuration, or
+   generated-input behavior change is not localized, however small its diff.
+2. **Mechanical path** — a repetitive, behavior-preserving transformation whose invariant can be
+   stated before editing and independently checked afterward. It may span many files. Examples are
+   a collision-free rename, a format-preserving migration, or regeneration from an unchanged
+   semantic input. Use the mechanical-change reference in `inet-code-authoring`; inventory the full
+   surface, check the invariant and generated artifacts, resolve seals, and run focused
+   verification. If correctness depends on interpreting runtime behavior, use the semantic path.
+3. **Semantic path** — a change to behavior, ownership, API contracts, state, protocol decisions,
+   effective configuration, lifecycle, timing, or observability. Use the full contract pipeline
+   below. Delegate only when independent evidence or a formal specialist handoff improves the task;
+   otherwise run the same safety gates in the root thread.
+
+The first two paths are classification rules, not permission shortcuts. Uncertainty about whether
+behavior is preserved selects the semantic path.
+
+## Semantic contract pipeline
 
 ```mermaid
 graph TD
@@ -33,16 +55,16 @@ graph TD
 
 Use a soft evidence budget rather than a fixed invocation or token limit. Start with the smallest lane set that can answer the current unresolved questions. Run a lane only when its prompt states both the unresolved question and the evidence expected to resolve it. Parallelize lanes that are already required and independent; run contingent lanes sequentially after reviewing the evidence that determines whether they are needed. Before adding a lane, reuse a suitable active specialist or explain why the existing evidence cannot close the question.
 
-## Tiers and agents
+## Specialist classes
 
-| Tier | Appropriate work | Specialist agent |
+| Class | Appropriate work | Specialist agent |
 | --- | --- | --- |
-| Chimp 🐒 | Ambiguous standards/MAC/PHY reasoning, difficult runtime causality, final review | `inet-wifi-specialist`, `inet-simulation-detective`, `inet-reviewer` |
-| Dog 🐕 | Cross-file architecture and NED/INI tracing | `inet-navigator` |
-| Fish 🐟 | Production implementation, established regression and result-analysis workflows | `inet-implementer`, `inet-regression-guard`, `inet-results-analyst` |
-| Ant 🐜 | Explicit searches, inventories, filtering, and structured extraction | `inet-evidence-miner` |
+| Reasoning | Ambiguous standards/MAC/PHY reasoning, difficult runtime causality, final review | `inet-wifi-specialist`, `inet-simulation-detective`, `inet-reviewer` |
+| Navigation | Cross-file architecture and NED/INI tracing | `inet-navigator` |
+| Implementation | Production implementation, established regression and result-analysis workflows | `inet-implementer`, `inet-regression-guard`, `inet-results-analyst` |
+| Extraction | Explicit searches, inventories, filtering, and structured extraction | `inet-evidence-miner` |
 
-For active tier assignments, consult [MODELS.md](../../../MODELS.md). For platform-specific runner configurations across Codex, Antigravity, and Kimi, see [platform-bindings.md](references/platform-bindings.md).
+For active class bindings, consult [MODELS.md](../../../MODELS.md). For platform-specific runner configurations across Codex, Antigravity, and Kimi, see [platform-bindings.md](references/platform-bindings.md).
 
 ## Routing
 
@@ -53,18 +75,9 @@ For active tier assignments, consult [MODELS.md](../../../MODELS.md). For platfo
 - **Production change:** establish the mechanism and change surface, then assign exactly one `inet-implementer`. For a semantic `src/inet/` change, first assign the implementer read-only contract completion using `inet-code-authoring`; require it to return the completed, self-validated contract without writing. Validate that handoff against the authoring checklist, then explicitly authorize the same implementer to write. Use `inet-regression-guard` for behavior changes and `inet-reviewer` on the stable verified diff for architecture-sensitive, nontrivial, or 802.11 changes.
 - **Results/plots:** use `inet-results-analyst`; use `inet-evidence-miner` only for bounded metadata inventory.
 
-### Trivial change fast-track
-For mechanically obvious changes meeting all of the following:
-1. Total diff <= 5 lines in a single file;
-2. No behavioral contract, protocol state machine, or API signature modified;
-3. No sibling dispatch branches or lifecycle interactions affected;
-4. Path is unsealed under `doc/project/audit/seal-list.md` (the source-path helper in
-   `inet-architectural-requirements` may resolve it);
-
-the orchestrator or implementer may skip formal multi-agent routing and use the lightweight contract flow in `inet-code-authoring`.
-
-In a single-agent session, follow the canonical contribution workflow in the root thread and add
-the pre-write contract and self-audit from `inet-code-authoring`.
+For either single-agent path, follow the canonical contribution workflow in the root thread and use
+the matching pre-write contract and self-audit from `inet-code-authoring`. Do not activate this
+orchestration skill solely to classify or execute such a change.
 
 ## Assignments and gates
 

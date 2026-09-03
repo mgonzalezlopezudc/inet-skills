@@ -1,0 +1,88 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inet.omnetpp.org/schemas/verification-result-v1.schema.json",
+  "title": "INET verification result envelope",
+  "description": "Runner facts normalized without causal correctness interpretation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "command",
+    "working_directory",
+    "build_mode",
+    "runner",
+    "selector",
+    "configuration",
+    "run",
+    "seed",
+    "cases_executed",
+    "status",
+    "exit_code",
+    "not_run_reason",
+    "first_causal_failure",
+    "artifacts",
+    "flaky",
+    "changed_result",
+    "adapter"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "command": {"type": "string", "minLength": 1},
+    "working_directory": {"type": "string", "minLength": 1},
+    "build_mode": {"type": ["string", "null"]},
+    "runner": {"enum": ["unit", "module", "fingerprint", "opp_repl"]},
+    "selector": {"type": ["string", "null"]},
+    "configuration": {"type": ["string", "null"]},
+    "run": {"type": ["integer", "string", "null"]},
+    "seed": {"type": ["integer", "null"]},
+    "cases_executed": {
+      "anyOf": [
+        {"type": "integer", "minimum": 0},
+        {"type": "null"}
+      ]
+    },
+    "status": {"enum": ["PASS", "FAIL", "ERROR", "INCONCLUSIVE", "NOT_RUN"]},
+    "exit_code": {"type": ["integer", "null"]},
+    "not_run_reason": {"type": ["string", "null"], "minLength": 1},
+    "first_causal_failure": {
+      "oneOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "summary", "source_line"],
+          "properties": {
+            "kind": {"enum": ["assertion", "build", "mismatch", "runner"]},
+            "summary": {"type": "string", "minLength": 1},
+            "source_line": {"type": "integer", "minimum": 1}
+          }
+        }
+      ]
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "flaky": {"type": "boolean"},
+    "changed_result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["observed", "expected", "approved"],
+      "properties": {
+        "observed": {"type": ["boolean", "null"]},
+        "expected": {"type": ["boolean", "null"]},
+        "approved": {"type": ["boolean", "null"]}
+      }
+    },
+    "adapter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"const": "normalize_verification"},
+        "version": {"const": 1}
+      }
+    }
+  }
+}

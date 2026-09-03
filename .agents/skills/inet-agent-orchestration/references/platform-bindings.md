@@ -9,7 +9,7 @@ Specific agent runner configurations and default reasoning efforts are registere
 - Antigravity: `.antigravity/agents/<agent-name>.toml` (or skill-level `agents/antigravity.yaml`)
 - OpenAI / Assistants API: `.agents/skills/<skill>/agents/openai.yaml`
 
-For active tier assignments, consult [MODELS.md](../../../../MODELS.md). Runner TOML files are authoritative when this overview and a binding disagree.
+For active specialist-class bindings, consult [MODELS.md](../../../../MODELS.md). Runner TOML files are authoritative when this overview and a binding disagree.
 
 ## Runtime-Specific Spawning Procedures
 
@@ -18,7 +18,7 @@ Spawn registered agent types directly using the platform sub-agent tool or confi
 
 ### Prompt-Persona Runtimes
 When running on platforms without declarative agent registration, instantiate the persona by prepending:
-1. The specialist agent's `description` from the tier table.
+1. The specialist agent's `description` from the class and routing tables.
 2. The specialized `developer_instructions` or owning skill prompt.
 3. Specific deliverable constraints (depth-one, single writer, required evidence).
 
@@ -28,4 +28,6 @@ When running on platforms without declarative agent registration, instantiate th
 - Report inherited model/effort when per-agent selection is unavailable.
 
 ## Fallback Rules
-If a tier binding is unavailable on the host platform, move upward in capability (e.g. Dog -> Chimp). Never silently downgrade Chimp work; disclose the actual model and verification used to the parent thread.
+If the assigned binding is unavailable on the host platform, choose an equal- or higher-capability
+model for the same specialist role. Never silently downgrade reasoning work; disclose the actual
+model and verification used to the parent thread.

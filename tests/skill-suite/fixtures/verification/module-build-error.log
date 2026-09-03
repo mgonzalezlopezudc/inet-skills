@@ -1,0 +1,4 @@
+Selected 1 test by filter 'LifecycleStop'
+Building test executable
+LifecycleStop.cc:44:12: error: no matching function for call to stopModule()
+make[1]: *** [Makefile:81: LifecycleStop.o] Error 1

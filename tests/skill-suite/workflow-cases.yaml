@@ -1,0 +1,76 @@
+version: 1
+
+# Gates name observable decisions or evidence. Evaluations assert these outcomes, not prose.
+cases:
+  - id: authoring-semantic-change
+    area: authoring
+    prompt: Implement a semantic INET packet-processing change and add focused coverage.
+    expected_skills: [inet-code-authoring]
+    required_gates:
+      - seal-resolution-before-write
+      - complete-pre-write-contract
+      - production-path-test-mapping
+      - post-write-self-audit
+
+  - id: independent-diff-review
+    area: review
+    prompt: Independently review an INET C++/NED working-tree diff without editing it.
+    expected_skills: [inet-code-review]
+    required_gates:
+      - read-only-review
+      - changed-contract-inventory
+      - evidence-backed-actionable-findings
+      - focused-validation-assessment
+
+  - id: multi-evidence-runtime-debug
+    area: debugging
+    prompt: Diagnose a Wi-Fi packet loss that may involve INI selection, MAC state, and PHY reception.
+    expected_skills: [inet-agent-orchestration, inet-80211-packet-debugging]
+    required_gates:
+      - independent-evidence-lanes
+      - smallest-reproduction
+      - first-causal-divergence
+      - evidence-authority-order
+
+  - id: repeated-run-results
+    area: results
+    prompt: Compare repeated OMNeT++ runs and plot a confidence interval without false replication.
+    expected_skills: [omnetpp-result-analysis, omnetpp-result-plotting]
+    required_gates:
+      - repetition-identity
+      - explicit-result-filter
+      - reproducible-derived-summary
+      - non-interactive-artifacts
+
+  - id: wifi-regression-design
+    area: regression
+    prompt: Turn a Wi-Fi retry bug into a deterministic regression that reaches the production path.
+    expected_skills: [inet-regression-testing, inet-80211-regression-testing]
+    required_gates:
+      - behavior-claim-to-invariant
+      - matching-test-category
+      - minimal-deterministic-reproduction
+      - production-path-evidence
+      - bounded-seed-or-parameter-campaign
+
+  - id: fixed-base-history-cleanup
+    area: branch-cleanup
+    prompt: Rebuild an opp_repl-tested fixed-base branch as a reviewable series with the same final tree.
+    expected_skills: [inet-branch-cleanup, inet-opp-repl, inet-pull-request-authoring]
+    required_gates:
+      - immutable-pinned-topic
+      - approved-change-groups
+      - coverage-ledger
+      - per-commit-opp-repl-evidence
+      - final-tree-equality
+
+  - id: high-risk-upstream-rebase
+    area: branch-rebase
+    prompt: Rebase an opp_repl-tested topic through risky upstream checkpoints and preserve forensic attempts.
+    expected_skills: [inet-branch-rebase, inet-opp-repl, inet-pull-request-authoring]
+    required_gates:
+      - immutable-pinned-inputs
+      - approved-groups-and-topology
+      - preserved-attempt-branches
+      - tested-safe-points
+      - final-control-comparison

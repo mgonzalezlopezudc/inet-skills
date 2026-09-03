@@ -1,0 +1,229 @@
+version: 1
+
+# These are selection contracts, not keyword-matching tests. An evaluation runner should present
+# only `prompt` to the model and compare observed skill loads with the expected/forbidden sets.
+cases:
+  - id: standards-positive
+    kind: positive
+    prompt: Which 802.11be clause defines the EHT Operation channel-width field?
+    expected_skills: [ieee80211-standards]
+  - id: standards-negative
+    kind: negative
+    prompt: Explain this checked-out C++ function without making a standards claim.
+    forbidden_skills: [ieee80211-standards]
+
+  - id: wifi-packet-debug-positive
+    kind: positive
+    prompt: Trace why this Wi-Fi Block Ack exchange retries after the receiver sent a BA frame.
+    expected_skills: [inet-80211-packet-debugging]
+  - id: wifi-packet-debug-negative
+    kind: negative
+    prompt: Extract all TCP retransmissions from this wired Ethernet capture.
+    forbidden_skills: [inet-80211-packet-debugging]
+
+  - id: wifi-regression-positive
+    kind: positive
+    prompt: Add a deterministic HE trigger-frame regression that proves the expected ACK policy.
+    expected_skills: [inet-80211-regression-testing]
+  - id: wifi-regression-negative
+    kind: negative
+    prompt: Design a protocol-neutral queue module regression test.
+    forbidden_skills: [inet-80211-regression-testing]
+
+  - id: walkthrough-positive
+    kind: positive
+    prompt: Use the checkout's shared Wi-Fi analyzer to write the 802.11ax OFDMA walkthrough.
+    expected_skills: [inet-80211-walkthrough-writer]
+  - id: walkthrough-negative
+    kind: negative
+    prompt: Invent a replacement Wi-Fi analysis script because the shared analyzer is absent.
+    forbidden_skills: [inet-80211-walkthrough-writer]
+
+  - id: orchestration-positive
+    kind: positive
+    prompt: Coordinate independent standards, configuration, runtime, and review lanes for this Wi-Fi failure.
+    expected_skills: [inet-agent-orchestration]
+  - id: orchestration-negative
+    kind: negative
+    prompt: Implement one understood production fix in a single-agent session.
+    forbidden_skills: [inet-agent-orchestration]
+
+  - id: architecture-positive
+    kind: positive
+    prompt: Audit this src/inet refactor for dependency direction, naming, and sealing compliance.
+    expected_skills: [inet-architectural-requirements]
+  - id: architecture-negative
+    kind: negative
+    prompt: Explain the value of an already-recorded scalar without changing source.
+    forbidden_skills: [inet-architectural-requirements]
+
+  - id: cleanup-positive
+    kind: positive
+    prompt: Rebuild this fixed-base opp_repl-tested topic branch into five reviewable commits.
+    expected_skills: [inet-branch-cleanup]
+  - id: cleanup-negative
+    kind: negative
+    prompt: Rebase this branch once onto upstream with ordinary Git and no history reconstruction.
+    forbidden_skills: [inet-branch-cleanup]
+
+  - id: rebase-positive
+    kind: positive
+    prompt: Carry this risky opp_repl-tested branch across approved upstream checkpoints and preserve every attempt.
+    expected_skills: [inet-branch-rebase]
+  - id: rebase-negative
+    kind: negative
+    prompt: Split a fixed-base branch into clearer commits without changing upstream.
+    forbidden_skills: [inet-branch-rebase]
+
+  - id: build-positive
+    kind: positive
+    prompt: Diagnose why the debug simulation is loading a stale release INET library.
+    expected_skills: [inet-build-debug-modes]
+  - id: build-negative
+    kind: negative
+    prompt: Query an existing scalar result file; no build is requested.
+    forbidden_skills: [inet-build-debug-modes]
+
+  - id: cmdenv-positive
+    kind: positive
+    prompt: Find the first packet drop and surrounding event numbers in this saved Cmdenv log.
+    expected_skills: [inet-cmdenv-log-analysis]
+  - id: cmdenv-negative
+    kind: negative
+    prompt: Reconstruct a canceled self-message from an OMNeT++ event log.
+    forbidden_skills: [inet-cmdenv-log-analysis]
+
+  - id: authoring-positive
+    kind: positive
+    prompt: Implement this INET NED and C++ behavior change with preventive checks and tests.
+    expected_skills: [inet-code-authoring]
+  - id: authoring-negative
+    kind: negative
+    prompt: Independently review the existing diff without modifying it.
+    forbidden_skills: [inet-code-authoring]
+
+  - id: review-positive
+    kind: positive
+    prompt: Review base..HEAD for actionable C++, NED, and integration defects; do not edit.
+    expected_skills: [inet-code-review]
+  - id: review-negative
+    kind: negative
+    prompt: Implement the already-approved localized fix.
+    forbidden_skills: [inet-code-review]
+
+  - id: fingerprint-positive
+    kind: positive
+    prompt: Diagnose this fingerprint mismatch and decide whether the baseline change is expected.
+    expected_skills: [inet-fingerprint-regression]
+  - id: fingerprint-negative
+    kind: negative
+    prompt: Prove a new computation is correct using a focused unit assertion.
+    forbidden_skills: [inet-fingerprint-regression]
+
+  - id: lldb-positive
+    kind: positive
+    prompt: Reproduce this INET abort under LLDB and inspect the first invalid local variable.
+    expected_skills: [inet-lldb-debugging]
+  - id: lldb-negative
+    kind: negative
+    prompt: Search a saved log for warnings; source-level debugging is unnecessary.
+    forbidden_skills: [inet-lldb-debugging]
+
+  - id: ned-ini-positive
+    kind: positive
+    prompt: Resolve which radio typename and bitrate this inherited omnetpp.ini actually selects.
+    expected_skills: [inet-ned-ini-analysis]
+  - id: ned-ini-negative
+    kind: negative
+    prompt: Inspect a packet capture whose effective configuration is already established.
+    forbidden_skills: [inet-ned-ini-analysis]
+
+  - id: opp-repl-positive
+    kind: positive
+    prompt: Discover this checkout's opp_repl interface, map changed paths to configurations, run the scoped check, and normalize its result.
+    expected_skills: [inet-opp-repl]
+  - id: opp-repl-negative
+    kind: negative
+    prompt: Reconstruct and rewrite a branch history; shared runner mechanics alone are insufficient.
+    forbidden_skills: [inet-opp-repl]
+
+  - id: packet-tag-positive
+    kind: positive
+    prompt: Find where the PacketProtocolTag disappears during encapsulation and decapsulation.
+    expected_skills: [inet-packet-tag-debugging]
+  - id: packet-tag-negative
+    kind: negative
+    prompt: Explain a scheduler event ordering problem with no packet metadata involved.
+    forbidden_skills: [inet-packet-tag-debugging]
+
+  - id: pcap-positive
+    kind: positive
+    prompt: Record both interfaces and use TShark to verify whether the TCP handshake occurred.
+    expected_skills: [inet-pcap-tshark-analysis]
+  - id: pcap-negative
+    kind: negative
+    prompt: Analyze an OMNeT++ scalar file; no packet capture exists.
+    forbidden_skills: [inet-pcap-tshark-analysis]
+
+  - id: pr-authoring-positive
+    kind: positive
+    prompt: Plan the commit boundaries and draft the pull-request description for this INET change.
+    expected_skills: [inet-pull-request-authoring]
+  - id: pr-authoring-negative
+    kind: negative
+    prompt: Review only the implementation correctness of this working-tree diff.
+    forbidden_skills: [inet-pull-request-authoring]
+
+  - id: generic-regression-positive
+    kind: positive
+    prompt: Turn this protocol-neutral module behavior claim into a minimal deterministic regression with direct production-path evidence.
+    expected_skills: [inet-regression-testing]
+  - id: generic-regression-negative
+    kind: negative
+    prompt: Execute an already-designed unit-test filter without making regression-design decisions.
+    forbidden_skills: [inet-regression-testing]
+
+  - id: simulation-positive
+    kind: positive
+    prompt: Run this INET configuration in Cmdenv with run 0 and diagnose its initialization error.
+    expected_skills: [inet-simulation-run]
+  - id: simulation-negative
+    kind: negative
+    prompt: Inspect already-produced result vectors without rerunning the simulation.
+    forbidden_skills: [inet-simulation-run]
+
+  - id: unit-positive
+    kind: positive
+    prompt: Rebuild debug INET and run this focused C++ unit-test regex.
+    expected_skills: [inet-unit-tests]
+  - id: unit-negative
+    kind: negative
+    prompt: Run a full network simulation configuration, not a unit or module test.
+    forbidden_skills: [inet-unit-tests]
+
+  - id: eventlog-positive
+    kind: positive
+    prompt: Use the event log to trace when this self-message was scheduled, canceled, and delivered.
+    expected_skills: [omnetpp-eventlog-analysis]
+  - id: eventlog-negative
+    kind: negative
+    prompt: Extract module warnings from plain Cmdenv output with no event-log records.
+    forbidden_skills: [omnetpp-eventlog-analysis]
+
+  - id: result-analysis-positive
+    kind: positive
+    prompt: Filter and export the relevant vectors from these .vec and .sca result files.
+    expected_skills: [omnetpp-result-analysis]
+  - id: result-analysis-negative
+    kind: negative
+    prompt: Debug a live simulation crash before any result files are produced.
+    forbidden_skills: [omnetpp-result-analysis]
+
+  - id: result-plotting-positive
+    kind: positive
+    prompt: Create a reproducible ECDF plot with confidence intervals from these OMNeT++ results.
+    expected_skills: [omnetpp-result-plotting]
+  - id: result-plotting-negative
+    kind: negative
+    prompt: Return a CSV export only; no visualization or derived plot is requested.
+    forbidden_skills: [omnetpp-result-plotting]

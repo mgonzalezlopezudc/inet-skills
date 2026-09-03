@@ -1,0 +1,5 @@
+Selected 1 test by filter 'SequenceWindow.*\.test'
+test_wrap_boundary ... FAIL
+Assertion failed: expected 0 after wrap, got 4096
+Ran 1 test
+FAILED (failures=1)

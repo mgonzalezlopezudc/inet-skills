@@ -1,0 +1,358 @@
+version: 1
+
+project_compatibility:
+  mode: capabilities
+  capabilities:
+    - path: doc/project/README.md
+      contains: ["The INET project documentation"]
+    - path: doc/project/guide/contribute-a-change.md
+      contains: ["Contribute a change", "TR-FOCUSED-EVIDENCE"]
+    - path: doc/project/rule/testing.md
+      contains: ["TR-CAT-MATCH", "TR-FOCUSED-EVIDENCE", "TR-FLAKY"]
+    - path: doc/project/design/test-anatomy.md
+      contains: ["The production path", "fingerprint"]
+    - path: doc/project/audit/seal-list.md
+      contains: ["The seal registry"]
+    - path: doc/project/rule/sealing.md
+      contains: ["SR-DEFAULT-OPEN", "SR-VIOLATION-IN-SEALED"]
+
+generated_metadata:
+  source: .agents/skill-suite.yaml
+  targets:
+    - agents/openai.yaml
+    - agents/antigravity.yaml
+
+verification_results:
+  schema: .agents/schemas/verification-result-v1.schema.json
+  adapter: .agents/scripts/normalize_verification.py
+  runners: [unit, module, fingerprint, opp_repl]
+  fixtures: tests/skill-suite/fixtures/verification
+
+profiles:
+  default:
+    extends: [wifi, results, history]
+    skills: []
+  core:
+    skills:
+      - inet-agent-orchestration
+      - inet-architectural-requirements
+      - inet-build-debug-modes
+      - inet-cmdenv-log-analysis
+      - inet-code-authoring
+      - inet-code-review
+      - inet-fingerprint-regression
+      - inet-lldb-debugging
+      - inet-ned-ini-analysis
+      - inet-packet-tag-debugging
+      - inet-pcap-tshark-analysis
+      - inet-pull-request-authoring
+      - inet-regression-testing
+      - inet-simulation-run
+      - inet-unit-tests
+      - omnetpp-eventlog-analysis
+  wifi:
+    extends: [core]
+    skills:
+      - ieee80211-standards
+      - inet-80211-packet-debugging
+      - inet-80211-regression-testing
+  results:
+    skills:
+      - omnetpp-result-analysis
+      - omnetpp-result-plotting
+  history:
+    extends: [core]
+    skills:
+      - inet-branch-cleanup
+      - inet-branch-rebase
+      - inet-opp-repl
+      - inet-pull-request-authoring
+  walkthrough:
+    extends: [wifi, results]
+    skills: [inet-80211-walkthrough-writer]
+    activation_requires:
+      all_files:
+        - examples/ieee80211/analysis/wifi_analysis.py
+        - examples/ieee80211/analysis/README.md
+
+skills:
+  ieee80211-standards:
+    metadata:
+      display_name: IEEE 802.11 Standards
+      short_description: Search repository IEEE 802.11 standards
+      default_prompt: Use $ieee80211-standards to find and cite the IEEE 802.11 clauses that govern this question.
+    dependencies: []
+    required_tools: [inet_process_standards]
+    required_checkout_files: [standards]
+
+  inet-80211-packet-debugging:
+    metadata:
+      display_name: INET 802.11 Packet Debugging
+      short_description: Debug reproducible Wi-Fi packet exchanges
+      default_prompt: Use $inet-80211-packet-debugging to trace this Wi-Fi exchange and identify the first evidence-backed divergence.
+    dependencies:
+      - ieee80211-standards
+      - inet-cmdenv-log-analysis
+      - inet-lldb-debugging
+      - inet-ned-ini-analysis
+      - inet-packet-tag-debugging
+      - inet-pcap-tshark-analysis
+      - omnetpp-eventlog-analysis
+    required_tools: [inet, tshark]
+    required_checkout_files: [doc/project/domain/ieee80211.md]
+
+  inet-80211-regression-testing:
+    metadata:
+      display_name: INET 802.11 Regression Testing
+      short_description: Design focused Wi-Fi regression tests
+      default_prompt: Use $inet-80211-regression-testing to design a deterministic regression test for this Wi-Fi behavior.
+    dependencies:
+      - ieee80211-standards
+      - inet-fingerprint-regression
+      - inet-ned-ini-analysis
+      - inet-regression-testing
+      - inet-unit-tests
+    required_tools: [inet]
+    required_checkout_files:
+      - doc/project/domain/ieee80211.md
+      - doc/project/rule/testing.md
+
+  inet-80211-walkthrough-writer:
+    metadata:
+      display_name: INET 802.11 Walkthrough Writer
+      short_description: Write concise, script-backed Wi-Fi walkthroughs
+      default_prompt: Use $inet-80211-walkthrough-writer only after confirming the active checkout provides the shared analyzer, then create or improve a concise walkthrough from analysis-script-generated scalar/vector and PCAP evidence.
+    dependencies: []
+    required_tools: [python3]
+    required_checkout_files:
+      - examples/ieee80211/analysis/wifi_analysis.py
+      - examples/ieee80211/analysis/README.md
+
+  inet-agent-orchestration:
+    metadata:
+      display_name: INET Agent Orchestration
+      short_description: Coordinate delegated INET specialist work
+      default_prompt: Use $inet-agent-orchestration to coordinate the independent evidence lanes and specialist handoffs required by this OMNeT++/INET task.
+    dependencies: []
+    deployment_files: [MODELS.md, .codex, .antigravity]
+    required_tools: []
+    required_checkout_files: [doc/project/guide/contribute-a-change.md]
+
+  inet-architectural-requirements:
+    metadata:
+      display_name: INET Architectural Requirements
+      short_description: Apply INET architecture and sealing rules
+      default_prompt: Use $inet-architectural-requirements to evaluate this INET change against the applicable architecture, naming, and sealing requirements.
+    dependencies: []
+    required_tools: [python3]
+    required_checkout_files:
+      - doc/project/rule/architecture.md
+      - doc/project/audit/seal-list.md
+      - doc/project/rule/sealing.md
+
+  inet-branch-cleanup:
+    metadata:
+      display_name: INET Branch Cleanup
+      short_description: Rebuild INET branches into reviewable commits
+      default_prompt: Use $inet-branch-cleanup to rebuild this tested INET topic branch as a reviewable commit series without changing its final tree.
+    dependencies: [inet-opp-repl, inet-pull-request-authoring]
+    required_tools: [git, opp_repl]
+    required_checkout_files:
+      - doc/project/rule/pull-request.md
+      - doc/project/guide/change-a-baseline.md
+
+  inet-branch-rebase:
+    metadata:
+      display_name: INET Branch Rebase
+      short_description: Rebase INET branches through safe checkpoints
+      default_prompt: Use $inet-branch-rebase to carry this tested INET topic branch across the approved upstream checkpoints.
+    dependencies:
+      - inet-architectural-requirements
+      - inet-code-authoring
+      - inet-opp-repl
+      - inet-pull-request-authoring
+    required_tools: [git, opp_repl]
+    required_checkout_files:
+      - doc/project/rule/pull-request.md
+      - doc/project/guide/change-a-baseline.md
+
+  inet-build-debug-modes:
+    metadata:
+      display_name: INET Debug Builds
+      short_description: Build and diagnose matching INET debug artifacts
+      default_prompt: Use $inet-build-debug-modes to build or diagnose the matching INET debug artifacts for this task.
+    dependencies: []
+    required_tools: [make]
+    required_checkout_files: [Makefile]
+
+  inet-cmdenv-log-analysis:
+    metadata:
+      display_name: INET Cmdenv Log Analysis
+      short_description: Find behavior and events in Cmdenv logs
+      default_prompt: Use $inet-cmdenv-log-analysis to extract the relevant module decisions, warnings, drops, and event context from this Cmdenv log.
+    dependencies: []
+    required_tools: [rg]
+    required_checkout_files: []
+
+  inet-code-authoring:
+    metadata:
+      display_name: INET Code Authoring
+      short_description: Prevent correctness defects while implementing INET changes
+      default_prompt: Use $inet-code-authoring to define and implement this INET change with preventive correctness checks.
+    dependencies: [inet-code-review]
+    required_tools: [git, rg]
+    required_checkout_files:
+      - doc/project/guide/contribute-a-change.md
+      - doc/project/guide/review-a-code-change.md
+
+  inet-code-review:
+    metadata:
+      display_name: INET Code Review
+      short_description: Layered C++, OMNeT++, INET, and Wi-Fi review
+      default_prompt: Use $inet-code-review to independently review the current INET diff and report evidence-backed actionable findings.
+    dependencies: []
+    required_tools: [git, rg]
+    required_checkout_files:
+      - doc/project/guide/review-a-code-change.md
+      - doc/project/enforcement/checklist/general.md
+
+  inet-fingerprint-regression:
+    metadata:
+      display_name: INET Fingerprint Regression
+      short_description: Diagnose and manage fingerprint regressions
+      default_prompt: Use $inet-fingerprint-regression to diagnose this fingerprint change and determine whether it is expected.
+    dependencies: []
+    required_tools: [python3]
+    required_checkout_files:
+      - tests/fingerprint/fingerprinttest
+      - doc/project/guide/change-a-baseline.md
+
+  inet-lldb-debugging:
+    metadata:
+      display_name: INET LLDB Debugging
+      short_description: Debug INET simulations at C++ source level
+      default_prompt: Use $inet-lldb-debugging to reproduce and inspect this INET runtime failure at C++ source level.
+    dependencies: [inet-build-debug-modes, inet-simulation-run]
+    required_tools: [lldb]
+    required_checkout_files: [Makefile]
+
+  inet-ned-ini-analysis:
+    metadata:
+      display_name: INET NED/INI Analysis
+      short_description: Trace effective NED and INI configuration
+      default_prompt: Use $inet-ned-ini-analysis to resolve the effective NED types, INI inheritance, and parameter values for this configuration.
+    dependencies: []
+    required_tools: [rg]
+    required_checkout_files: []
+
+  inet-opp-repl:
+    metadata:
+      display_name: INET opp_repl Verification
+      short_description: Run and normalize scoped opp_repl checks
+      default_prompt: Use $inet-opp-repl to discover the active interface, map the directly related scope, and normalize this opp_repl verification run.
+    dependencies: []
+    routes_to:
+      - inet-fingerprint-regression
+      - omnetpp-result-analysis
+      - omnetpp-result-plotting
+    required_tools: [opp_repl]
+    required_checkout_files:
+      - tests/dependency.json
+      - doc/project/rule/testing.md
+
+  inet-packet-tag-debugging:
+    metadata:
+      display_name: INET Packet and Tag Debugging
+      short_description: Trace INET packet, chunk, and tag behavior
+      default_prompt: Use $inet-packet-tag-debugging to find where this packet, chunk, or tag state first changes incorrectly.
+    dependencies: []
+    required_tools: [rg]
+    required_checkout_files: []
+
+  inet-pcap-tshark-analysis:
+    metadata:
+      display_name: INET PCAP/TShark Analysis
+      short_description: Record and analyze INET packet captures
+      default_prompt: Use $inet-pcap-tshark-analysis to record or inspect this INET packet exchange and correlate the relevant capture points.
+    dependencies: [inet-cmdenv-log-analysis]
+    required_tools: [capinfos, tshark]
+    required_checkout_files: []
+
+  inet-pull-request-authoring:
+    metadata:
+      display_name: INET Pull Request Authoring
+      short_description: Plan and audit reviewable commits and pull requests
+      default_prompt: Use $inet-pull-request-authoring to plan or audit the commit series and pull request for this INET change.
+    dependencies: []
+    required_tools: [git]
+    required_checkout_files:
+      - doc/project/rule/pull-request.md
+      - doc/project/guide/review-a-pull-request.md
+
+  inet-regression-testing:
+    metadata:
+      display_name: INET Regression Testing
+      short_description: Design protocol-neutral INET regressions
+      default_prompt: Use $inet-regression-testing to turn this behavior claim into a minimal deterministic regression with direct evidence.
+    dependencies:
+      - inet-fingerprint-regression
+      - inet-simulation-run
+      - inet-unit-tests
+    routes_to:
+      - inet-cmdenv-log-analysis
+      - inet-lldb-debugging
+      - inet-ned-ini-analysis
+      - inet-packet-tag-debugging
+      - inet-pcap-tshark-analysis
+      - omnetpp-eventlog-analysis
+      - omnetpp-result-analysis
+      - omnetpp-result-plotting
+    required_tools: []
+    required_checkout_files:
+      - doc/project/rule/testing.md
+      - doc/project/design/test-anatomy.md
+
+  inet-simulation-run:
+    metadata:
+      display_name: INET Simulation Runner
+      short_description: Run reproducible INET simulations
+      default_prompt: Use $inet-simulation-run to run this simulation reproducibly and diagnose any initialization or runtime failure.
+    dependencies: [inet-build-debug-modes]
+    required_tools: [inet]
+    required_checkout_files: [Makefile]
+
+  inet-unit-tests:
+    metadata:
+      display_name: INET Unit Tests
+      short_description: Build and run focused INET unit and module tests
+      default_prompt: Use $inet-unit-tests to build the required debug artifacts and run the focused INET unit or module tests for this change.
+    dependencies: [inet-build-debug-modes]
+    required_tools: [inet_run_module_tests, inet_run_unit_tests, make]
+    required_checkout_files: [tests/unit, tests/module]
+
+  omnetpp-eventlog-analysis:
+    metadata:
+      display_name: OMNeT++ Event Log Analysis
+      short_description: Trace OMNeT++ message and event causality
+      default_prompt: Use $omnetpp-eventlog-analysis to reconstruct the scheduling and message-delivery causality behind this simulation behavior.
+    dependencies: [inet-cmdenv-log-analysis]
+    required_tools: [rg]
+    required_checkout_files: []
+
+  omnetpp-result-analysis:
+    metadata:
+      display_name: OMNeT++ Result Analysis
+      short_description: Query and export OMNeT++ simulation results
+      default_prompt: Use $omnetpp-result-analysis to query and export the relevant scalar or vector results for this comparison.
+    dependencies: []
+    required_tools: [opp_scavetool]
+    required_checkout_files: []
+
+  omnetpp-result-plotting:
+    metadata:
+      display_name: OMNeT++ Result Plotting
+      short_description: Plot reproducible OMNeT++ simulation results
+      default_prompt: Use $omnetpp-result-plotting to create a reproducible non-interactive plot and derived summary for these simulation results.
+    dependencies: [omnetpp-result-analysis]
+    required_tools: [python3]
+    required_checkout_files: []

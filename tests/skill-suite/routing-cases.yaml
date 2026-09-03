@@ -1,0 +1,47 @@
+version: 1
+
+cases:
+  - id: localized-single-agent-change
+    prompt: Implement one understood, localized production fix in a single-agent session.
+    expected_path: localized
+    expected_skills: [inet-code-authoring]
+    forbidden_skills: [inet-agent-orchestration]
+    required_gates: [seal-resolution, bounded-contract, focused-verification]
+
+  - id: independent-multi-lane-diagnosis
+    prompt: Coordinate independent standards, NED/INI, runtime, and review evidence for a Wi-Fi failure.
+    expected_path: orchestrated
+    expected_skills: [inet-agent-orchestration]
+    required_gates: [bounded-lanes, evidence-handoffs, independent-review]
+
+  - id: wide-behavior-preserving-rename
+    prompt: Rename a symbol and its generated-artifact inputs across 40 files without changing behavior.
+    expected_path: mechanical
+    expected_skills: [inet-code-authoring]
+    forbidden_skills: [inet-agent-orchestration]
+    required_gates: [stated-invariant, independent-mechanical-check, focused-verification]
+
+  - id: localized-behavioral-change-rejected
+    prompt: Change one numeric return expression in a computation and add its boundary test.
+    expected_path: semantic
+    expected_skills: [inet-code-authoring]
+    forbidden_paths: [localized, mechanical]
+    required_gates: [full-pre-write-contract, focused-verification]
+
+  - id: wide-behavioral-change-rejected
+    prompt: Migrate several modules to a new API and deliberately change their runtime behavior.
+    expected_path: semantic
+    expected_skills: [inet-code-authoring]
+    forbidden_paths: [localized, mechanical]
+    required_gates: [full-pre-write-contract, affected-consumer-inventory, focused-verification]
+
+  - id: semantic-safety-gates-retained
+    prompt: Implement a semantic change under src/inet with a stable reviewed diff.
+    expected_path: semantic
+    expected_skills: [inet-code-authoring]
+    required_gates:
+      - seal-resolution-before-write
+      - complete-pre-write-contract
+      - focused-verification
+      - approval-when-required
+      - independent-review-when-routed

@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET opp_repl Verification"
+  short_description: "Run and normalize scoped opp_repl checks"
+  default_prompt: "Use $inet-opp-repl to discover the active interface, map the directly related scope, and normalize this opp_repl verification run."

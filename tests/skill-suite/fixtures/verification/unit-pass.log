@@ -1,0 +1,5 @@
+Selected 2 tests by filter '(Header|Serializer).*\.test'
+test_header_round_trip ... ok
+test_serializer_boundary ... ok
+Ran 2 tests
+OK

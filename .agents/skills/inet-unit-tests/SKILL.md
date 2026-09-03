@@ -1,6 +1,6 @@
 ---
 name: inet-unit-tests
-description: Build INET and run unit tests in this repository. Use when asked to build for, execute, filter, diagnose, or report INET C++ unit tests, including IEEE 802.11 HE tests.
+description: Build INET and run focused unit or module tests in this repository. Use when asked to build for, execute, filter, diagnose, or report INET C++ unit tests or OMNeT++ module tests, including IEEE 802.11 HE coverage.
 ---
 
 # Build and run INET unit tests
@@ -38,3 +38,9 @@ The runner invocation must carry an explicit `-f` regex for the set selected und
 test rule. When piping through `tee`, preserve the runner's exit status with `pipefail`.
 
 Distinguish INET-library build failures, test-executable build failures, and assertion failures. Report the first relevant failure rather than counting cascades as independent causes.
+
+For a machine-readable handoff, preserve the raw runner output and normalize it with the skill-suite
+`.agents/scripts/normalize_verification.py --runner unit` or `--runner module` adapter. Supply the exact
+command, working directory, debug build mode, filter, exit code, and artifact paths. The v1 envelope
+uses `NOT_RUN` for a zero-test selection and records facts only; interpret the cause here, not in the
+adapter.

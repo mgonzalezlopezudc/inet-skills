@@ -1,56 +1,37 @@
-# INET `opp_repl` cleanup test contract
+# Cleanup-specific opp_repl contract
 
-Use `opp_repl` as the per-commit oracle: it checks whether a commit behaves as its label claims.
+Use [inet-opp-repl](../../inet-opp-repl/SKILL.md) for command discovery, dependency mapping, common
+result semantics, baseline-update boundaries, and the structured verification envelope. This
+reference adds the cleanup comparison and commit-type oracle.
 
-## Choose the test scope
+## Scope and controls
 
-Choose the test category under `doc/project/rule/testing.md`; this reference adds only the
-`opp_repl` mechanics for the selected cleanup contract.
+Select the directly related configurations for each output commit from that commit's assigned
+coverage-ledger slice. Unless the approved cleanup contract requires otherwise, start with
+fingerprints and run 0; add statistical, chart, seed, or parameter coverage only when the behavior
+claim requires it.
 
-Record the requested test types in priority order. Unless the cleanup specifies otherwise, use fingerprint tests first, statistical tests second, and run number 0 only. Add chart tests or more runs only when the task opts in or directly related coverage requires them.
+Use these controls for a surprising result:
 
-Use `dependency.json` to map:
+- `topic` — the pinned intended final behavior;
+- `base` — the pinned starting behavior;
+- `clean@prev` — the previous promoted clean safe point, isolating the current commit.
 
-```text
-changed files -> NED packages -> features -> simulation configurations
-```
+## Commit-type oracle
 
-This mapping predicts which configurations each change group can affect and therefore scopes its per-commit test. If no directly related test can be identified, report the coverage gap; do not substitute an unrelated broad suite.
+- **Refactor / chore / docs** — the selected behavior signal remains identical to the previous safe
+  point. A mismatch means the commit is misclassified or defective. Stop and investigate; do not
+  re-record a baseline to preserve the label.
+- **Fix / feature** — the signal may change only in predicted configurations and for the explained
+  behavior claim. Unrelated selected configurations remain identical.
 
-Run one scoped `opp_repl` invocation per output commit, with the build folded into that step:
-
-- **ERROR** — the build or execution failed, or no valid test ran;
-- **FAIL** — the test ran but the observed behavior did not match the expectation;
-- **PASS** — the build succeeded and the result matched the declared commit effect.
-
-## Use the test as the type oracle
-
-- **Refactor / chore / docs** — the fingerprint must be identical to the previous clean safe point on every affected configuration. A mismatch means that behavior leaked into the commit or that the change is mislabeled. Stop and investigate; never re-record the baseline merely to make it pass.
-- **Fix / feature** — the fingerprint or statistics may change, but only in the predicted configurations and for an intended, explained reason. Unrelated selected configurations must remain identical.
-
-When a result is surprising, compare it with three controls:
-
-- `results_topic` — the intended final behavior;
-- `results_base` — the starting behavior;
-- `results_clean@prev` — the previous output commit, which isolates what the current commit changed.
-
-## Update baselines
-
-Follow `doc/project/guide/change-a-baseline.md`, including its approval requirement, before updating
-any recorded expectation.
-
-- **Fingerprint** — call `update_fingerprint_test_results(...)`. It uses `FingerprintStore.update_fingerprint`, writes `fingerprint.json`, and reports `INSERT`, `UPDATE`, or `KEEP`. Record the affected entries and result codes.
-- **Statistical** — call `update_statistical_test_results(...)`. It copies the current `.sca` result into the baseline directory. Record the exact files and quantify the delta.
-
-Treat `fingerprint.json`, baseline `.sca` files, and `dependency.json` as test artifacts when comparing `clean` with `topic`.
-
-Put an approved baseline delta in the same commit as the source change that caused it. Rerun the
-same scoped test on that commit and record the causal behavior change and reason in its message. Use
-a standalone baseline commit only when no single source commit caused the movement, as required by
-the canonical procedure.
-
-Detailed results are temporary: use them to write the causal account in the logbook, then discard them unless repository policy requires retention.
+Run one scoped build-and-test invocation per output commit. A zero-case selection cannot promote a
+safe point. Persist the normalized envelope and concise causal account in the cleanup logbook before
+discarding temporary details.
 
 ## Final acceptance
 
-Run the selected contract across every configuration mapped to any change in the branch, using run 0 or the explicitly approved wider run set. “Full” means full coverage of the branch's directly related contract; keep explicit filters and do not expand into unrelated INET suites.
+Run the union of every directly related configuration mapped to a change in the reconstructed
+branch, retaining explicit filters. Compare with the pinned topic and base where they distinguish
+missing material from intended behavior. Baseline artifacts may differ from `topic` only through the
+approved canonical procedure; source and other non-baseline files must remain tree-identical.
