@@ -1,0 +1,342 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://inet.omnetpp.org/schemas/feature-ir-v1.schema.json",
+  "title": "INET non-authoritative feature IR",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "authority",
+    "feature",
+    "sources",
+    "roles",
+    "conditions",
+    "actions",
+    "qualifiers",
+    "obligations",
+    "state_variables",
+    "transitions",
+    "exchanges",
+    "invariants",
+    "implementation_mappings",
+    "verification_mappings",
+    "reviews"
+  ],
+  "properties": {
+    "schema_version": {"const": "inet-feature-ir/v1"},
+    "authority": {"$ref": "#/$defs/authority"},
+    "feature": {"$ref": "#/$defs/feature"},
+    "sources": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/source"}},
+    "roles": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/term"}},
+    "conditions": {"type": "array", "items": {"$ref": "#/$defs/term"}},
+    "actions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/action"}},
+    "qualifiers": {"type": "array", "items": {"$ref": "#/$defs/term"}},
+    "obligations": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/obligation"}},
+    "state_variables": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/state_variable"}},
+    "transitions": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/transition"}},
+    "exchanges": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/exchange"}},
+    "invariants": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/invariant"}},
+    "implementation_mappings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/implementation_mapping"}
+    },
+    "verification_mappings": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/verification_mapping"}
+    },
+    "reviews": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/review"}}
+  },
+  "$defs": {
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(?:-[a-z][a-z0-9]*)*$"
+    },
+    "text": {"type": "string", "minLength": 1},
+    "slug_list": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/slug"}
+    },
+    "nonempty_slug_list": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/slug"}
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "notice"],
+      "properties": {
+        "status": {"const": "non-authoritative"},
+        "notice": {"$ref": "#/$defs/text"}
+      }
+    },
+    "feature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "title", "domain", "summary", "scope"],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "title": {"$ref": "#/$defs/text"},
+        "domain": {"$ref": "#/$defs/slug"},
+        "summary": {"$ref": "#/$defs/text"},
+        "scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["includes", "excludes"],
+          "properties": {
+            "includes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/text"}},
+            "excludes": {"type": "array", "items": {"$ref": "#/$defs/text"}}
+          }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "document", "revision", "node_id", "locator", "reviewed_text_sha256"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "document": {"type": "string", "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$"},
+        "revision": {"$ref": "#/$defs/text"},
+        "node_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*:(?:clause|table|figure|definition):.+$"
+        },
+        "locator": {"type": "string", "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*@[0-9]+:[0-9]+$"},
+        "reviewed_text_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "term": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "description"],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "description": {"$ref": "#/$defs/text"}
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "description"],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "kind": {
+          "enum": ["send", "receive", "establish", "refuse", "terminate", "wait", "notify", "update", "other"]
+        },
+        "description": {"$ref": "#/$defs/text"},
+        "frame": {"$ref": "#/$defs/slug"}
+      }
+    },
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_review", "implementation", "verification"],
+      "properties": {
+        "source_review": {"enum": ["draft", "source-checked", "disputed"]},
+        "implementation": {"enum": ["unmapped", "mapped", "implemented"]},
+        "verification": {"enum": ["uncovered", "covered", "verified"]}
+      }
+    },
+    "obligation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "statement", "modality", "subject", "conditions", "action", "qualifiers",
+        "sources", "status", "implementation_mappings", "verification_mappings"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "statement": {"$ref": "#/$defs/text"},
+        "modality": {"enum": ["shall", "should", "may", "descriptive", "derived"]},
+        "subject": {"$ref": "#/$defs/slug"},
+        "conditions": {"$ref": "#/$defs/slug_list"},
+        "action": {"$ref": "#/$defs/slug"},
+        "qualifiers": {"$ref": "#/$defs/slug_list"},
+        "sources": {"$ref": "#/$defs/nonempty_slug_list"},
+        "status": {"$ref": "#/$defs/status"},
+        "implementation_mappings": {"$ref": "#/$defs/slug_list"},
+        "verification_mappings": {"$ref": "#/$defs/slug_list"}
+      }
+    },
+    "state_variable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "owner", "key", "states", "initial"],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "owner": {"$ref": "#/$defs/slug"},
+        "key": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "#/$defs/text"}},
+        "states": {"$ref": "#/$defs/nonempty_slug_list"},
+        "initial": {"$ref": "#/$defs/slug"}
+      }
+    },
+    "transition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "state_variable", "from", "event", "conditions", "actions", "to", "obligations"
+      ],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "state_variable": {"$ref": "#/$defs/slug"},
+        "from": {"$ref": "#/$defs/slug"},
+        "event": {"$ref": "#/$defs/slug"},
+        "conditions": {"$ref": "#/$defs/slug_list"},
+        "actions": {"$ref": "#/$defs/nonempty_slug_list"},
+        "to": {"$ref": "#/$defs/slug"},
+        "obligations": {"$ref": "#/$defs/nonempty_slug_list"}
+      }
+    },
+    "exchange_step": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "actor", "event", "obligations"],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "actor": {"$ref": "#/$defs/slug"},
+        "event": {"$ref": "#/$defs/slug"},
+        "peer": {"$ref": "#/$defs/slug"},
+        "frame": {"$ref": "#/$defs/slug"},
+        "obligations": {"$ref": "#/$defs/slug_list"}
+      }
+    },
+    "exchange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "participants", "steps"],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "participants": {
+          "type": "array", "minItems": 2, "uniqueItems": true, "items": {"$ref": "#/$defs/slug"}
+        },
+        "steps": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/exchange_step"}}
+      }
+    },
+    "invariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "statement", "sources", "obligations"],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "statement": {"$ref": "#/$defs/text"},
+        "sources": {"$ref": "#/$defs/nonempty_slug_list"},
+        "obligations": {"$ref": "#/$defs/nonempty_slug_list"}
+      }
+    },
+    "implementation_mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "obligations", "resolution"],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "obligations": {"$ref": "#/$defs/nonempty_slug_list"},
+        "resolution": {"enum": ["resolved", "gap"]},
+        "relation": {"enum": ["realizes", "partial", "contradicts"]},
+        "path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+        "symbol": {"$ref": "#/$defs/text"},
+        "gap": {"$ref": "#/$defs/text"}
+      },
+      "oneOf": [
+        {
+          "properties": {"resolution": {"const": "resolved"}},
+          "required": ["path", "symbol", "relation"],
+          "not": {"required": ["gap"]}
+        },
+        {
+          "properties": {"resolution": {"const": "gap"}},
+          "required": ["gap"],
+          "not": {"anyOf": [{"required": ["path"]}, {"required": ["symbol"]}, {"required": ["relation"]}]}
+        }
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["command", "result"],
+      "properties": {
+        "command": {"$ref": "#/$defs/text"},
+        "result": {"enum": ["pass", "fail"]}
+      }
+    },
+    "verification_mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "obligations", "category", "resolution"],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "obligations": {"$ref": "#/$defs/nonempty_slug_list"},
+        "category": {
+          "enum": [
+            "unit",
+            "module",
+            "protocol",
+            "queueing",
+            "packet",
+            "networks",
+            "statistical",
+            "validation",
+            "fingerprint",
+            "speed",
+            "features",
+            "misc"
+          ]
+        },
+        "resolution": {"enum": ["resolved", "gap"]},
+        "path": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"},
+        "configuration": {"$ref": "#/$defs/text"},
+        "selector": {"$ref": "#/$defs/text"},
+        "evidence": {"$ref": "#/$defs/evidence"},
+        "gap": {"$ref": "#/$defs/text"}
+      },
+      "oneOf": [
+        {
+          "properties": {"resolution": {"const": "resolved"}},
+          "required": ["path", "configuration", "selector"],
+          "not": {"required": ["gap"]}
+        },
+        {
+          "properties": {"resolution": {"const": "gap"}},
+          "required": ["gap"],
+          "not": {
+            "anyOf": [
+              {"required": ["path"]},
+              {"required": ["configuration"]},
+              {"required": ["selector"]},
+              {"required": ["evidence"]}
+            ]
+          }
+        }
+      ]
+    },
+    "finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "kind", "disposition", "detail", "obligations"],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "kind": {"enum": ["confirmation", "omission", "qualification", "disagreement"]},
+        "disposition": {"enum": ["included", "excluded", "disputed", "recorded"]},
+        "detail": {"$ref": "#/$defs/text"},
+        "obligations": {"$ref": "#/$defs/slug_list"}
+      }
+    },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "pass", "date", "method", "sources", "findings"],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "pass": {"enum": [1, 2]},
+        "date": {"type": "string", "format": "date"},
+        "method": {"$ref": "#/$defs/text"},
+        "sources": {"$ref": "#/$defs/nonempty_slug_list"},
+        "findings": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/finding"}}
+      }
+    }
+  }
+}

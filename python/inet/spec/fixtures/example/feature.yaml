@@ -1,0 +1,160 @@
+schema_version: inet-feature-ir/v1
+authority:
+  status: non-authoritative
+  notice: This synthetic manifest is an interpreted engineering aid, not protocol authority.
+feature:
+  id: sample-handshake
+  title: Synthetic two-party handshake
+  domain: example-protocol
+  summary: A license-safe fixture for validating one request and acceptance exchange.
+  scope:
+    includes:
+      - One successful offer and acceptance.
+    excludes:
+      - Retries and cancellation.
+sources:
+  - id: example-clause
+    document: example-1
+    revision: "1"
+    node_id: example-1:clause:1.1
+    locator: example-1@0:27
+    reviewed_text_sha256: 00c4453c976639983795e6d2dfd59fbd70daf16006513637700c03964f92af03
+roles:
+  - id: sender
+    description: Offers a synthetic session.
+  - id: receiver
+    description: Accepts a synthetic session.
+conditions:
+  - id: peer-ready
+    description: Both synthetic peers are ready.
+actions:
+  - id: send-offer
+    kind: send
+    frame: offer-frame
+    description: Send an offer carrying a session key.
+  - id: accept-offer
+    kind: establish
+    frame: acceptance-frame
+    description: Accept the matching offer.
+qualifiers:
+  - id: matching-session-key
+    description: The acceptance identifies the offered session key.
+obligations:
+  - id: sender-offers-ready-session
+    statement: The sender sends an offer when the peer is ready.
+    modality: shall
+    subject: sender
+    conditions: [peer-ready]
+    action: send-offer
+    qualifiers: []
+    sources: [example-clause]
+    status:
+      source_review: source-checked
+      implementation: implemented
+      verification: verified
+    implementation_mappings: [handshake-implementation]
+    verification_mappings: [handshake-success-test]
+  - id: receiver-accepts-matching-session
+    statement: The receiver establishes only the session identified by the offer.
+    modality: shall
+    subject: receiver
+    conditions: [peer-ready]
+    action: accept-offer
+    qualifiers: [matching-session-key]
+    sources: [example-clause]
+    status:
+      source_review: source-checked
+      implementation: implemented
+      verification: verified
+    implementation_mappings: [handshake-implementation]
+    verification_mappings: [handshake-success-test]
+state_variables:
+  - id: sender-session-state
+    owner: sender
+    key: [peer, session key]
+    states: [idle, established]
+    initial: idle
+  - id: receiver-session-state
+    owner: receiver
+    key: [peer, session key]
+    states: [idle, established]
+    initial: idle
+transitions:
+  - id: sender-offers-transition
+    state_variable: sender-session-state
+    from: idle
+    event: start-session
+    conditions: [peer-ready]
+    actions: [send-offer]
+    to: established
+    obligations: [sender-offers-ready-session]
+  - id: receiver-accepts-transition
+    state_variable: receiver-session-state
+    from: idle
+    event: offer-received
+    conditions: [peer-ready]
+    actions: [accept-offer]
+    to: established
+    obligations: [receiver-accepts-matching-session]
+exchanges:
+  - id: successful-handshake-exchange
+    participants: [sender, receiver]
+    steps:
+      - id: sender-transmits-offer
+        actor: sender
+        event: offer-transmitted
+        peer: receiver
+        frame: offer-frame
+        obligations: [sender-offers-ready-session]
+      - id: receiver-transmits-acceptance
+        actor: receiver
+        event: acceptance-transmitted
+        peer: sender
+        frame: acceptance-frame
+        obligations: [receiver-accepts-matching-session]
+invariants:
+  - id: established-session-keys-match
+    statement: Both established endpoint states use the same peer and session key.
+    sources: [example-clause]
+    obligations: [sender-offers-ready-session, receiver-accepts-matching-session]
+implementation_mappings:
+  - id: handshake-implementation
+    obligations: [sender-offers-ready-session, receiver-accepts-matching-session]
+    resolution: resolved
+    relation: realizes
+    path: src/Handshake.txt
+    symbol: Handshake::offer
+verification_mappings:
+  - id: handshake-success-test
+    obligations: [sender-offers-ready-session, receiver-accepts-matching-session]
+    category: protocol
+    resolution: resolved
+    path: tests/Handshake.test
+    configuration: Example
+    selector: sample_handshake_success
+    evidence:
+      command: run-example-test --filter sample_handshake_success
+      result: pass
+reviews:
+  - id: initial-source-check
+    pass: 1
+    date: "2026-09-03"
+    method: Compare each paraphrased obligation with the synthetic source node.
+    sources: [example-clause]
+    findings:
+      - id: initial-obligations-confirmed
+        kind: confirmation
+        disposition: included
+        detail: Both atomic obligations are supported by the synthetic source.
+        obligations: [sender-offers-ready-session, receiver-accepts-matching-session]
+  - id: qualification-source-check
+    pass: 2
+    date: "2026-09-03"
+    method: Re-read the source for omitted conditions and over-broad statements.
+    sources: [example-clause]
+    findings:
+      - id: retry-behavior-omitted
+        kind: omission
+        disposition: excluded
+        detail: Retry behavior is outside this fixture and is recorded in feature scope.
+        obligations: []
