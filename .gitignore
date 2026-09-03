@@ -9,3 +9,4 @@ standards/RFCs/catalog.json
 # ignore backup and temp files
 *~
 /tmp/
+/graphify-out/
