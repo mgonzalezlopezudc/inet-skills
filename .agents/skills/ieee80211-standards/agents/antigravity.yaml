@@ -1,4 +1,4 @@
 interface:
   display_name: "IEEE 802.11 Standards"
-  short_description: "Search repository IEEE 802.11 standards"
-  default_prompt: "Use $ieee80211-standards to find and cite the IEEE 802.11 clauses that govern this question."
+  short_description: "Navigate IEEE 802.11 structure, definitions, and references"
+  default_prompt: "Use $ieee80211-standards to retrieve, trace, verify, and cite the exact IEEE 802.11 clauses, objects, definitions, and cross-references that govern this question."

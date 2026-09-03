@@ -1,2 +1,1 @@
-"""Utilities for preprocessing local standards documents."""
-
+"""Build and navigate the local structural standards corpus."""

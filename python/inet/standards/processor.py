@@ -1,67 +1,85 @@
-import argparse
+"""Extraction, publication, and query facade for the standards corpus."""
+
+from __future__ import annotations
+
 import hashlib
 import json
-import os
-import platform
 import re
-import shutil
 import sqlite3
 import subprocess
-import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
+try:
+    from . import corpus
+    from . import index as structural_index
+    from .model import DocumentKind, StandardDocument
+    from .semantics import analyze_semantics
+    from .structure import StructureAnalysis, analyze_structure
+except ImportError:
+    import corpus
+    import index as structural_index
+    from model import DocumentKind, StandardDocument
+    from semantics import analyze_semantics
+    from structure import StructureAnalysis, analyze_structure
 
-PIPELINE_VERSION = "2"
+
 DEFAULT_STANDARDS_DIR = Path("standards")
 DEFAULT_OUTPUT_DIR = DEFAULT_STANDARDS_DIR / "processed"
-PDFTOTEXT_ARGS = ["-layout"]
+EXTRACTOR_IMPLEMENTATION = "poppler-pdftotext"
+EXTRACTOR_VERSION = "1"
+PDFTOTEXT_ARGS = ("-layout",)
 LICENSE_FOOTER_RE = re.compile(
-    r"^\s*Authorized licensed use limited to: .* Downloaded on .* IEEE Xplore\. Restrictions apply\.\s*$"
+    r"^\s*Authorized licensed use limited to: .* Downloaded on .* "
+    r"IEEE Xplore\. Restrictions apply\.\s*$"
 )
-TABLE_FIGURE_RE = re.compile(r"^\s*(Table|Figure)\s+([A-Z]?\d+(?:-\d+)?|[A-Z]-\d+)\.?\s*[-\u2013\u2014.]?\s*(.{0,180})\s*$")
-NUMBERED_CLAUSE_RE = re.compile(r"^\s*(\d{1,2}(?:\.\d+){1,8})\s+([A-Za-z][^.\n]{2,180})\s*$")
-ANNEX_CLAUSE_RE = re.compile(r"^\s*([A-Z](?:\.\d+){1,8})\s+([A-Za-z][^.\n]{2,180})\s*$")
-TOC_LEADER_RE = re.compile(r"\.{4,}\s*\d+\s*$")
 
 
-@dataclass
-class Heading:
-    kind: str
-    label: str
-    heading: str
+@dataclass(frozen=True)
+class DocumentProfile:
+    document_id: str
+    title: str
+    revision: str
+    kind: DocumentKind
+    amends: tuple[str, ...] = ()
 
 
-@dataclass
-class Chunk:
-    doc_id: str
-    chunk_id: str
-    kind: str
-    label: str
-    heading: str
-    page_start: int
-    page_end: int
-    text: str
-
-    def to_json(self):
-        return {
-            "doc_id": self.doc_id,
-            "chunk_id": self.chunk_id,
-            "kind": self.kind,
-            "label": self.label,
-            "heading": self.heading,
-            "page_start": self.page_start,
-            "page_end": self.page_end,
-            "text": self.text,
-        }
+# Reviewed identity contracts. Supporting PDFs are deliberately not auto-ingested
+# by the IEEE 802.11 structural recognizer.
+DOCUMENT_PROFILES = {
+    "80211ax-2024.pdf": DocumentProfile(
+        document_id="ieee80211-2024",
+        title="IEEE Std 802.11-2024",
+        revision="2024",
+        kind=DocumentKind.BASE_STANDARD,
+    ),
+    "80211be-2024.pdf": DocumentProfile(
+        document_id="ieee80211be-2024",
+        title="IEEE Std 802.11be-2024",
+        revision="2024",
+        kind=DocumentKind.AMENDMENT,
+        amends=("ieee80211-2024",),
+    ),
+}
 
 
-def discover_pdfs(standards_dir):
-    return sorted(Path(standards_dir).glob("*.pdf"))
+def discover_pdfs(standards_dir: Path) -> list[Path]:
+    root = Path(standards_dir)
+    return [root / name for name in DOCUMENT_PROFILES if (root / name).is_file()]
 
 
-def sha256_file(path):
+def profile_for_pdf(path: Path) -> DocumentProfile:
+    try:
+        return DOCUMENT_PROFILES[Path(path).name]
+    except KeyError as error:
+        supported = ", ".join(DOCUMENT_PROFILES)
+        raise ValueError(
+            f"no reviewed document profile for {Path(path).name}; supported PDFs: {supported}"
+        ) from error
+
+
+def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with Path(path).open("rb") as stream:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
@@ -69,58 +87,58 @@ def sha256_file(path):
     return digest.hexdigest()
 
 
-def run_command(args):
-    return subprocess.run(args, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+def run_command(args: list[str]) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        args, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
 
 
-def command_text(args):
+def command_text(args: list[str]) -> str:
     completed = run_command(args)
-    return (completed.stdout + completed.stderr).decode("utf-8", errors="replace").strip()
+    return (completed.stdout + completed.stderr).decode(
+        "utf-8", errors="replace"
+    ).strip()
 
 
-def tool_version(name):
+def tool_version(name: str) -> str:
     try:
-        first_line = command_text([name, "-v"]).splitlines()[0]
-        return first_line
+        return command_text([name, "-v"]).splitlines()[0]
     except Exception as error:
         return f"unavailable: {error}"
 
 
-def pdfinfo(path):
-    info = {}
-    text = command_text(["pdfinfo", str(path)])
-    for line in text.splitlines():
-        if ":" not in line:
-            continue
-        key, value = line.split(":", 1)
-        info[key.strip()] = value.strip()
-    return info
+def pdfinfo(path: Path) -> dict[str, str]:
+    values = {}
+    for line in command_text(["pdfinfo", str(path)]).splitlines():
+        if ":" in line:
+            key, value = line.split(":", 1)
+            values[key.strip()] = value.strip()
+    return values
 
 
-def parse_page_spec(page_spec):
-    if not page_spec:
+def parse_page_spec(page_spec: str | None) -> tuple[int, ...] | None:
+    if page_spec is None:
         return None
-    pages = []
-    for part in page_spec.split(","):
-        part = part.strip()
-        if not part:
-            continue
-        if "-" in part:
-            start_text, end_text = part.split("-", 1)
-            start = int(start_text)
-            end = int(end_text)
+    pages: list[int] = []
+    for component in page_spec.split(","):
+        component = component.strip()
+        if not component:
+            raise ValueError("page specification contains an empty component")
+        if "-" in component:
+            start_text, end_text = component.split("-", 1)
+            start, end = int(start_text), int(end_text)
             if start <= 0 or end < start:
-                raise ValueError(f"Invalid page range: {part}")
+                raise ValueError(f"invalid page range: {component}")
             pages.extend(range(start, end + 1))
         else:
-            page = int(part)
+            page = int(component)
             if page <= 0:
-                raise ValueError(f"Invalid page number: {part}")
+                raise ValueError(f"invalid page number: {component}")
             pages.append(page)
-    return sorted(dict.fromkeys(pages))
+    return tuple(sorted(set(pages)))
 
 
-def contiguous_ranges(values):
+def contiguous_ranges(values: tuple[int, ...]) -> list[tuple[int, int]]:
     if not values:
         return []
     ranges = []
@@ -135,443 +153,410 @@ def contiguous_ranges(values):
     return ranges
 
 
-def normalize_text(text):
+def normalize_text(text: str) -> str:
     return text.replace("\r\n", "\n").replace("\r", "\n")
 
 
-def extract_pdf_text(pdf_path, pages=None):
-    if pages is None:
-        completed = run_command(["pdftotext", *PDFTOTEXT_ARGS, str(pdf_path), "-"])
-        return normalize_text(completed.stdout.decode("utf-8", errors="replace")), None
-
-    segments = []
-    for start, end in contiguous_ranges(pages):
-        completed = run_command(["pdftotext", *PDFTOTEXT_ARGS, "-f", str(start), "-l", str(end), str(pdf_path), "-"])
-        segment = normalize_text(completed.stdout.decode("utf-8", errors="replace")).rstrip("\f")
-        segments.append(segment)
-    return "\f".join(segments), pages
-
-
-def split_pages(text):
-    pages = text.split("\f")
-    if pages and pages[-1] == "":
-        pages = pages[:-1]
-    return pages
-
-
-def clean_page_text(text):
-    lines = []
-    for line in normalize_text(text).splitlines():
-        if is_license_footer_line(line):
-            continue
-        lines.append(line.rstrip())
-    return "\n".join(lines).strip()
-
-
-def is_license_footer_line(line):
+def is_license_footer_line(line: str) -> bool:
     stripped = line.strip()
-    if LICENSE_FOOTER_RE.match(stripped):
-        return True
-    footer_fragments = [
-        "Authorized licensed use limited to:",
-        "IEEE Xplore. Restrictions apply.",
-        "Downloaded onrights reserved.",
-    ]
-    if any(fragment in stripped for fragment in footer_fragments):
-        return True
-    if re.search(r"©\s+\d{4}\s+IEEE\. All", stripped):
-        return True
-    if re.search(r"Downloaded on .* IEEE Xplore", stripped):
-        return True
-    return stripped == "Copyright"
-
-
-def is_probable_toc_line(line):
-    return bool(TOC_LEADER_RE.search(line)) or line.count(".") > 12
-
-
-def detect_heading(line):
-    stripped = line.strip()
-    if len(stripped) < 5 or is_probable_toc_line(stripped):
-        return None
-
-    match = TABLE_FIGURE_RE.match(stripped)
-    if match:
-        kind = match.group(1).lower()
-        label = f"{match.group(1)} {match.group(2)}"
-        title = match.group(3).strip()
-        heading = f"{label} {title}".strip()
-        return Heading(kind=kind, label=label, heading=heading)
-
-    match = NUMBERED_CLAUSE_RE.match(stripped)
-    if match:
-        label = match.group(1)
-        title = match.group(2).strip()
-        return Heading(kind="clause", label=label, heading=f"{label} {title}")
-
-    match = ANNEX_CLAUSE_RE.match(stripped)
-    if match:
-        label = match.group(1)
-        title = match.group(2).strip()
-        return Heading(kind="clause", label=label, heading=f"{label} {title}")
-
-    return None
-
-
-def make_page_numbers(page_count, requested_pages):
-    if requested_pages is not None:
-        return requested_pages
-    return list(range(1, page_count + 1))
-
-
-def chunk_pages(doc_id, pages):
-    chunks = []
-    current = None
-    current_lines = []
-    current_start = None
-    current_end = None
-
-    def flush():
-        nonlocal current, current_lines, current_start, current_end
-        if current is None or current_start is None:
-            current = None
-            current_lines = []
-            return
-        text = "\n".join(current_lines).strip()
-        if text:
-            chunk_id = f"{doc_id}:chunk:{len(chunks) + 1:05d}"
-            chunks.append(Chunk(
-                doc_id=doc_id,
-                chunk_id=chunk_id,
-                kind=current.kind,
-                label=current.label,
-                heading=current.heading,
-                page_start=current_start,
-                page_end=current_end,
-                text=text,
-            ))
-        current = None
-        current_lines = []
-        current_start = None
-        current_end = None
-
-    for page_number, page_text in pages:
-        cleaned = clean_page_text(page_text)
-        if not cleaned:
-            continue
-        if current is None:
-            current = Heading(kind="page", label=f"Page {page_number}", heading=f"Page {page_number}")
-            current_start = page_number
-        current_end = page_number
-
-        for line in cleaned.splitlines():
-            heading = detect_heading(line)
-            if heading:
-                flush()
-                current = heading
-                current_start = page_number
-                current_end = page_number
-            current_lines.append(line)
-
-    flush()
-    return chunks
-
-
-def ensure_fts5_available():
-    connection = sqlite3.connect(":memory:")
-    try:
-        connection.execute("CREATE VIRTUAL TABLE x USING fts5(body)")
-    finally:
-        connection.close()
-
-
-def prepare_output_dirs(output_dir):
-    output_dir = Path(output_dir)
-    for subdir in ["text", "pages", "chunks"]:
-        (output_dir / subdir).mkdir(parents=True, exist_ok=True)
-    return output_dir
-
-
-def write_doc_artifacts(output_dir, doc_id, text, page_numbers):
-    output_dir = Path(output_dir)
-    text_path = output_dir / "text" / f"{doc_id}.txt"
-    text_path.write_text(text, encoding="utf-8")
-
-    pages = split_pages(text)
-    if len(pages) != len(page_numbers):
-        raise RuntimeError(f"{doc_id}: extracted {len(pages)} pages, expected {len(page_numbers)}")
-
-    page_dir = output_dir / "pages" / doc_id
-    if page_dir.exists():
-        shutil.rmtree(page_dir)
-    page_dir.mkdir(parents=True)
-    numbered_pages = list(zip(page_numbers, pages))
-    for page_number, page_text in numbered_pages:
-        (page_dir / f"page-{page_number:04d}.txt").write_text(page_text.strip() + "\n", encoding="utf-8")
-
-    chunks = chunk_pages(doc_id, numbered_pages)
-    chunk_path = output_dir / "chunks" / f"{doc_id}.jsonl"
-    with chunk_path.open("w", encoding="utf-8") as stream:
-        for chunk in chunks:
-            stream.write(json.dumps(chunk.to_json(), ensure_ascii=False) + "\n")
-
-    return {
-        "text": str(text_path),
-        "pages": str(page_dir),
-        "chunks": str(chunk_path),
-        "chunk_count": len(chunks),
-        "page_count": len(numbered_pages),
-    }, chunks
-
-
-def build_sqlite_index(output_dir, chunks_by_doc, documents):
-    ensure_fts5_available()
-    index_path = Path(output_dir) / "index.sqlite"
-    if index_path.exists():
-        index_path.unlink()
-    connection = sqlite3.connect(index_path)
-    try:
-        connection.execute("CREATE TABLE documents (doc_id TEXT PRIMARY KEY, pdf_path TEXT, sha256 TEXT, title TEXT, pages INTEGER)")
-        connection.execute(
-            "CREATE TABLE chunks ("
-            "doc_id TEXT NOT NULL, chunk_id TEXT PRIMARY KEY, kind TEXT NOT NULL, label TEXT, "
-            "heading TEXT, page_start INTEGER NOT NULL, page_end INTEGER NOT NULL, text TEXT NOT NULL)"
-        )
-        connection.execute("CREATE VIRTUAL TABLE chunks_fts USING fts5(heading, text, content='chunks', content_rowid='rowid')")
-        for document in documents:
-            connection.execute(
-                "INSERT INTO documents(doc_id, pdf_path, sha256, title, pages) VALUES (?, ?, ?, ?, ?)",
-                (document["doc_id"], document["pdf_path"], document["sha256"], document.get("title", ""), document.get("pages_total", 0)),
-            )
-        for chunks in chunks_by_doc.values():
-            for chunk in chunks:
-                cursor = connection.execute(
-                    "INSERT INTO chunks(doc_id, chunk_id, kind, label, heading, page_start, page_end, text) "
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    (chunk.doc_id, chunk.chunk_id, chunk.kind, chunk.label, chunk.heading, chunk.page_start, chunk.page_end, chunk.text),
-                )
-                connection.execute(
-                    "INSERT INTO chunks_fts(rowid, heading, text) VALUES (?, ?, ?)",
-                    (cursor.lastrowid, chunk.heading, chunk.text),
-                )
-        connection.commit()
-    finally:
-        connection.close()
-    return index_path
-
-
-def write_manifest(output_dir, documents, page_spec):
-    manifest = {
-        "pipeline_version": PIPELINE_VERSION,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
-        "python_version": platform.python_version(),
-        "tool_versions": {
-            "pdftotext": tool_version("pdftotext"),
-            "pdfinfo": tool_version("pdfinfo"),
-        },
-        "extraction": {
-            "pdftotext_args": PDFTOTEXT_ARGS,
-            "page_spec": page_spec,
-        },
-        "documents": documents,
-    }
-    manifest_path = Path(output_dir) / "manifest.json"
-    manifest_path.write_text(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    return manifest
-
-
-def load_manifest(output_dir):
-    path = Path(output_dir) / "manifest.json"
-    if not path.exists():
-        return None
-    return json.loads(path.read_text(encoding="utf-8"))
-
-
-def expected_pdf_entries(pdf_paths):
-    entries = []
-    for pdf_path in pdf_paths:
-        info = pdfinfo(pdf_path)
-        entries.append({
-            "doc_id": pdf_path.stem,
-            "pdf_path": str(pdf_path),
-            "sha256": sha256_file(pdf_path),
-            "pages_total": int(info.get("Pages", "0")),
-            "title": info.get("Title", ""),
-        })
-    return entries
-
-
-def artifacts_exist(output_dir, document):
-    doc_id = document["doc_id"]
-    return (
-        (Path(output_dir) / "text" / f"{doc_id}.txt").exists()
-        and (Path(output_dir) / "pages" / doc_id).is_dir()
-        and (Path(output_dir) / "chunks" / f"{doc_id}.jsonl").exists()
-        and (Path(output_dir) / "index.sqlite").exists()
+    return bool(
+        LICENSE_FOOTER_RE.match(stripped)
+        or "Authorized licensed use limited to:" in stripped
+        or "IEEE Xplore. Restrictions apply." in stripped
+        or "Downloaded onrights reserved." in stripped
+        or re.search(r"©\s+\d{4}\s+IEEE\. All", stripped)
+        or re.search(r"Downloaded on .* IEEE Xplore", stripped)
+        or stripped == "Copyright"
     )
 
 
-def is_fresh(output_dir, manifest, expected_documents, page_spec):
-    if not manifest:
-        return False
-    if manifest.get("pipeline_version") != PIPELINE_VERSION:
-        return False
-    if manifest.get("extraction", {}).get("pdftotext_args") != PDFTOTEXT_ARGS:
-        return False
-    if manifest.get("extraction", {}).get("page_spec") != page_spec:
-        return False
-    actual = {document["doc_id"]: document for document in manifest.get("documents", [])}
-    expected = {document["doc_id"]: document for document in expected_documents}
-    if set(actual) != set(expected):
-        return False
-    for doc_id, expected_document in expected.items():
-        actual_document = actual[doc_id]
-        if actual_document.get("sha256") != expected_document.get("sha256"):
-            return False
-        if not artifacts_exist(output_dir, actual_document):
-            return False
-    return True
+def clean_page_text(text: str) -> str:
+    lines = [
+        line.rstrip()
+        for line in normalize_text(text).splitlines()
+        if not is_license_footer_line(line)
+    ]
+    return "\n".join(lines).strip()
 
 
-def build(output_dir=DEFAULT_OUTPUT_DIR, standards_dir=DEFAULT_STANDARDS_DIR, pdfs=None, page_spec=None, force=False):
-    pdf_paths = [Path(pdf) for pdf in pdfs] if pdfs else discover_pdfs(standards_dir)
-    if not pdf_paths:
-        raise RuntimeError(f"No PDF files found in {standards_dir}")
-
-    requested_pages = parse_page_spec(page_spec)
-    expected_documents = expected_pdf_entries(pdf_paths)
-    manifest = load_manifest(output_dir)
-    if not force and is_fresh(output_dir, manifest, expected_documents, page_spec):
-        return {"status": "fresh", "documents": manifest["documents"], "output_dir": str(output_dir)}
-
-    output_dir = prepare_output_dirs(output_dir)
-    documents = []
-    chunks_by_doc = {}
-    for pdf_path, expected in zip(pdf_paths, expected_documents):
-        doc_id = expected["doc_id"]
-        text, extracted_pages = extract_pdf_text(pdf_path, requested_pages)
-        pages = split_pages(text)
-        page_numbers = make_page_numbers(len(pages), extracted_pages)
-        artifacts, chunks = write_doc_artifacts(output_dir, doc_id, text, page_numbers)
-        document = dict(expected)
-        document.update({
-            "pdf_path": str(pdf_path),
-            "pages_generated": len(page_numbers),
-            "artifacts": artifacts,
-        })
-        documents.append(document)
-        chunks_by_doc[doc_id] = chunks
-
-    build_sqlite_index(output_dir, chunks_by_doc, documents)
-    write_manifest(output_dir, documents, page_spec)
-    return {"status": "built", "documents": documents, "output_dir": str(output_dir)}
+def split_pages(text: str) -> list[str]:
+    pages = normalize_text(text).split("\f")
+    if pages and pages[-1] == "":
+        pages.pop()
+    return pages
 
 
-def fts_query(user_query):
-    tokens = re.findall(r"[\w]+", user_query, flags=re.UNICODE)
-    if not tokens:
-        raise ValueError("Search query did not contain any searchable terms")
-    return " AND ".join(tokens)
-
-
-def search(output_dir=DEFAULT_OUTPUT_DIR, query=None, limit=10):
-    if not query:
-        raise ValueError("Missing search query")
-    index_path = Path(output_dir) / "index.sqlite"
-    if not index_path.exists():
-        raise RuntimeError(f"Missing index: {index_path}")
-    connection = sqlite3.connect(index_path)
-    connection.row_factory = sqlite3.Row
-    try:
-        sql = (
-            "SELECT c.doc_id, c.chunk_id, c.kind, c.label, c.heading, c.page_start, c.page_end, "
-            "snippet(chunks_fts, 1, '[', ']', '...', 24) AS snippet, bm25(chunks_fts) AS score "
-            "FROM chunks_fts JOIN chunks c ON chunks_fts.rowid = c.rowid "
-            "WHERE chunks_fts MATCH ? ORDER BY score LIMIT ?"
+def extract_pdf_pages(
+    pdf_path: Path, pages: tuple[int, ...] | None, pdf_page_count: int
+) -> list[tuple[int, str]]:
+    page_numbers = pages or tuple(range(1, pdf_page_count + 1))
+    if page_numbers and page_numbers[-1] > pdf_page_count:
+        raise ValueError(
+            f"requested PDF page {page_numbers[-1]} exceeds {pdf_page_count} pages"
         )
-        return [dict(row) for row in connection.execute(sql, (fts_query(query), limit))]
-    finally:
-        connection.close()
+    extracted: list[tuple[int, str]] = []
+    for start, end in contiguous_ranges(page_numbers):
+        completed = run_command(
+            [
+                "pdftotext",
+                *PDFTOTEXT_ARGS,
+                "-f",
+                str(start),
+                "-l",
+                str(end),
+                str(pdf_path),
+                "-",
+            ]
+        )
+        segment_pages = split_pages(
+            completed.stdout.decode("utf-8", errors="replace")
+        )
+        expected_numbers = list(range(start, end + 1))
+        if len(segment_pages) != len(expected_numbers):
+            raise RuntimeError(
+                f"{pdf_path.name}: extracted {len(segment_pages)} pages for PDF range "
+                f"{start}-{end}, expected {len(expected_numbers)}"
+            )
+        extracted.extend(
+            (number, clean_page_text(text))
+            for number, text in zip(expected_numbers, segment_pages)
+        )
+    return extracted
 
 
-def read_chunk_from_jsonl(output_dir, chunk_id):
-    chunks_dir = Path(output_dir) / "chunks"
-    for path in sorted(chunks_dir.glob("*.jsonl")):
-        with path.open(encoding="utf-8") as stream:
-            for line in stream:
-                chunk = json.loads(line)
-                if chunk.get("chunk_id") == chunk_id:
-                    return chunk
-    return None
+def extraction_record() -> corpus.ExtractionRecord:
+    return corpus.ExtractionRecord(
+        implementation=EXTRACTOR_IMPLEMENTATION,
+        version=EXTRACTOR_VERSION,
+        arguments=PDFTOTEXT_ARGS,
+        tool_versions=(
+            ("pdftotext", tool_version("pdftotext")),
+            ("pdfinfo", tool_version("pdfinfo")),
+            ("sqlite", sqlite3.sqlite_version),
+        ),
+    )
 
 
-def show(output_dir=DEFAULT_OUTPUT_DIR, identifier=None):
-    if not identifier:
-        raise ValueError("Missing chunk or page identifier")
-    page_match = re.match(r"^(.+):page:(\d+)$", identifier)
-    if page_match:
-        doc_id = page_match.group(1)
-        page = int(page_match.group(2))
-        page_path = Path(output_dir) / "pages" / doc_id / f"page-{page:04d}.txt"
-        if not page_path.exists():
-            raise RuntimeError(f"Missing page artifact: {page_path}")
+def expected_document(
+    pdf_path: Path, requested_pages: tuple[int, ...] | None
+) -> StandardDocument:
+    path = Path(pdf_path)
+    if not path.is_file():
+        raise FileNotFoundError(f"missing standards PDF: {path}")
+    profile = profile_for_pdf(path)
+    information = pdfinfo(path)
+    page_count = int(information.get("Pages", "0"))
+    if page_count <= 0:
+        raise RuntimeError(f"pdfinfo did not report a positive page count for {path}")
+    if requested_pages and requested_pages[-1] > page_count:
+        raise ValueError(
+            f"requested PDF page {requested_pages[-1]} exceeds {path.name}'s {page_count} pages"
+        )
+    return StandardDocument(
+        document_id=profile.document_id,
+        title=information.get("Title") or profile.title,
+        revision=profile.revision,
+        kind=profile.kind,
+        source_path=str(path.resolve()),
+        source_sha256=sha256_file(path),
+        pdf_page_count=page_count,
+        amends=profile.amends,
+        extracted_pdf_pages=requested_pages,
+    )
+
+
+def _pdf_paths(standards_dir: Path, pdfs: list[str] | None) -> list[Path]:
+    paths = [Path(pdf) for pdf in pdfs] if pdfs else discover_pdfs(standards_dir)
+    if not paths:
+        raise RuntimeError(f"no reviewed standards PDFs found in {standards_dir}")
+    for path in paths:
+        profile_for_pdf(path)
+    document_ids = [profile_for_pdf(path).document_id for path in paths]
+    if len(document_ids) != len(set(document_ids)):
+        raise ValueError("the PDF selection contains duplicate document identities")
+    return paths
+
+
+def _write_jsonl(path: Path, records) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as stream:
+        for record in records:
+            stream.write(json.dumps(record.to_dict(), ensure_ascii=False) + "\n")
+
+
+def _write_analysis(
+    layout: corpus.CorpusLayout,
+    analysis: StructureAnalysis,
+    pages: list[tuple[int, str]],
+    references,
+) -> None:
+    document_id = analysis.document.document_id
+    layout.text(document_id).parent.mkdir(parents=True, exist_ok=True)
+    layout.text(document_id).write_text(analysis.text, encoding="utf-8")
+    layout.pages(document_id).mkdir(parents=True, exist_ok=True)
+    for page_number, page_text in pages:
+        layout.page(document_id, page_number).write_text(page_text, encoding="utf-8")
+    _write_jsonl(layout.nodes(document_id), analysis.nodes)
+    _write_jsonl(layout.occurrences(document_id), analysis.occurrences)
+    _write_jsonl(layout.diagnostics(document_id), analysis.diagnostics)
+    _write_jsonl(layout.references(document_id), references)
+
+
+def _is_fresh(
+    output_dir: Path,
+    expected_documents: tuple[StandardDocument, ...],
+    extractor: corpus.ExtractionRecord,
+) -> bool:
+    try:
+        manifest = corpus.validate_complete_corpus(output_dir)
+    except (corpus.CorpusError, ValueError, OSError):
+        return False
+    return manifest.documents == expected_documents and manifest.extractor == extractor
+
+
+def build(
+    output_dir: Path = DEFAULT_OUTPUT_DIR,
+    standards_dir: Path = DEFAULT_STANDARDS_DIR,
+    pdfs: list[str] | None = None,
+    page_spec: str | None = None,
+    force: bool = False,
+) -> dict:
+    paths = _pdf_paths(Path(standards_dir), pdfs)
+    requested_pages = parse_page_spec(page_spec)
+    if requested_pages is not None and len(paths) != 1:
+        raise ValueError("--pages requires exactly one selected PDF")
+    documents = tuple(expected_document(path, requested_pages) for path in paths)
+    extractor = extraction_record()
+    if not force and _is_fresh(Path(output_dir), documents, extractor):
         return {
-            "type": "page",
-            "doc_id": doc_id,
-            "page_start": page,
-            "page_end": page,
-            "heading": f"{doc_id} page {page}",
-            "text": page_path.read_text(encoding="utf-8"),
+            "status": "fresh",
+            "output_dir": str(output_dir),
+            "documents": [document.to_dict() for document in documents],
         }
 
-    chunk = None
-    index_path = Path(output_dir) / "index.sqlite"
-    if index_path.exists():
-        connection = sqlite3.connect(index_path)
-        connection.row_factory = sqlite3.Row
+    analyses: dict[str, StructureAnalysis] = {}
+    pages_by_document: dict[str, list[tuple[int, str]]] = {}
+    with corpus.CorpusBuildTransaction(Path(output_dir)) as transaction:
+        for path, document in zip(paths, documents):
+            pages = extract_pdf_pages(
+                path, document.extracted_pdf_pages, document.pdf_page_count
+            )
+            analyses[document.document_id] = analyze_structure(document, pages)
+            pages_by_document[document.document_id] = pages
+        analyses, references_by_document = analyze_semantics(analyses)
+        for document in documents:
+            _write_analysis(
+                transaction.layout,
+                analyses[document.document_id],
+                pages_by_document[document.document_id],
+                references_by_document[document.document_id],
+            )
+        manifest = corpus.CorpusManifest(
+            generated_at=datetime.now(timezone.utc).isoformat(),
+            extractor=extractor,
+            documents=documents,
+        )
+        corpus.write_manifest(transaction.layout.root, manifest)
+        structural_index.build_index(
+            transaction.layout, manifest, analyses, references_by_document
+        )
+        published = transaction.commit()
+
+    return {
+        "status": "built",
+        "output_dir": str(published.root),
+        "documents": [
+            {
+                **document.to_dict(),
+                "node_count": len(analyses[document.document_id].nodes),
+                "occurrence_count": len(analyses[document.document_id].occurrences),
+                "diagnostic_count": len(analyses[document.document_id].diagnostics),
+                "reference_count": len(references_by_document[document.document_id]),
+            }
+            for document in documents
+        ],
+    }
+
+
+def search(
+    output_dir: Path = DEFAULT_OUTPUT_DIR,
+    query: str | None = None,
+    limit: int = 10,
+    document_id: str | None = None,
+    kind: str | None = None,
+) -> list[dict]:
+    if not query:
+        raise ValueError("missing search query")
+    return structural_index.search(
+        Path(output_dir), query, limit=limit, document_id=document_id, kind=kind
+    )
+
+
+def get(
+    output_dir: Path = DEFAULT_OUTPUT_DIR,
+    *,
+    kind: str | None = None,
+    label: str | None = None,
+    document_id: str | None = None,
+    node_id: str | None = None,
+    source_span: str | None = None,
+    include_children: bool = False,
+    include_ancestors: bool = False,
+    context_characters: int = 0,
+) -> dict:
+    if source_span is not None:
+        return structural_index.get_source_span(
+            Path(output_dir), source_span, context_characters=context_characters
+        )
+    return structural_index.get_node(
+        Path(output_dir),
+        kind=kind,
+        label=label,
+        document_id=document_id,
+        node_id=node_id,
+        include_children=include_children,
+        include_ancestors=include_ancestors,
+        context_characters=context_characters,
+    )
+
+
+def lint(
+    output_dir: Path = DEFAULT_OUTPUT_DIR,
+    *,
+    document_id: str | None = None,
+    minimum_severity: str = "warning",
+    limit: int = 100,
+) -> dict:
+    return structural_index.lint(
+        Path(output_dir),
+        document_id=document_id,
+        minimum_severity=minimum_severity,
+        limit=limit,
+    )
+
+
+def refs(
+    output_dir: Path = DEFAULT_OUTPUT_DIR,
+    *,
+    kind: str | None = None,
+    label: str | None = None,
+    document_id: str | None = None,
+    node_id: str | None = None,
+    limit: int = 100,
+) -> dict:
+    return structural_index.references(
+        Path(output_dir),
+        kind=kind,
+        label=label,
+        document_id=document_id,
+        node_id=node_id,
+        limit=limit,
+    )
+
+
+def referenced_by(
+    output_dir: Path = DEFAULT_OUTPUT_DIR,
+    *,
+    kind: str | None = None,
+    label: str | None = None,
+    document_id: str | None = None,
+    node_id: str | None = None,
+    limit: int = 100,
+) -> dict:
+    return structural_index.referenced_by(
+        Path(output_dir),
+        kind=kind,
+        label=label,
+        document_id=document_id,
+        node_id=node_id,
+        limit=limit,
+    )
+
+
+def define(
+    output_dir: Path = DEFAULT_OUTPUT_DIR,
+    *,
+    term: str,
+    document_id: str | None = None,
+) -> dict:
+    return structural_index.define(
+        Path(output_dir), term, document_id=document_id
+    )
+
+
+def status(
+    output_dir: Path = DEFAULT_OUTPUT_DIR,
+    standards_dir: Path = DEFAULT_STANDARDS_DIR,
+    pdfs: list[str] | None = None,
+) -> dict:
+    current_extractor = extraction_record()
+    paths = [Path(pdf) for pdf in pdfs] if pdfs else discover_pdfs(standards_dir)
+    expected = []
+    source_errors = []
+    for path in paths:
         try:
-            row = connection.execute("SELECT * FROM chunks WHERE chunk_id = ?", (identifier,)).fetchone()
-            if row:
-                chunk = dict(row)
-        finally:
-            connection.close()
-    if chunk is None:
-        chunk = read_chunk_from_jsonl(output_dir, identifier)
-    if chunk is None:
-        raise RuntimeError(f"Unknown chunk identifier: {identifier}")
-    chunk["type"] = "chunk"
-    return chunk
+            expected.append(expected_document(path, None))
+        except Exception as error:
+            source_errors.append({"source_path": str(path), "error": str(error)})
 
+    manifest = None
+    corpus_state = "missing"
+    corpus_error = None
+    try:
+        manifest = corpus.validate_complete_corpus(Path(output_dir))
+        corpus_state = "ready"
+    except corpus.IncompatibleCorpusError as error:
+        corpus_state = "incompatible"
+        corpus_error = str(error)
+    except corpus.CorpusError as error:
+        corpus_error = str(error)
 
-def status(output_dir=DEFAULT_OUTPUT_DIR, standards_dir=DEFAULT_STANDARDS_DIR, pdfs=None):
-    pdf_paths = [Path(pdf) for pdf in pdfs] if pdfs else discover_pdfs(standards_dir)
-    manifest = load_manifest(output_dir)
-    current_documents = expected_pdf_entries(pdf_paths) if pdf_paths else []
-    manifest_docs = {document["doc_id"]: document for document in manifest.get("documents", [])} if manifest else {}
+    counts = {}
+    if corpus_state == "ready":
+        try:
+            counts = structural_index.document_counts(Path(output_dir))
+        except Exception as error:
+            corpus_state = "incompatible"
+            corpus_error = str(error)
+
+    recorded = (
+        {document.document_id: document for document in manifest.documents}
+        if manifest is not None
+        else {}
+    )
+    extractor_state = "missing"
+    if manifest is not None:
+        extractor_state = (
+            "fresh" if manifest.extractor == current_extractor else "stale"
+        )
     rows = []
-    for document in current_documents:
-        recorded = manifest_docs.get(document["doc_id"])
-        if recorded is None:
+    for document in expected:
+        saved = recorded.get(document.document_id)
+        if saved is None:
             state = "missing"
-        elif recorded.get("sha256") != document["sha256"]:
+        elif saved.source_sha256 != document.source_sha256:
             state = "stale"
-        elif manifest.get("pipeline_version") != PIPELINE_VERSION:
+        elif extractor_state == "stale":
             state = "stale"
-        elif manifest.get("extraction", {}).get("page_spec") is not None:
+        elif saved.extracted_pdf_pages is not None:
             state = "partial"
-        elif not artifacts_exist(output_dir, recorded):
-            state = "stale"
+        elif corpus_state != "ready":
+            state = corpus_state
         else:
             state = "fresh"
-        rows.append({**document, "state": state})
+        rows.append({**document.to_dict(), "state": state})
+
     return {
         "output_dir": str(output_dir),
-        "pipeline_version": PIPELINE_VERSION,
-        "tool_versions": {
-            "pdftotext": tool_version("pdftotext"),
-            "pdfinfo": tool_version("pdfinfo"),
-            "sqlite": sqlite3.sqlite_version,
-        },
-        "manifest": manifest,
+        "corpus_state": corpus_state,
+        "corpus_error": corpus_error,
+        "format": corpus.CORPUS_FORMAT,
+        "format_version": corpus.CORPUS_FORMAT_VERSION,
+        "extractor_version": EXTRACTOR_VERSION,
+        "extractor_state": extractor_state,
+        "tool_versions": dict(current_extractor.tool_versions),
+        "manifest": manifest.to_dict() if manifest is not None else None,
         "documents": rows,
+        "corpus_documents": counts,
+        "source_errors": source_errors,
     }
