@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Fingerprint Regression"
+  short_description: "Diagnose and manage fingerprint regressions"
+  default_prompt: "Use $inet-fingerprint-regression to diagnose this fingerprint change and determine whether it is expected."

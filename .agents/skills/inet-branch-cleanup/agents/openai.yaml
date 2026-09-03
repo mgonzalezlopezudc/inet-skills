@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Branch Cleanup"
+  short_description: "Rebuild INET branches into reviewable commits"
+  default_prompt: "Use $inet-branch-cleanup to rebuild this tested INET topic branch as a reviewable commit series without changing its final tree."

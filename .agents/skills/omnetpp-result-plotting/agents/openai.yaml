@@ -1,0 +1,4 @@
+interface:
+  display_name: "OMNeT++ Result Plotting"
+  short_description: "Plot reproducible OMNeT++ simulation results"
+  default_prompt: "Use $omnetpp-result-plotting to create a reproducible non-interactive plot and derived summary for these simulation results."

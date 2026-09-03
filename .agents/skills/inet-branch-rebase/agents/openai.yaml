@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Branch Rebase"
+  short_description: "Rebase INET branches through safe checkpoints"
+  default_prompt: "Use $inet-branch-rebase to carry this tested INET topic branch across the approved upstream checkpoints."

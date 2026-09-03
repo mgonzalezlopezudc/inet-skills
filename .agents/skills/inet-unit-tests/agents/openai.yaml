@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Unit Tests"
+  short_description: "Build and run focused INET unit tests"
+  default_prompt: "Use $inet-unit-tests to build the required debug artifacts and run the focused INET unit tests for this change."

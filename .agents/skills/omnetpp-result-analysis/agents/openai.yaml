@@ -1,0 +1,4 @@
+interface:
+  display_name: "OMNeT++ Result Analysis"
+  short_description: "Query and export OMNeT++ simulation results"
+  default_prompt: "Use $omnetpp-result-analysis to query and export the relevant scalar or vector results for this comparison."

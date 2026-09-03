@@ -1,4 +1,4 @@
 interface:
   display_name: "INET 802.11 Walkthrough Writer"
   short_description: "Write concise, script-backed Wi-Fi walkthroughs"
-  default_prompt: "Use $inet-80211-walkthrough-writer only after confirming that the active checkout contains the shared analyzer and supports the walkthrough's canonical placement. Then create or improve a concise walkthrough that interprets only analysis-script-generated scalar/vector and PCAP evidence."
+  default_prompt: "Use $inet-80211-walkthrough-writer only after confirming the active checkout provides the shared analyzer, then create or improve a concise walkthrough from analysis-script-generated scalar/vector and PCAP evidence."

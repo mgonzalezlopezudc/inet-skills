@@ -1,0 +1,4 @@
+interface:
+  display_name: "OMNeT++ Event Log Analysis"
+  short_description: "Trace OMNeT++ message and event causality"
+  default_prompt: "Use $omnetpp-eventlog-analysis to reconstruct the scheduling and message-delivery causality behind this simulation behavior."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Cmdenv Log Analysis"
+  short_description: "Find behavior and events in Cmdenv logs"
+  default_prompt: "Use $inet-cmdenv-log-analysis to extract the relevant module decisions, warnings, drops, and event context from this Cmdenv log."
