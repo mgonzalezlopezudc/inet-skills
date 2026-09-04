@@ -64,6 +64,7 @@ profiles:
     extends: [core]
     skills:
       - inet-branch-cleanup
+      - inet-branch-cleanup-simple
       - inet-branch-rebase
       - inet-opp-repl
       - inet-pull-request-authoring
@@ -155,6 +156,17 @@ skills:
       display_name: INET Branch Cleanup
       short_description: Rebuild INET branches into reviewable commits
       default_prompt: Use $inet-branch-cleanup to rebuild this tested INET topic branch as a reviewable commit series without changing its final tree.
+    dependencies: [inet-opp-repl, inet-pull-request-authoring]
+    required_tools: [git, opp_repl]
+    required_checkout_files:
+      - doc/project/rule/pull-request.md
+      - doc/project/guide/change-a-baseline.md
+
+  inet-branch-cleanup-simple:
+    metadata:
+      display_name: INET Simple Branch Cleanup
+      short_description: Quickly rebuild straightforward INET commit series
+      default_prompt: Use $inet-branch-cleanup-simple to quickly rebuild this straightforward tested INET topic branch as a reviewable commit series.
     dependencies: [inet-opp-repl, inet-pull-request-authoring]
     required_tools: [git, opp_repl]
     required_checkout_files:

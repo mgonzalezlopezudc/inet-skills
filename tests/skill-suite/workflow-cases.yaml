@@ -55,7 +55,7 @@ cases:
 
   - id: fixed-base-history-cleanup
     area: branch-cleanup
-    prompt: Rebuild an opp_repl-tested fixed-base branch as a reviewable series with the same final tree.
+    prompt: Rebuild an opp_repl-tested fixed-base branch with mixed sub-hunks and temporary detours as a reviewable series with the same final tree.
     expected_skills: [inet-branch-cleanup, inet-opp-repl, inet-pull-request-authoring]
     required_gates:
       - immutable-pinned-topic
@@ -63,6 +63,18 @@ cases:
       - coverage-ledger
       - per-commit-opp-repl-evidence
       - final-tree-equality
+
+  - id: simple-fixed-base-history-cleanup
+    area: branch-cleanup
+    prompt: Quickly squash and reword a linear, tested fixed-base branch whose commit mapping is obvious and needs no detours or baseline movement.
+    expected_skills: [inet-branch-cleanup-simple, inet-opp-repl, inet-pull-request-authoring]
+    required_gates:
+      - immutable-pinned-topic
+      - single-approved-commit-plan
+      - construct-before-verification
+      - sequential-per-commit-opp-repl-sweep
+      - final-tree-equality
+      - escalation-on-complexity
 
   - id: high-risk-upstream-rebase
     area: branch-rebase

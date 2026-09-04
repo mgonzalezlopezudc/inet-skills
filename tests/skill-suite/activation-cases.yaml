@@ -59,12 +59,23 @@ cases:
 
   - id: cleanup-positive
     kind: positive
-    prompt: Rebuild this fixed-base opp_repl-tested topic branch into five reviewable commits.
+    prompt: Rebuild this fixed-base opp_repl-tested topic branch with mixed sub-hunks and temporary detours into five reviewable commits, preserving forensic checkpoints.
     expected_skills: [inet-branch-cleanup]
   - id: cleanup-negative
     kind: negative
     prompt: Rebase this branch once onto upstream with ordinary Git and no history reconstruction.
     forbidden_skills: [inet-branch-cleanup]
+
+  - id: simple-cleanup-positive
+    kind: positive
+    prompt: Quickly squash and reword this linear, fixed-base, already-tested topic branch using the obvious commit plan; it needs no baseline movement, scaffolding, or semantic repair.
+    expected_skills: [inet-branch-cleanup-simple]
+    forbidden_skills: [inet-branch-cleanup]
+  - id: simple-cleanup-negative
+    kind: negative
+    prompt: Reconstruct this branch with temporary detours, a baseline correction, and iterative regrouping after behavior mismatches.
+    expected_skills: [inet-branch-cleanup]
+    forbidden_skills: [inet-branch-cleanup-simple]
 
   - id: rebase-positive
     kind: positive
