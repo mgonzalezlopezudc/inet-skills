@@ -79,12 +79,23 @@ cases:
 
   - id: rebase-positive
     kind: positive
-    prompt: Carry this risky opp_repl-tested branch across approved upstream checkpoints and preserve every attempt.
+    prompt: Carry this risky opp_repl-tested branch with overlapping contracts across three approved upstream checkpoints, adapt conflicts, and preserve every attempt.
     expected_skills: [inet-branch-rebase]
   - id: rebase-negative
     kind: negative
     prompt: Split a fixed-base branch into clearer commits without changing upstream.
     forbidden_skills: [inet-branch-rebase]
+
+  - id: simple-rebase-positive
+    kind: positive
+    prompt: Rebase this linear, already-tested topic once onto pinned main and verify every resulting commit; the dependency map shows no contract overlap and no conflicts or baseline changes are expected.
+    expected_skills: [inet-branch-rebase-simple]
+    forbidden_skills: [inet-branch-rebase]
+  - id: simple-rebase-negative
+    kind: negative
+    prompt: Rebase this topic across intermediate upstream checkpoints where changed contracts overlap and semantic conflict adaptations are expected.
+    expected_skills: [inet-branch-rebase]
+    forbidden_skills: [inet-branch-rebase-simple]
 
   - id: build-positive
     kind: positive

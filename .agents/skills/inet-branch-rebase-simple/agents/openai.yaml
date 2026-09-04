@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Simple Branch Rebase"
+  short_description: "Quickly verify a one-shot INET branch rebase"
+  default_prompt: "Use $inet-branch-rebase-simple to replay this straightforward tested INET topic once onto pinned upstream and verify every resulting commit."

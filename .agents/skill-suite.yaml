@@ -66,6 +66,7 @@ profiles:
       - inet-branch-cleanup
       - inet-branch-cleanup-simple
       - inet-branch-rebase
+      - inet-branch-rebase-simple
       - inet-opp-repl
       - inet-pull-request-authoring
   walkthrough:
@@ -183,6 +184,18 @@ skills:
       - inet-code-authoring
       - inet-opp-repl
       - inet-pull-request-authoring
+    required_tools: [git, opp_repl]
+    required_checkout_files:
+      - doc/project/rule/pull-request.md
+      - doc/project/guide/change-a-baseline.md
+
+  inet-branch-rebase-simple:
+    metadata:
+      display_name: INET Simple Branch Rebase
+      short_description: Quickly verify a one-shot INET branch rebase
+      default_prompt: Use $inet-branch-rebase-simple to replay this straightforward tested INET topic once onto pinned upstream and verify every resulting commit.
+    dependencies: [inet-opp-repl, inet-pull-request-authoring]
+    routes_to: [inet-branch-rebase]
     required_tools: [git, opp_repl]
     required_checkout_files:
       - doc/project/rule/pull-request.md

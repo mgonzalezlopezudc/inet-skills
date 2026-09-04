@@ -78,7 +78,7 @@ cases:
 
   - id: high-risk-upstream-rebase
     area: branch-rebase
-    prompt: Rebase an opp_repl-tested topic through risky upstream checkpoints and preserve forensic attempts.
+    prompt: Rebase an opp_repl-tested topic with overlapping contracts through risky upstream checkpoints and preserve forensic attempts.
     expected_skills: [inet-branch-rebase, inet-opp-repl, inet-pull-request-authoring]
     required_gates:
       - immutable-pinned-inputs
@@ -86,3 +86,16 @@ cases:
       - preserved-attempt-branches
       - tested-safe-points
       - final-control-comparison
+
+  - id: simple-one-shot-upstream-rebase
+    area: branch-rebase
+    prompt: Rebase a linear tested topic once onto pinned upstream when dependency mapping proves no changed-contract overlap and no conflicts are expected.
+    expected_skills: [inet-branch-rebase-simple, inet-opp-repl, inet-pull-request-authoring]
+    required_gates:
+      - immutable-pinned-inputs
+      - no-overlap-admission-check
+      - valid-pinned-main-control
+      - equal-one-to-one-range-diff
+      - sequential-final-commit-verification
+      - final-union-verification
+      - escalation-on-complexity
