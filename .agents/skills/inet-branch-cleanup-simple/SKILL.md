@@ -60,8 +60,10 @@ too; this fast path has no exception ledger. Also audit the constructed series a
 
 ## Verify in one sweep
 
-Walk every output commit from oldest to newest in one uninterrupted sequential run. Use a disposable
-worktree or equivalent so the `clean` ref remains pinned at its final SHA. For each commit:
+Walk every output commit from oldest to newest in one uninterrupted sequential run. Reuse one
+verification worktree with retained build artifacts so the `clean` ref remains pinned at its final
+SHA. Apply the [incremental build recipe](../inet-opp-repl/references/incremental-builds.md);
+dispose of the worktree only after verification and evidence collection are complete. For each commit:
 
 1. Build the matching INET artifacts and run its explicitly filtered, directly related `opp_repl`
    cases. Zero executed cases is not evidence.

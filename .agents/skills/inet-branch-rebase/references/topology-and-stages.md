@@ -38,6 +38,10 @@ serial groups, where the predecessor's promoted `stage-0` point is the anchor.
 
 ## Attempts and safe points
 
+Keep the build workspaces reusable under the
+[incremental build recipe](../../inet-opp-repl/references/incremental-builds.md). Immutable attempt
+refs and evidence survive independently of the worktree used to compile and test them.
+
 For each group/checkpoint:
 
 1. Create immutable `rebase/group-<id>/attempt/<stage>-<attempt>` at the resolved anchor and apply the

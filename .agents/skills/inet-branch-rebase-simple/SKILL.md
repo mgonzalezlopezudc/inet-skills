@@ -77,7 +77,9 @@ or patch-changed commit is outside this skill. Audit the candidate against appli
 ## Verify the final series once
 
 Walk every target commit from oldest to newest in one uninterrupted sequential run, using a
-disposable worktree so `target` remains pinned at its final SHA. For each commit:
+reusable verification worktree so `target` remains pinned at its final SHA. Retain build artifacts
+under the [incremental build recipe](../inet-opp-repl/references/incremental-builds.md) throughout
+the sweep; dispose of the worktree only after verification and evidence collection. For each commit:
 
 1. Build matching INET artifacts and run explicitly filtered, directly related `opp_repl` cases.
    Zero executed cases is not evidence.

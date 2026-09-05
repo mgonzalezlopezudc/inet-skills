@@ -12,6 +12,10 @@ Choose the test category under `doc/project/rule/testing.md` and the directly re
 `TR-FOCUSED-EVIDENCE`. Read [workflow-contract.md](references/workflow-contract.md) before the first
 invocation in a workflow.
 
+For repeated history verification, read [incremental-builds.md](references/incremental-builds.md)
+before the first build. Retain compatible artifacts in reusable worktrees and build incrementally;
+fresh evidence at each stage does not require a clean rebuild.
+
 ## Capability and command discovery
 
 1. Verify `command -v opp_repl` in the active environment and record the resolved executable.

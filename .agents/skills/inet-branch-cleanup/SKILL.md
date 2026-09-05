@@ -85,6 +85,10 @@ Finalization requires `remaining` to be empty or contain only approved baseline 
 
 ## Phase 4 — Build forward
 
+Use the shared [incremental build recipe](../inet-opp-repl/references/incremental-builds.md).
+Retain one compatible build workspace across output commits, rework, and final spot checks;
+checkpoint branches preserve history without requiring new build directories or clean rebuilds.
+
 For each approved output commit:
 
 1. Author only its assigned slice. Adopt a whole file only when the group owns the whole file; otherwise apply selected hunks or hand-author the intermediate state.
