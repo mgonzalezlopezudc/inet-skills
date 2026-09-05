@@ -64,7 +64,7 @@ Use a soft evidence budget rather than a fixed invocation or token limit. Start 
 | Implementation | Production implementation, established regression and result-analysis workflows | `inet-implementer`, `inet-regression-guard`, `inet-results-analyst` |
 | Extraction | Explicit searches, inventories, filtering, and structured extraction | `inet-evidence-miner` |
 
-For active class bindings, consult [MODELS.md](../../../MODELS.md). For platform-specific runner configurations across Codex, Antigravity, and Kimi, see [platform-bindings.md](references/platform-bindings.md).
+Use the three Codex model tiers in [MODELS.md](../../../MODELS.md): reasoning first, navigation second, and implementation and extraction third. Select the tier by specialist class. For platform-specific runner configurations across Codex, Antigravity, and Kimi, see [platform-bindings.md](references/platform-bindings.md).
 
 ## Routing
 

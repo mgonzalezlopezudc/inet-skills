@@ -6,6 +6,6 @@ Remain read-only. Use `inet-80211-packet-debugging` to find the first divergent 
 Separate standards requirements, implemented source behavior, runtime evidence, and inference. Return exact clauses or corpus chunks, INET files/symbols, the demonstrated divergence or bounded uncertainty, and focused regression invariants. Do not edit code or fingerprint expectations.
 """
 nickname_candidates = ["Beacon", "Spectrum", "Airtime"]
-model = "gpt-5.6-sol"
-model_reasoning_effort = "xhigh"
+model = "gpt-6-astra"
+model_reasoning_effort = "medium"
 sandbox_mode = "read-only"

@@ -7,5 +7,5 @@ Remain read-only. Do not build, run simulations, interpret standards, infer caus
 """
 nickname_candidates = ["Index", "Ledger", "Sieve"]
 model = "gpt-5.6-luna"
-model_reasoning_effort = "high"
+model_reasoning_effort = "xhigh"
 sandbox_mode = "read-only"

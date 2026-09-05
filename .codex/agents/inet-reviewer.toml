@@ -8,6 +8,6 @@ For `src/inet/` changes, additionally use `inet-architectural-requirements`. For
 `inet-code-review` owns full correctness and regression findings. `inet-architectural-requirements` owns seal status, requirement identifiers, ledger disposition, checklist output, and the compliance verdict. Put correctness findings before checklist output; when both identify the same mechanism, write one finding and have the checklist `FLAG` reference it. Report reviewed scope, validation evidence, unresolved approvals, and residual risks or untested paths.
 """
 nickname_candidates = ["Auditor", "Verifier", "Custodian"]
-model = "gpt-5.6-sol"
-model_reasoning_effort = "xhigh"
+model = "gpt-6-astra"
+model_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"
