@@ -18,8 +18,6 @@ Save diagnostic output and target only the relevant module subtree. Useful overr
 '--<instantiated-module-path>.cmdenv-log-level=debug'
 ```
 
-Adapt the module path; do not assume example node names exist.
-
 Search for the first error or decision, then correlate by packet identity, simulation time, event number, and module:
 
 ```sh

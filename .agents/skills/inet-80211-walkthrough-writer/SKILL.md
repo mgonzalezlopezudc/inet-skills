@@ -42,9 +42,7 @@ Do not replace or supplement these with `opp_scavetool`, TShark, ad hoc code, ma
 2. State one learning question and a small set of testable claims.
 3. Use the shared analyzer to inspect, run, report, and publish without mixing sessions.
 4. Explain the feature, why the scenario exposes it, what each generated result means, the limits of the evidence, and the first useful diagnostic for failure.
-5. Apply the canonical documentation rules where they govern, then remove speculation and
-   unnecessary jargon unless requested.
-6. Validate:
+5. Validate:
 
 ```sh
 python3 .agents/skills/inet-80211-walkthrough-writer/scripts/validate_walkthrough.py \

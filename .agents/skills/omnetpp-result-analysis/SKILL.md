@@ -18,10 +18,10 @@ opp_scavetool export -f '<filter>' -F CSV-R -o <output.csv> <inputs>
 
 Use `-F CSV-R` for raw tabular data or `-F CSV-S` for scalar summary; `-F CSV` is invalid. Quote filters and do not overwrite an analysis export unless requested.
 
-1. Identify configuration/run and input files.
-2. Discover actual module/result names, types, units, and run attributes.
-3. Apply the narrowest selection and report ambiguous or empty matches.
-4. Export only required items and vector intervals.
+Before export, check the selected run IDs, module/result names, types, units, and run attributes.
+Record match counts and the requested vector interval. Report empty or ambiguous selections rather
+than broadening the filter silently; an absent recording is not a measured zero. Extraction-only
+agents return these facts and leave aggregation or causal interpretation to the assigned analyst.
 
 Distinguish scalars, vectors, statistics, and histograms. Use timestamps with captures, logs, or
 event logs when the canonical diagnosis guide requires causal correlation; aggregates alone may hide

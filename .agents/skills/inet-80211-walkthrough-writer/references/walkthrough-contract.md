@@ -84,22 +84,5 @@ hand-create an analysis table or plot, run a separate query to fill one in, or
 copy generated rows into authored prose. If scripts cannot generate a needed
 view, record the gap and improve the shared analysis machinery.
 
-## Writing rules
-
-- Lead with the conclusion; explain only the evidence needed to support it.
-- Prefer familiar words, short sentences, and one idea per paragraph.
-- Expand an acronym only if it recurs or is needed to follow the evidence.
-- Avoid raw artifact inventories, configuration dumps, generic Wi-Fi
-  background, implementation trivia, and repeated conclusions.
-- Do not make population claims from one run or event-level causal claims
-  across separate sessions.
-- State the repository working directory and keep commands directly runnable there.
-- Use repository-relative paths for artifacts and links; do not publish absolute `/home` paths.
-
-## Ready-to-publish check
-
-- Can a reader understand the feature and verdict quickly?
-- Does every claim point to current script-generated evidence?
-- Are all analysis plots, tables, statistics, and exchanges script-owned?
-- Are limitations visible without overwhelming the main result?
-- Can another developer reproduce the evidence with the shared analyzer?
+Use repository-relative artifact links; do not publish absolute `/home` paths. Keep population
+claims scoped to the sampled runs and event-level causal claims within one results session.

@@ -21,30 +21,16 @@ Use matching debug components: `opp_run_dbg`, `libINET_dbg.so`, and debug projec
    ```
 
    For automated capture, use `lldb -b -o run -o bt -- ...`. If an interactive transport handshake fails, use batch LLDB or direct Cmdenv rather than retrying unchanged.
-3. Set a targeted breakpoint before running when the path is known.
-4. At the first relevant stop, record the stop reason and full backtrace.
-5. Select the first INET/project frame exposing invalid state; inspect locals before expressions.
-6. Use conditional breakpoints or watchpoints to find the first divergence.
-7. Correlate with simulation time, event number, module, and packet/message identity.
 
-Useful commands:
+3. At the first relevant stop, capture the stop reason and backtrace before continuing. Select the
+   first INET/project frame exposing the suspicious state and inspect locals with `frame variable`
+   before evaluating expressions that may call methods. A debugger trap identifies the stop site,
+   not necessarily the defect.
+4. For a lifetime investigation, trace the object address through deletion or ownership transfer.
+   A watchpoint on a pointer variable detects reassignment, not destruction of its pointee.
 
-```lldb
-process status
-thread backtrace all
-frame select <index>
-frame variable --show-types
-source list
-breakpoint set --name <function>
-breakpoint set --file <file> --line <line>
-watchpoint set variable <variable>
-continue
-```
-
-A pointer-variable watchpoint detects reassignment, not destruction of its pointee. For dangling pointers, identify the object address while valid and break on deletion or ownership transfer.
+Correlate the stopped INET/project frame with simulation time, event number, module, and packet/message identity.
 
 Prefer side-effect-free expressions and never mutate simulation state unless the user explicitly requests an experiment. Use `inet-packet-tag-debugging` for packet metadata and the Wi-Fi debugging references for 802.11 breakpoints.
 
 Use Cmdenv by default. Use Qtenv with `lldb-dap` only when topology/animation or event-by-event interaction is necessary.
-
-Do not continue from a trap before capturing stack and locals, treat the trap frame as root cause, or patch before the evidence identifies a defect.

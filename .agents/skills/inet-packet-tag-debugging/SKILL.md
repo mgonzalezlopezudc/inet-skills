@@ -14,7 +14,9 @@ metadata, chunk, tag, and ownership model. This skill adds a first-divergence de
 4. Check sharing, ownership, and preservation across duplication, fragmentation, aggregation, and protocol conversion.
 5. Use targeted logs or LLDB at the first changing module; confirm protocol-visible effects with PCAP.
 
-Remember: peek does not consume data; pop/trim does. PCAP does not expose every internal tag, and
-debugger method calls may execute code.
+Peek leaves the packet's data offsets unchanged; pop/trim consumes or changes its visible range.
+Debugger method calls can execute code, so inspect stored fields before invoking packet methods.
+
+PCAP does not expose internal packet tags; inspect those in logs or the debugger.
 
 Return the packet identity, first divergent module/source location, relevant tag/chunk state, ownership evidence, and failure category.

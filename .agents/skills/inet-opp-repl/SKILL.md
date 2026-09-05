@@ -50,8 +50,6 @@ configuration, run, seed, time limit, and result ingredients like-for-like acros
 - Update runners: `KEEP` records no baseline movement; `INSERT` and `UPDATE` record changed
   expectations; `ERROR` records a failed update. `INSERT` or `UPDATE` is not proof that the new value
   is correct and never supplies baseline approval.
-- Preserve the first causal failure or mismatch available from the runner and the raw log path. Do
-  not turn cascaded failures into separate causes.
 
 For a machine-readable handoff, use the skill-suite
 `.agents/scripts/normalize_verification.py --runner opp_repl` adapter. Supply command, working directory,

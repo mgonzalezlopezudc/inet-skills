@@ -1,72 +1,24 @@
-# Common agent pitfalls
+# INET reviewer traps
 
-Recurring failure modes not already stated by the canonical review procedure, rules, and semantic
-checklists in `doc/project/`. Apply `doc/project/guide/review-a-code-change.md` and the selected
-canonical documents first; this reference adds concrete reviewer traps.
+Use `doc/project/guide/review-a-code-change.md` for finding thresholds and reporting.
 
-## False positives — findings agents file that are not defects
-
-### Retained state misidentified as a leak
-
-Agents frequently flag `std::map` or `std::vector` entries that are retained for the lifetime of a module as memory leaks. In INET, many modules intentionally retain state (registered protocols, interface entries, cached agreements) until `finish()`, destruction, or an applicable lifecycle-operation handler. **Before calling something a leak:** trace the owner, the real cleanup path, and whether supported model cardinality bounds growth.
-
-### Cached chunk access misidentified as a dangling pointer
-
-The chunk API returns shared `Ptr` values. An agent that sees a raw `Chunk *` derived with `.get()` from a `Ptr` returned by `peekAtFront()` may flag it as dangling merely because the packet is later modified. **Trace whether a `Ptr` owner is retained across the access:** replacing the packet's reference does not destroy the chunk while another `Ptr` owns it, but a raw pointer that outlives every such owner is unsafe.
-
-### Intentional tag clearing treated as data loss
-
-Several INET modules deliberately clear sender-local tags (e.g., `DispatchProtocolReq`, `SocketReq`) after consuming them. Agents sometimes flag this as "losing metadata needed downstream." **Verify that downstream consumers actually need the tag** before filing. In most cases the tag's contract ends at the consuming module.
-
-### Module path assumptions in unfamiliar NED compositions
-
-Agents may assert that a module lookup like `getModuleByPath("^.interfaceTable")` is fragile or broken based on a different NED composition than the one actually in use. **Resolve the NED inheritance chain and the effective network** before claiming a path is wrong.
-
-### Multi-stage initialization stage index assumptions
-
-Agents sometimes flag `stage == 1` or `stage == 2` in `initialize(int stage)` as out-of-order or invalid because they assume OMNeT++ uses only a single stage. Apply `doc/project/rule/architecture.md#ar-life-stages`, then **check `src/inet/common/InitStages.h`** to see where the module fits in the global multi-stage lifecycle before claiming an initialization stage index is wrong.
-
-## Missed findings — defects agents tend to overlook
-
-### Sibling paths not covered by a change
-
-When a change modifies one dispatch branch (e.g., the data-frame path), agents often verify that branch thoroughly but forget to check whether the management-frame, control-frame, or error-handling sibling needs the same change. **Enumerate affected siblings explicitly.**
-
-### Signal emission missing from new terminal paths
-
-A new early-return, error, or lifecycle path may skip signal emissions that the normal path performs. Agents tend to verify the happy path and miss that a subscriber will never see the completion event on the new path. **Trace every terminal route for paired signal completeness.**
-
-### Stale state after lifecycle stop/restart
-
-Agents verify runtime behavior well but often skip the lifecycle dimension. After a supported stop/start cycle, a module must re-establish its documented operational invariants without stale timers, callbacks, or transaction generations; persistent configuration or statistics need not be reset unless their contract says so. **Check whether the change introduces state that persists incorrectly across lifecycle boundaries.**
-
-### Insufficient effective initialization-stage count
-
-Apply `doc/project/rule/architecture.md#ar-life-stages`. A common missed defect is a later-stage
-branch that OMNeT++ never calls; the opposite false positive is demanding a local override when the
-base count already covers it. **Trace the inherited count and compare it with the highest named
-stage handled by the class.**
-
-### Generated code consumers not updated
-
-When a `.msg` field changes, agents verify the generated `_m.h` but often miss that downstream consumers (serializers, printers, dissectors, factories, or copy paths) still reference the old field name, type, or semantics. **Trace every consumer of the changed field.**
-
-### Ownership transfer in callbacks and notifications
-
-When a callback or listener receives an object, agents often assume it is borrowed, but INET callback APIs differ: some retain ownership at the caller while others transfer a packet or message to the callee. **Trace the concrete interface and its callers before deciding the ownership contract of any callback parameter; signal payloads remain borrowed for the emission call unless their documented contract says otherwise.**
-
-## Calibration errors — findings that use the wrong severity or scope
-
-### Minor issues filed as blockers
-
-An undeclared `@unit` on a dimensionless count or a missing `@display` icon is a convention question
-or rule violation, not automatically a severe correctness defect. Derive finding severity only as
-specified by `doc/project/guide/review-a-code-change.md`.
-
-### Architectural noncompliance reported as a correctness finding
-
-A missing serializer or a visualization dependency in protocol code is an architectural rule
-violation, not a correctness defect unless it causes runtime misbehavior. **Route these to the
-architectural checklist** (`AR-OBS-INTROSPECTION`, `AR-ORG-VIS-SPLIT`, etc.). When one mechanism is
-both, report the correctness finding once and make the checklist `FLAG` reference it as required by
-`doc/project/guide/review-a-code-change.md`.
+- Modules may retain registered protocols, interface entries, and cached agreements until
+  `finish()`, destruction, or a lifecycle handler. Distinguish bounded model state from growth under
+  peer or transaction churn.
+- Chunk APIs return shared `Ptr` values. Replacing a packet's chunk reference does not invalidate a
+  raw pointer while another `Ptr` still owns that chunk; trace the retained owners across the access.
+- `DispatchProtocolReq` and `SocketReq` can be deliberately cleared after consumption. Their
+  sender-local contract need not extend to downstream modules.
+- Resolve `getModuleByPath("^.interfaceTable")` against the effective NED composition, including
+  inheritance, rather than against another node type.
+- Check `src/inet/common/InitStages.h` and the inherited `numInitStages()` count. A later-stage
+  branch can be unreachable; a local count override can also be unnecessary when the base covers it.
+- Trace new terminal paths through paired INET signals and supported lifecycle stop/start behavior.
+  Persistent configuration or statistics need not reset unless their contract requires it.
+- A `.msg` field change reaches serializers, printers, dissectors, factories, and copy paths beyond
+  the generated `_m.h` declaration.
+- INET callback interfaces differ in packet/message ownership transfer. Signal payloads remain
+  borrowed for the emission call unless their documented contract says otherwise.
+- Route missing introspection artifacts or visualization dependencies to the architectural
+  checklist (`AR-OBS-INTROSPECTION`, `AR-ORG-VIS-SPLIT`). A demonstrated runtime defect also belongs
+  in the correctness findings, with the checklist referencing it under the canonical review guide.

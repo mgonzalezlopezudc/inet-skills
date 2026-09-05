@@ -37,7 +37,9 @@ inet_run_module_tests -m debug -f '<directly-related-filter>'
 The runner invocation must carry an explicit `-f` regex for the set selected under the canonical
 test rule. When piping through `tee`, preserve the runner's exit status with `pipefail`.
 
-Distinguish INET-library build failures, test-executable build failures, and assertion failures. Report the first relevant failure rather than counting cascades as independent causes.
+Classify the first failure as INET-library build, test-executable build, runner/setup, or test
+assertion. Record the executed-case count and the failing case; a zero-case selection is `NOT_RUN`,
+and a setup failure provides no evidence about the behavior under test.
 
 For a machine-readable handoff, preserve the raw runner output and normalize it with the skill-suite
 `.agents/scripts/normalize_verification.py --runner unit` or `--runner module` adapter. Supply the exact

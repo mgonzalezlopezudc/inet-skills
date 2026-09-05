@@ -40,6 +40,15 @@ coverage and add a module or protocol test that enters through the production ga
 configuration and observes the outcome. Do not copy production dispatch logic into a fixture and
 call that integration evidence.
 
+## Select failure-path probes
+
+Use the changed mechanism to choose applicable probes: ownership transfer on refusal/error;
+callback re-entry that replaces or removes state; timeout followed by late completion; repeated
+cleanup; empty/singleton/multiple-item mutation; numeric limits or sequence wrap; and two independent
+peers or flows. Establish reachability from the production entry point before adding a case.
+Record which path each selected test reaches and what assertion would fail before the fix. A
+successful command or a passing neighboring test does not establish that coverage.
+
 ## Seed and parameter scope
 
 One fixed seed is enough when the invariant is deterministic, the reproduction reaches the exact

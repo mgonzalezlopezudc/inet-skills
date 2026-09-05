@@ -65,3 +65,11 @@ production integration:
 | Feature composition | built-in default, feature off, explicit override, valid custom config |
 
 Use the owning test or simulation skill for the selected check.
+
+## Generated and external consumers
+
+**[RP-CPP-COMPATIBILITY-REACHABILITY]** Changes to signatures or enums can reach generated callers, reflection, registration, serializers,
+printers, NED, and external result-analysis tools. Check these consumers when assessing compatibility
+or apparently dead code. For externally visible enum values, apply
+`doc/project/rule/release.md#rr-numeric-stable`; ordinary diagnostic logs establish numeric stability
+only when they are a defined published or tooling interface.

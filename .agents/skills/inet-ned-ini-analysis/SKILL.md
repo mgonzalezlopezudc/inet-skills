@@ -15,6 +15,4 @@ Use the NED/configuration authority described in `doc/project/design/decisions.m
 5. Check radio/medium representation compatibility and parameter units.
 6. If static resolution remains ambiguous, run a short Cmdenv initialization or diagnostic.
 
-Use `rg --files -g '*.ned' -g '*.ini'` to locate model files, then narrow searches to the relevant subtree. Do not assume a parameter or module path from another checkout or example.
-
 Return the config chain, instantiated types/paths, matching assignments, winning precedence, and unresolved ambiguity.

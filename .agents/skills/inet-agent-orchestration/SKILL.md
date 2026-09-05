@@ -83,6 +83,13 @@ orchestration skill solely to classify or execute such a change.
 
 Every delegated prompt must say to follow `AGENTS.md` and the applicable repository skills, not spawn sub-agents, and return to the parent. Specify one deliverable, exact scope and inputs, write authority, exclusions, required evidence, definition of done, and concise return shape. Include paths, symbols, configuration, run/seed, and artifacts when relevant. For semantic `src/inet/` implementation, do not combine unresolved contract completion and write authority in one assignment. First provide the available `inet-code-authoring` evidence in a read-only contract assignment; after the implementer returns a complete self-validation, the orchestrator validates it and sends a separate follow-up that authorizes the first write. Reuse that implementer for the authorized implementation and related follow-up work.
 
+For implementation, regression, and extraction assignments, include the applicable skill/reference
+sections and the concrete evidence to return. A model binding or high reasoning effort does not
+replace the contract checks: the implementer must load the selected authoring references, the
+regression agent must identify the exercised failure path, and the extractor must report empty or
+ambiguous selections without interpreting them as a pass. Keep causal and normative judgments in
+the specialist classes assigned those responsibilities above.
+
 Gate handoffs as follows:
 
 1. Diagnose → contract: demonstrated mechanism, bounded change surface, architecture/seal decision, any required approval, and the available evidence for every applicable `inet-code-authoring` contract field.

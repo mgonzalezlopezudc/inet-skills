@@ -45,7 +45,7 @@ from the applicable `PR-*` identifiers, and cite those identifiers in an audit.
 
 ## Audit existing artifacts
 
-Report only evidence-backed results. For each defect, cite the violated `PR-*` identifier, point to
+For each defect, cite the violated `PR-*` identifier, point to
 the commit, message, hunk, or missing description section that establishes it, and give a concrete
 correction direction. Distinguish a violation from missing evidence and from an open question.
 

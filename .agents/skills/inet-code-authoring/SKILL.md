@@ -14,25 +14,8 @@ repeat project policy.
 Use the changed-contract inventory in `doc/project/guide/review-a-code-change.md` as a preventive
 self-audit aid, without adopting reviewer verdicts, finding severity, or report formatting.
 
-## Choose the context tier
-
-Select the smallest tier that covers the changed contract. File count is a clue, not the decision:
-cross-layer runtime behavior and uncertainty raise the tier; a wide independently checkable rename
-can remain mechanical.
-
-- **Small** — one understood owner and one runtime layer, with a bounded caller/consumer surface.
-  Read only the primary preventive reference for that layer from the table below.
-- **Medium** — several owners or a runtime contract that actually crosses layers. Read
-  [common-agent-pitfalls.md](../inet-code-review/references/common-agent-pitfalls.md), the primary
-  layer reference, and only the additional layer references crossed by the effective control path.
-- **Large** — broad semantic change, uncertain ownership, protocol/lifecycle state, or multiple
-  generated and configuration consumers. Read `common-agent-pitfalls.md` and every reference for a
-  layer the established runtime contract crosses. Do not load unrelated layers merely because the
-  diff contains their file extensions.
-- **Wide mechanical** — repetitive and behavior-preserving, with a stated invariant that can be
-  independently checked. Read [mechanical-migrations.md](references/mechanical-migrations.md).
-  Reclassify as semantic if the transformation changes runtime meaning or that invariant cannot be
-  established before writing.
+For a wide behavior-preserving transformation, use
+[mechanical-migrations.md](references/mechanical-migrations.md).
 
 The preventive references are maintained by `inet-code-review`; this skill depends on that skill's
 reference package but does not adopt its independent-review role or finding format.
@@ -41,10 +24,14 @@ Select layers by the changed runtime contract, not only by file extension:
 
 | Layer | Select when the change involves | Preventive checks |
 | --- | --- | --- |
-| General C++ | APIs, ownership, lifetime, containers, algorithms, callbacks, state, or polymorphism | [general-cpp-review-checks.md](../inet-code-review/references/general-cpp-review-checks.md) |
+| C++ | APIs, ownership, callbacks, containers, numeric boundaries, or state | [general-cpp-review-checks.md](../inet-code-review/references/general-cpp-review-checks.md) |
 | OMNeT++ | modules, initialization, events, messages, signals, NED, INI, MSG, statistics, or simulation trajectories | [omnetpp-review-checks.md](../inet-code-review/references/omnetpp-review-checks.md) |
 | INET | packets, chunks, tags, protocol integration, lifecycle operations, queues, serializers, feature composition, or INET tests | [inet-review-checks.md](../inet-code-review/references/inet-review-checks.md) |
 | IEEE 802.11 | Wi-Fi MAC/PHY behavior, management, association, channel access, Block Ack, capabilities, rates, modes, or configuration | [ieee80211-review-checks.md](../inet-code-review/references/ieee80211-review-checks.md) |
+
+Read the selected reference sections before completing the implementation contract, then revisit
+them during the self-audit. The C++ checklist supplies explicit failure-path probes for implementers;
+use domain references for the actual INET and protocol contracts.
 
 The `RP-*` labels in these references identify non-normative investigation prompts, not new
 authoring requirements. Use them to name preventive checks when useful; take every implementation
@@ -92,8 +79,6 @@ For a wide mechanical change, use the contract and checks in `mechanical-migrati
 semantic template remains mandatory for behavioral API migrations, renames that change dispatch or
 registration, and generated-input changes that alter runtime meaning.
 
-Resolve uncertainty about the mechanism or effective configuration before writing. Do not turn unsupported hypotheses, optional hardening, or unrelated pre-existing issues into patch scope.
-
 ### Validate the contract before the first write
 
 Do not start implementation until the contract passes all of these checks:
@@ -116,8 +101,6 @@ When a filled-in field remains unclear, read the optional [verified non-WLAN con
   `doc/project/rule/architecture.md#ar-life-stages`. As the preventive trace, identify the highest
   named stage handled by the class and compare it with the effective inherited `numInitStages()`;
   add or update a local override only when that effective count does not cover the stage.
-- Establish externally observable state before re-entrant callbacks or signals, and make shared
-  terminal cleanup idempotent when paths can converge.
 - Keep current and pending state, peers, interfaces, flows, TIDs, directions, links, and generations separate according to the owning protocol. Use complete identity tuples and domain-correct boundary or wrap semantics.
 - Keep absolute deadlines distinct from relative durations and preserve units and conversion ownership across NED, C++, model fields, serializers, and wire encodings.
 - Select and report tests under `doc/project/rule/testing.md#tr-focused-evidence`. Apply the
@@ -137,7 +120,7 @@ When implementation reveals a related target or behavior not covered by the vali
 ## Self-audit and hand off
 
 Once the diff is stable, complete this checklist against the implementation contract and every
-reference selected by the context tier:
+selected domain reference:
 
 - [ ] Stable diff matches the validated behavior claim; every deviation and required scope expansion is recorded.
 - [ ] Effective owner/control path, affected consumers, siblings, and terminal paths were retraced in the resulting tree.
