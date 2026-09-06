@@ -5,8 +5,9 @@ description: Create, revise, or review concise, evidence-backed INET IEEE 802.11
 
 # Write IEEE 802.11 walkthroughs
 
-Use `doc/project/requirement/accepted-requirements.md` for project-level documentation and evidence
-obligations. This skill owns only the IEEE 802.11 walkthrough contract and analyzer workflow.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
+active checkout's project-level documentation and evidence obligations. This skill owns only the
+IEEE 802.11 walkthrough contract and analyzer workflow.
 
 Read [walkthrough-contract.md](references/walkthrough-contract.md) and [analysis-machinery.md](references/analysis-machinery.md). Start new documents from [walkthrough-template.md](assets/walkthrough-template.md).
 
@@ -14,8 +15,8 @@ Read [walkthrough-contract.md](references/walkthrough-contract.md) and [analysis
 
 Before drafting or changing a walkthrough:
 
-1. Read the active checkout's `doc/project/design/repository-layout.md` and
-   `doc/project/rule/documentation.md`.
+1. Read the active checkout's project entry point and follow its current repository-layout and
+   documentation routes.
 2. Verify that both `examples/ieee80211/analysis/wifi_analysis.py` and
    `examples/ieee80211/analysis/README.md` are tracked in the active checkout.
 3. Verify that the requested document location matches the canonical distinction among examples,

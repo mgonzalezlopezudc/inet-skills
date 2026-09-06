@@ -1,6 +1,7 @@
 # INET reviewer traps
 
-Use `doc/project/guide/review-a-code-change.md` for finding thresholds and reporting.
+Use the active project's review route, discovered through the project entry point, for finding
+thresholds and reporting.
 
 - Modules may retain registered protocols, interface entries, and cached agreements until
   `finish()`, destruction, or a lifecycle handler. Distinguish bounded model state from growth under
@@ -19,6 +20,6 @@ Use `doc/project/guide/review-a-code-change.md` for finding thresholds and repor
   the generated `_m.h` declaration.
 - INET callback interfaces differ in packet/message ownership transfer. Signal payloads remain
   borrowed for the emission call unless their documented contract says otherwise.
-- Route missing introspection artifacts or visualization dependencies to the architectural
-  checklist (`AR-OBS-INTROSPECTION`, `AR-ORG-VIS-SPLIT`). A demonstrated runtime defect also belongs
+- Route missing introspection artifacts or visualization dependencies to the applicable architectural
+  checklist. A demonstrated runtime defect also belongs
   in the correctness findings, with the checklist referencing it under the canonical review guide.

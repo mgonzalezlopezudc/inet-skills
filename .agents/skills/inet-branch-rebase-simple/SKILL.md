@@ -15,6 +15,9 @@ skill's admission contract is not satisfied.
 
 ## Admission contract
 
+Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to
+discover the active project's current series, protection, baseline, and verification requirements.
+
 Use this skill only when all of these are true:
 
 - Pinned `base` is an ancestor of both pinned `topic` and pinned `main`; `topic` is linear.
@@ -28,7 +31,8 @@ Use this skill only when all of these are true:
 - Existing baseline changes, if any, are already approved and remain in their causal topic commit.
   The rebase will not create or correct baseline values.
 
-Before planning, use `inet-pull-request-authoring` and read `doc/project/rule/pull-request.md`. Use
+Before planning, use `inet-pull-request-authoring` and discover the active project's current series
+guidance. Use
 `inet-opp-repl` for command discovery, dependency mapping, scoped execution, and normalized results.
 
 ## Pin and approve once
@@ -71,8 +75,8 @@ git range-diff <base-sha>..<topic-sha> <main-sha>..<target-sha>
 
 The ancestry command must succeed, the merge list must be empty, the counts must match, and every
 range-diff row must be an equal one-to-one pair in the original order. Any added, removed, reordered,
-or patch-changed commit is outside this skill. Audit the candidate against applicable
-`PR-SERIES-ORDER`, `PR-SERIES-LINEAR`, and `PR-MSG-*` rules before starting expensive tests.
+or patch-changed commit is outside this skill. Audit the candidate against the active project series,
+linearity, and message guidance before starting expensive tests.
 
 ## Verify the final series once
 
@@ -88,8 +92,8 @@ the sweep; dispose of the worktree only after verification and evidence collecti
 3. Record one concise row with source and target SHAs, subject, build command/status, selector,
    `opp_repl` status, exit code, and artifact or normalized-envelope path.
 
-Do not deliver until every target commit satisfies `PR-SERIES-BUILDS`. Then run the approved final
-union at `target` HEAD and perform the final `PR-*` audit. Do not repeat checkpoint or middle-commit
+Do not deliver until every target commit satisfies the active per-commit build requirement. Then run
+the approved final union at `target` HEAD and perform the final project series audit. Do not repeat checkpoint or middle-commit
 tests when the sweep already tested those exact trees and nothing was rewritten afterward.
 
 Keep one compact execution record under `ai-logs/executions/` only when the work must survive across

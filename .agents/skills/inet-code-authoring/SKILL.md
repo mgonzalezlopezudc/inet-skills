@@ -7,12 +7,12 @@ description: Design and implement semantic INET C++, NED, MSG, INI, and test cha
 
 Prevent defects while defining and implementing a change. Keep `inet-code-review` independent and read-only; reuse its maintained correctness references without adopting its finding format or reviewer role.
 
-Follow `doc/project/guide/contribute-a-change.md` and its canonical seals, rules, gates, and test
-policy. This skill adds a pre-write correctness contract and a post-write self-audit; it does not
-repeat project policy.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) before applying
+the active checkout's contribution, protection, rule, gate, and test guidance. This skill adds a
+pre-write correctness contract and a post-write self-audit; it does not repeat project policy.
 
-Use the changed-contract inventory in `doc/project/guide/review-a-code-change.md` as a preventive
-self-audit aid, without adopting reviewer verdicts, finding severity, or report formatting.
+If the project entry point provides a changed-contract inventory, use it as a preventive self-audit
+aid, without adopting reviewer verdicts, finding severity, or report formatting.
 
 For a wide behavior-preserving transformation, use
 [mechanical-migrations.md](references/mechanical-migrations.md).
@@ -94,17 +94,18 @@ When a filled-in field remains unclear, read the optional [verified non-WLAN con
 
 ## Implement against the contract
 
-- Apply the packet, lifecycle, determinism, artifact, and testing rules selected from `doc/project/`.
+- Apply the packet, lifecycle, determinism, artifact, and testing guidance discovered in the active
+  checkout.
   For the called packet API, establish its concrete `Packet *` ownership transfer and its
   `take`/`drop`/`send`/delete contract; use `Ptr`/`makeShared` only where the checked API requires it.
-- For multi-stage initialization, apply
-  `doc/project/rule/architecture.md#ar-life-stages`. As the preventive trace, identify the highest
-  named stage handled by the class and compare it with the effective inherited `numInitStages()`;
+- For multi-stage initialization, use the active lifecycle guidance. As the preventive trace,
+  identify the highest named stage handled by the class and compare it with the effective inherited
+  `numInitStages()`;
   add or update a local override only when that effective count does not cover the stage.
 - Keep current and pending state, peers, interfaces, flows, TIDs, directions, links, and generations separate according to the owning protocol. Use complete identity tuples and domain-correct boundary or wrap semantics.
 - Keep absolute deadlines distinct from relative durations and preserve units and conversion ownership across NED, C++, model fields, serializers, and wire encodings.
-- Select and report tests under `doc/project/rule/testing.md#tr-focused-evidence`. Apply the
-  production-path distinction in `doc/project/design/test-anatomy.md`: helper-only coverage does not
+- Select and report tests under the active test guidance. Apply its production-path distinction:
+  helper-only coverage does not
   prove that the real caller invokes the helper, supplies the intended identity, or handles every
   terminal result.
 
@@ -130,8 +131,8 @@ selected domain reference:
       gaps and approval needs are explicit.
 
 Use the owning build, test, simulation, packet, result, and fingerprint skills. Obtain project test
-and baseline policy from `doc/project/rule/testing.md` and
-`doc/project/guide/change-a-baseline.md`; apply the additional execution constraints in `AGENTS.md`.
+and baseline policy through the shared discovery procedure. Apply any additional execution
+constraints discovered from the active checkout's repository instructions.
 
 Return this plain-text envelope. Use `None` only when supported by the audit; do not omit fields.
 

@@ -8,8 +8,8 @@ description: Run and normalize scoped opp_repl verification for INET workflows. 
 Own the shared `opp_repl` mechanics used by history and comparison workflows. The calling skill owns
 the behavior claim, controls, approval gates, and correctness interpretation.
 
-Choose the test category under `doc/project/rule/testing.md` and the directly related scope under
-`TR-FOCUSED-EVIDENCE`. Read [workflow-contract.md](references/workflow-contract.md) before the first
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
+active checkout's test category and directly related scope. Read [workflow-contract.md](references/workflow-contract.md) before the first
 invocation in a workflow.
 
 For repeated history verification, read [incremental-builds.md](references/incremental-builds.md)
@@ -21,8 +21,8 @@ fresh evidence at each stage does not require a clean rebuild.
 1. Verify `command -v opp_repl` in the active environment and record the resolved executable.
 2. Inspect the installed command/API help and the workflow's checked-in `.opp` entrypoints. Do not
    assume function names, keyword arguments, or result stores from another `opp_repl` version.
-3. Resolve the active simulation project and build mode. Agent-run INET verification uses debug mode
-   when required by `AGENTS.md`.
+3. Resolve the active simulation project and build mode from the active project guidance and record
+   the selected mode.
 4. If the executable, required entrypoint, dependency store, or selected test data is unavailable,
    invoke the adapter with `--not-run-reason '<missing capability>'` and return `NOT_RUN`; do not
    improvise an unscoped substitute.

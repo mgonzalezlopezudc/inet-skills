@@ -1,8 +1,7 @@
 # IEEE 802.11 walkthrough contract
 
-Project-level documentation and evidence obligations live in
-`doc/project/requirement/accepted-requirements.md`, `doc/project/rule/documentation.md`, and
-`doc/project/rule/testing.md`. This reference adds the analyzer-owned walkthrough format.
+Project-level documentation and evidence obligations come from the active project guidance discovered
+through the shared procedure. This reference adds the analyzer-owned walkthrough format.
 
 ## Goal
 

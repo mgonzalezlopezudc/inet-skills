@@ -5,8 +5,8 @@ description: Inspect, filter, query, and export OMNeT++ scalar and vector result
 
 # Analyze OMNeT++ results
 
-Apply `doc/project/guide/analyze-simulation-results.md` for comparison, measurement, and reporting
-rules. For causal investigations, also apply `doc/project/guide/diagnose-a-simulation.md`. This skill
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
+active checkout's current comparison, measurement, reporting, and diagnosis guidance. This skill
 adds `opp_scavetool` discovery and export mechanics.
 
 Select `.sca`/`.vec` inputs by run metadata and verify they exist. Do not assume every file in a directory belongs to the requested run.

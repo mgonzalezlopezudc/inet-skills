@@ -5,17 +5,20 @@ description: Diagnose and manage INET fingerprint regression tests. Use to run f
 
 # INET fingerprint regression
 
-Read `doc/project/design/test-anatomy.md` for what a fingerprint establishes,
-`doc/project/rule/testing.md` for scope, and `doc/project/guide/change-a-baseline.md` before changing
-recorded expectations. This skill adds the filtered runner and first-divergence workflow.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover what
+the active checkout's test guidance says a fingerprint establishes, how it should be scoped, and
+what approval is required before changing recorded expectations. This skill adds the filtered runner
+and first-divergence workflow.
 
-After compiled INET source or generated-code inputs change, build debug mode from the repository root:
+After compiled INET source or generated-code inputs change, first use the discovered project
+guidance to select the required build mode, freshness check, repository working directory, and
+build command. The following is a technical debug-mode example when that guidance selects it:
 
 ```sh
 make MODE=debug -j$(nproc)
 ```
 
-Then run the wrapper from `tests/fingerprint`:
+For that debug-mode example, run the wrapper from `tests/fingerprint`:
 
 ```sh
 ./fingerprinttest -d -m '<directly-related-regex>' -f 'tplx' -f '~tNl' -f '~tND'
@@ -24,8 +27,7 @@ Then run the wrapper from `tests/fingerprint`:
 The working directory is mandatory because default CSV expansion occurs before the wrapper's
 directory option. Treat `Ran 0 tests` or `NO TESTS RAN` as invocation failure. Translate the
 canonical test selection into `-m`/`-x` filters and never invoke this wrapper without a selection
-filter. The agent-run command uses `-d` under the debug execution constraint in `AGENTS.md`; it does
-not satisfy the contributor's release-mode gate.
+filter. Use the build mode required by the active project guidance and record it with the run.
 
 For a mismatch:
 
@@ -35,8 +37,8 @@ For a mismatch:
 4. If the divergence is accepted, follow the canonical baseline procedure.
 5. Rerun only the same directly related fingerprint tests.
 
-Keep the debug runner and libraries consistent within this invocation. Apply the comparison and
-evidence rules in `doc/project/guide/diagnose-a-simulation.md`; any execution failure or zero-test
+Keep the selected runner and library modes consistent within this invocation. Apply the comparison and
+evidence rules discovered from the project entry point; any execution failure or zero-test
 run remains incomplete tool output.
 
 For a machine-readable handoff, preserve the raw runner output and use the skill-suite

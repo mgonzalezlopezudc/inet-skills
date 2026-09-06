@@ -1,7 +1,7 @@
 # PHY, carrier sense, and timing
 
-Apply the PHY authority/timing rules in `doc/project/domain/ieee80211.md` and the signal/fidelity
-rules in `doc/project/rule/architecture.md` first. This reference adds the diagnostic transition
+Use the shared project-guidance discovery procedure to find the active PHY authority, timing,
+signal, and fidelity guidance first. This reference adds the diagnostic transition
 and isolation procedures.
 
 ## Locate the first failed PHY transition

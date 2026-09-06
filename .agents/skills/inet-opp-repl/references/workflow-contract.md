@@ -27,8 +27,8 @@ Do not conflate a test operation with an update operation. A test operation comp
 with an expectation or control and reports test results such as `PASS`, `FAIL`, or `ERROR`. An update
 operation writes a store and reports facts such as `KEEP`, `INSERT`, `UPDATE`, or `ERROR`.
 
-An update requires the exact scope, cause, correctness reason, and explicit approval required by
-`doc/project/guide/change-a-baseline.md`. Run the same scoped test after an approved update. Record
+An update requires the exact scope, cause, correctness reason, and explicit approval required by the
+active baseline procedure. Run the same scoped test after an approved update. Record
 the affected entries or files and keep the update with its causal source change unless the canonical
 procedure permits a standalone baseline commit.
 

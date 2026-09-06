@@ -1,20 +1,10 @@
 version: 1
 
-project_compatibility:
-  mode: capabilities
-  capabilities:
-    - path: doc/project/README.md
-      contains: ["The INET project documentation"]
-    - path: doc/project/guide/contribute-a-change.md
-      contains: ["Contribute a change", "TR-FOCUSED-EVIDENCE"]
-    - path: doc/project/rule/testing.md
-      contains: ["TR-CAT-MATCH", "TR-FOCUSED-EVIDENCE", "TR-FLAKY"]
-    - path: doc/project/design/test-anatomy.md
-      contains: ["The production path", "fingerprint"]
-    - path: doc/project/audit/seal-list.md
-      contains: ["The seal registry"]
-    - path: doc/project/rule/sealing.md
-      contains: ["SR-DEFAULT-OPEN", "SR-VIOLATION-IN-SEALED"]
+project_guidance:
+  entrypoint: doc/project/README.md
+
+shared_resources:
+  - .agents/references/project-guidance-discovery.md
 
 generated_metadata:
   source: .agents/skill-suite.yaml
@@ -27,6 +17,25 @@ verification_results:
   adapter: .agents/scripts/normalize_verification.py
   runners: [unit, module, fingerprint, opp_repl]
   fixtures: tests/skill-suite/fixtures/verification
+  required_fixtures:
+    unit:
+      - unit-pass.log
+      - unit-assertion-failure.log
+      - zero-selection.log
+      - malformed-output.log
+    module:
+      - module-build-error.log
+    fingerprint:
+      - fingerprint-expected-change.log
+      - fingerprint-expected-results.log
+      - fingerprint-failure.log
+      - fingerprint-unexpected-pass.log
+    opp_repl:
+      - opp-repl-empty.log
+      - opp-repl-error.log
+      - opp-repl-pass.log
+      - opp-repl-single-fail.log
+      - opp-repl-single-pass.log
 
 profiles:
   default:
@@ -85,7 +94,9 @@ skills:
       default_prompt: Use $ieee80211-standards to retrieve, trace, verify, and cite the exact IEEE 802.11 clauses, objects, definitions, and cross-references that govern this question.
     dependencies: []
     required_tools: [inet_process_standards]
-    required_checkout_files: [standards]
+    checkout_requirements:
+      required: [standards]
+      optional: []
 
   inet-80211-packet-debugging:
     metadata:
@@ -101,7 +112,9 @@ skills:
       - inet-pcap-tshark-analysis
       - omnetpp-eventlog-analysis
     required_tools: [inet, tshark]
-    required_checkout_files: [doc/project/domain/ieee80211.md]
+    checkout_requirements:
+      required: []
+      optional: [standards]
 
   inet-80211-regression-testing:
     metadata:
@@ -115,9 +128,9 @@ skills:
       - inet-regression-testing
       - inet-unit-tests
     required_tools: [inet]
-    required_checkout_files:
-      - doc/project/domain/ieee80211.md
-      - doc/project/rule/testing.md
+    checkout_requirements:
+      required: []
+      optional: [standards]
 
   inet-80211-walkthrough-writer:
     metadata:
@@ -126,9 +139,11 @@ skills:
       default_prompt: Use $inet-80211-walkthrough-writer only after confirming the active checkout provides the shared analyzer, then create or improve a concise walkthrough from analysis-script-generated scalar/vector and PCAP evidence.
     dependencies: []
     required_tools: [python3]
-    required_checkout_files:
+    checkout_requirements:
+      required:
       - examples/ieee80211/analysis/wifi_analysis.py
       - examples/ieee80211/analysis/README.md
+      optional: []
 
   inet-agent-orchestration:
     metadata:
@@ -138,7 +153,9 @@ skills:
     dependencies: []
     deployment_files: [MODELS.md, .codex, .antigravity]
     required_tools: []
-    required_checkout_files: [doc/project/guide/contribute-a-change.md]
+    checkout_requirements:
+      required: []
+      optional: []
 
   inet-architectural-requirements:
     metadata:
@@ -147,10 +164,9 @@ skills:
       default_prompt: Use $inet-architectural-requirements to evaluate this INET change against the applicable architecture, naming, and sealing requirements.
     dependencies: []
     required_tools: [python3]
-    required_checkout_files:
-      - doc/project/rule/architecture.md
-      - doc/project/audit/seal-list.md
-      - doc/project/rule/sealing.md
+    checkout_requirements:
+      required: []
+      optional: []
 
   inet-branch-cleanup:
     metadata:
@@ -159,9 +175,9 @@ skills:
       default_prompt: Use $inet-branch-cleanup to rebuild this tested INET topic branch as a reviewable commit series without changing its final tree.
     dependencies: [inet-opp-repl, inet-pull-request-authoring]
     required_tools: [git, opp_repl]
-    required_checkout_files:
-      - doc/project/rule/pull-request.md
-      - doc/project/guide/change-a-baseline.md
+    checkout_requirements:
+      required: []
+      optional: []
 
   inet-branch-cleanup-simple:
     metadata:
@@ -170,9 +186,9 @@ skills:
       default_prompt: Use $inet-branch-cleanup-simple to quickly rebuild this straightforward tested INET topic branch as a reviewable commit series.
     dependencies: [inet-opp-repl, inet-pull-request-authoring]
     required_tools: [git, opp_repl]
-    required_checkout_files:
-      - doc/project/rule/pull-request.md
-      - doc/project/guide/change-a-baseline.md
+    checkout_requirements:
+      required: []
+      optional: []
 
   inet-branch-rebase:
     metadata:
@@ -185,9 +201,9 @@ skills:
       - inet-opp-repl
       - inet-pull-request-authoring
     required_tools: [git, opp_repl]
-    required_checkout_files:
-      - doc/project/rule/pull-request.md
-      - doc/project/guide/change-a-baseline.md
+    checkout_requirements:
+      required: []
+      optional: []
 
   inet-branch-rebase-simple:
     metadata:
@@ -197,9 +213,9 @@ skills:
     dependencies: [inet-opp-repl, inet-pull-request-authoring]
     routes_to: [inet-branch-rebase]
     required_tools: [git, opp_repl]
-    required_checkout_files:
-      - doc/project/rule/pull-request.md
-      - doc/project/guide/change-a-baseline.md
+    checkout_requirements:
+      required: []
+      optional: []
 
   inet-build-debug-modes:
     metadata:
@@ -208,7 +224,9 @@ skills:
       default_prompt: Use $inet-build-debug-modes to build or diagnose the matching INET debug artifacts for this task.
     dependencies: []
     required_tools: [make]
-    required_checkout_files: [Makefile]
+    checkout_requirements:
+      required: [Makefile]
+      optional: []
 
   inet-cmdenv-log-analysis:
     metadata:
@@ -217,7 +235,9 @@ skills:
       default_prompt: Use $inet-cmdenv-log-analysis to extract the relevant module decisions, warnings, drops, and event context from this Cmdenv log.
     dependencies: []
     required_tools: [rg]
-    required_checkout_files: []
+    checkout_requirements:
+      required: []
+      optional: []
 
   inet-code-authoring:
     metadata:
@@ -226,9 +246,9 @@ skills:
       default_prompt: Use $inet-code-authoring to define and implement this INET change with preventive correctness checks.
     dependencies: [inet-code-review]
     required_tools: [git, rg]
-    required_checkout_files:
-      - doc/project/guide/contribute-a-change.md
-      - doc/project/guide/review-a-code-change.md
+    checkout_requirements:
+      required: []
+      optional: []
 
   inet-code-review:
     metadata:
@@ -237,9 +257,9 @@ skills:
       default_prompt: Use $inet-code-review to independently review the current INET diff and report evidence-backed actionable findings.
     dependencies: []
     required_tools: [git, rg]
-    required_checkout_files:
-      - doc/project/guide/review-a-code-change.md
-      - doc/project/enforcement/checklist/general.md
+    checkout_requirements:
+      required: []
+      optional: []
 
   inet-fingerprint-regression:
     metadata:
@@ -248,9 +268,9 @@ skills:
       default_prompt: Use $inet-fingerprint-regression to diagnose this fingerprint change and determine whether it is expected.
     dependencies: []
     required_tools: [python3]
-    required_checkout_files:
-      - tests/fingerprint/fingerprinttest
-      - doc/project/guide/change-a-baseline.md
+    checkout_requirements:
+      required: [tests/fingerprint/fingerprinttest]
+      optional: []
 
   inet-lldb-debugging:
     metadata:
@@ -259,7 +279,9 @@ skills:
       default_prompt: Use $inet-lldb-debugging to reproduce and inspect this INET runtime failure at C++ source level.
     dependencies: [inet-build-debug-modes, inet-simulation-run]
     required_tools: [lldb]
-    required_checkout_files: [Makefile]
+    checkout_requirements:
+      required: [Makefile]
+      optional: []
 
   inet-ned-ini-analysis:
     metadata:
@@ -268,7 +290,9 @@ skills:
       default_prompt: Use $inet-ned-ini-analysis to resolve the effective NED types, INI inheritance, and parameter values for this configuration.
     dependencies: []
     required_tools: [rg]
-    required_checkout_files: []
+    checkout_requirements:
+      required: []
+      optional: []
 
   inet-opp-repl:
     metadata:
@@ -281,9 +305,9 @@ skills:
       - omnetpp-result-analysis
       - omnetpp-result-plotting
     required_tools: [opp_repl]
-    required_checkout_files:
-      - tests/dependency.json
-      - doc/project/rule/testing.md
+    checkout_requirements:
+      required: [tests/dependency.json]
+      optional: []
 
   inet-packet-tag-debugging:
     metadata:
@@ -292,7 +316,9 @@ skills:
       default_prompt: Use $inet-packet-tag-debugging to find where this packet, chunk, or tag state first changes incorrectly.
     dependencies: []
     required_tools: [rg]
-    required_checkout_files: []
+    checkout_requirements:
+      required: []
+      optional: []
 
   inet-pcap-tshark-analysis:
     metadata:
@@ -301,7 +327,9 @@ skills:
       default_prompt: Use $inet-pcap-tshark-analysis to record or inspect this INET packet exchange and correlate the relevant capture points.
     dependencies: [inet-cmdenv-log-analysis]
     required_tools: [capinfos, tshark]
-    required_checkout_files: []
+    checkout_requirements:
+      required: []
+      optional: []
 
   inet-pull-request-authoring:
     metadata:
@@ -310,9 +338,9 @@ skills:
       default_prompt: Use $inet-pull-request-authoring to plan or audit the commit series and pull request for this INET change.
     dependencies: []
     required_tools: [git]
-    required_checkout_files:
-      - doc/project/rule/pull-request.md
-      - doc/project/guide/review-a-pull-request.md
+    checkout_requirements:
+      required: []
+      optional: []
 
   inet-regression-testing:
     metadata:
@@ -333,9 +361,9 @@ skills:
       - omnetpp-result-analysis
       - omnetpp-result-plotting
     required_tools: []
-    required_checkout_files:
-      - doc/project/rule/testing.md
-      - doc/project/design/test-anatomy.md
+    checkout_requirements:
+      required: []
+      optional: []
 
   inet-simulation-run:
     metadata:
@@ -344,7 +372,9 @@ skills:
       default_prompt: Use $inet-simulation-run to run this simulation reproducibly and diagnose any initialization or runtime failure.
     dependencies: [inet-build-debug-modes]
     required_tools: [inet]
-    required_checkout_files: [Makefile]
+    checkout_requirements:
+      required: [Makefile]
+      optional: []
 
   inet-unit-tests:
     metadata:
@@ -353,7 +383,9 @@ skills:
       default_prompt: Use $inet-unit-tests to build the required debug artifacts and run the focused INET unit or module tests for this change.
     dependencies: [inet-build-debug-modes]
     required_tools: [inet_run_module_tests, inet_run_unit_tests, make]
-    required_checkout_files: [tests/unit, tests/module]
+    checkout_requirements:
+      required: [tests/unit, tests/module]
+      optional: []
 
   omnetpp-eventlog-analysis:
     metadata:
@@ -362,7 +394,9 @@ skills:
       default_prompt: Use $omnetpp-eventlog-analysis to reconstruct the scheduling and message-delivery causality behind this simulation behavior.
     dependencies: [inet-cmdenv-log-analysis]
     required_tools: [rg]
-    required_checkout_files: []
+    checkout_requirements:
+      required: []
+      optional: []
 
   omnetpp-result-analysis:
     metadata:
@@ -371,7 +405,9 @@ skills:
       default_prompt: Use $omnetpp-result-analysis to query and export the relevant scalar or vector results for this comparison.
     dependencies: []
     required_tools: [opp_scavetool]
-    required_checkout_files: []
+    checkout_requirements:
+      required: []
+      optional: []
 
   omnetpp-result-plotting:
     metadata:
@@ -380,4 +416,6 @@ skills:
       default_prompt: Use $omnetpp-result-plotting to create a reproducible non-interactive plot and derived summary for these simulation results.
     dependencies: [omnetpp-result-analysis]
     required_tools: [python3]
-    required_checkout_files: []
+    checkout_requirements:
+      required: []
+      optional: []

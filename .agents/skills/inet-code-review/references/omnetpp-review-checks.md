@@ -1,7 +1,8 @@
 # OMNeT++ review checks
 
-Apply the lifecycle, observability, configuration, determinism, and testing rules from
-`doc/project/` first. This reference adds OMNeT++ kernel and configuration failure modes.
+Use the shared project-guidance discovery procedure to apply the active lifecycle, observability,
+configuration, determinism, and testing guidance first. This reference adds OMNeT++ kernel and
+configuration failure modes.
 
 ## Determinism diagnostics
 
@@ -10,7 +11,7 @@ Apply the lifecycle, observability, configuration, determinism, and testing rule
 ## Module lifecycle and initialization
 
 - **[RP-OMNET-INIT-STAGE-DEPENDENCIES]** Trace the exact initialization stage that establishes each field, subscription, module reference, and published value. Resolve the checked-out version's registered stage dependencies; do not infer order from declaration order or a remembered stage list. Determine whether an event or synchronous call can observe partially initialized state.
-- **[RP-OMNET-INIT-STAGE-COUNT]** Apply `doc/project/rule/architecture.md#ar-life-stages`. Identify the highest named stage the class
+- **[RP-OMNET-INIT-STAGE-COUNT]** Use the active lifecycle guidance. Identify the highest named stage the class
   actually handles and trace the effective `numInitStages()` through inheritance. Require a local
   override only when the inherited count does not cover that stage, and verify that any override is
   a stage-independent constant expression that also preserves the base requirement.
@@ -24,7 +25,7 @@ Apply the lifecycle, observability, configuration, determinism, and testing rule
 - **[RP-OMNET-TIMER-ROLE]** State what each self-message or timer means: whole transaction, latest attempt, inactivity, delayed work, or response wait. Verify scheduling, rescheduling, cancellation, ownership, and stale delivery against that meaning. Distinct roles may need distinct timers; require at most one live timer per role and generation rather than one timer for an entire transaction.
 - **[RP-OMNET-DEADLINE-DURATION]** Trace absolute deadlines and relative durations through the complete call chain. Absolute values must reach `scheduleAt`/`rescheduleAt`, while durations must reach `scheduleAfter`/`rescheduleAfter`. Example: passing `simTime() + timeout` to a helper that reschedules *after* its argument delays expiry by the current simulation time a second time.
 - **[RP-OMNET-TIMER-RESCHEDULING]** For a reused self-message, decide whether a second scheduling request replaces, retains, or rejects the existing event. Use scheduling and rescheduling APIs consistently with that decision; an `isScheduled()` guard that silently ignores a new deadline is not automatically correct.
-- **[RP-OMNET-SAME-TIME-PROGRESS]** Prove finite progress for loops inside one event and for zero-delay event chains across events. A same-time chain is valid only when each event advances a bounded progress measure and ordering is deterministic; same-instant sibling coordination may separately violate `AR-COM-DIRECT`. Example: if a busy downstream module becomes available only at a later simulation time, unbounded immediate self-message retries can prevent time from reaching that event.
+- **[RP-OMNET-SAME-TIME-PROGRESS]** Prove finite progress for loops inside one event and for zero-delay event chains across events. A same-time chain is valid only when each event advances a bounded progress measure and ordering is deterministic; same-instant sibling coordination may separately violate the active direct-coordination guidance. Example: if a busy downstream module becomes available only at a later simulation time, unbounded immediate self-message retries can prevent time from reaching that event.
 - **[RP-OMNET-TIME-COMPARISON]** Compare `simtime_t` or floating-derived timestamps by their provenance. Exact equality is sound when both operands reuse the same stored, quantized timestamp; independently calculated values require a justified ordering, quantization, or tolerance. Example: a timer scheduled from quantized `simtime_t` duration need not equal an end time recomputed through `double` bitrate arithmetic.
 - **[RP-OMNET-TERMINAL-EVENTS]** Exercise every terminal route: success, error, timeout, cancellation, shutdown, and late or duplicate events. Cleanup and completion must happen exactly once.
 - **[RP-OMNET-SAME-TIME-ORDER]** Trace event ordering when correctness depends on which same-time event executes first. Do not infer ordering from source layout. Example: a response and a stale timeout at the same simulation time must not let insertion order decide whether a transaction succeeds.
@@ -50,7 +51,7 @@ Apply the lifecycle, observability, configuration, determinism, and testing rule
 
 ## Focused verification
 
-Select evidence under `doc/project/rule/testing.md#tr-focused-evidence`. Use a filtered module test
+Select evidence under the active test guidance. Use a filtered module test
 or one Cmdenv configuration/run/seed when kernel behavior is necessary to prove the path. High-value
 cases include:
 
@@ -64,6 +65,6 @@ cases include:
 | Configuration resolution | inherited default, explicit override, wildcard collision, feature off |
 | MSG change | copy, parsim pack/unpack, and derived type dispatch |
 
-For trajectory changes, take fingerprint meaning and baseline handling from
-`doc/project/design/test-anatomy.md` and `doc/project/guide/change-a-baseline.md`; use
+For trajectory changes, take fingerprint meaning and baseline handling from the active project
+guidance; use
 `inet-fingerprint-regression` for the operational diagnosis.

@@ -6,8 +6,8 @@
 * Bound capture cost
 * Validate the artifact
 
-Select and interpret observation points under `doc/project/guide/diagnose-a-simulation.md`. This
-reference adds PcapRecorder configuration mechanics.
+Select and interpret observation points under the active diagnosis guidance discovered through the
+project entry point. This reference adds PcapRecorder configuration mechanics.
 
 ## Select the capture point
 

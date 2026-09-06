@@ -9,13 +9,17 @@ Carry a pinned `base..topic` range onto pinned `main` through approved commit gr
 checkpoints. Preserve every attempt branch and deliver a clean target containing approved topic and
 adaptation effects, with no stage-only scaffolding.
 
+Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to
+discover the active project's current series, protection, baseline, and verification requirements.
+
 This mutates history. Start only when the user explicitly requests a high-risk upstream rebase. Use
 `inet-branch-cleanup` for fixed-base split/squash/re-authoring, and ordinary Git for a low-risk
 one-shot rebase. Rebase authorization does not authorize unrelated redesign, baseline movement, a
 push, or a pull request.
 
-Use `inet-pull-request-authoring` and `doc/project/rule/pull-request.md` before grouping commits. This
-workflow preserves whole input commits; splitting or squashing is separate authorized scope.
+Use `inet-pull-request-authoring` and the active project's current series guidance before grouping
+commits. This workflow preserves whole input commits; splitting or squashing is separate authorized
+scope.
 
 ## Progressive references
 
@@ -53,7 +57,7 @@ Completion requires:
    pass; attempt and superseded-group branches remain immutable and addressable.
 3. The clean target contains approved rebased effects and adaptation provenance without stage-only
    scaffolding.
-4. Every final commit satisfies applicable `PR-SERIES-BUILDS` and `PR-SERIES-ORDER` checks, the final
+4. Every final commit satisfies the applicable project series checks, the final
    directly related contract passes, and every material difference is attributed.
 5. `inet-pull-request-authoring` audits the resulting series; unauthorized cleanup remains a
    separate handoff.

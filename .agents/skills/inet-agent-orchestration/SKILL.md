@@ -7,9 +7,9 @@ description: Coordinate project-scoped specialist agents across Codex, Antigravi
 
 Keep requirements, decisions, and synthesis in the root thread. Delegate bounded evidence or execution outcomes when independent lanes reduce risk or latency.
 
-For production changes and pull-request reviews, obtain project policy and gate order from
-`doc/project/guide/contribute-a-change.md` or `doc/project/guide/review-a-pull-request.md`. This
-skill adds agent routing, ownership, and handoff mechanics only.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to obtain the
+active checkout's current contribution or review policy and gate order. This skill adds agent
+routing, ownership, and handoff mechanics only.
 
 ## Execution paths
 
@@ -81,7 +81,15 @@ orchestration skill solely to classify or execute such a change.
 
 ## Assignments and gates
 
-Every delegated prompt must say to follow `AGENTS.md` and the applicable repository skills, not spawn sub-agents, and return to the parent. Specify one deliverable, exact scope and inputs, write authority, exclusions, required evidence, definition of done, and concise return shape. Include paths, symbols, configuration, run/seed, and artifacts when relevant. For semantic `src/inet/` implementation, do not combine unresolved contract completion and write authority in one assignment. First provide the available `inet-code-authoring` evidence in a read-only contract assignment; after the implementer returns a complete self-validation, the orchestrator validates it and sends a separate follow-up that authorizes the first write. Reuse that implementer for the authorized implementation and related follow-up work.
+Every delegated prompt must say to follow the active repository instructions and applicable repository
+skills, avoid unauthorized delegation, and return to the parent. Specify one deliverable, exact scope
+and inputs, write authority, exclusions, required evidence, definition of done, and concise return
+shape. Include paths, symbols, configuration, run/seed, and artifacts when relevant. For semantic
+`src/inet/` implementation, do not combine unresolved contract completion and write authority in one
+assignment. First provide the available `inet-code-authoring` evidence in a read-only contract
+assignment; after the implementer returns a complete self-validation, the orchestrator validates it
+and sends a separate follow-up that authorizes the first write. Reuse that implementer for the
+authorized implementation and related follow-up work.
 
 For implementation, regression, and extraction assignments, include the applicable skill/reference
 sections and the concrete evidence to return. A model binding or high reasoning effort does not
@@ -95,14 +103,14 @@ Gate handoffs as follows:
 1. Diagnose → contract: demonstrated mechanism, bounded change surface, architecture/seal decision, any required approval, and the available evidence for every applicable `inet-code-authoring` contract field.
 2. Contract → implement: the implementer has returned every field complete and self-validated; the orchestrator has independently checked the authoring validation checklist, recorded the result, and explicitly authorized the first write. An unresolved field returns to diagnosis.
 3. Implement → verify: stable diff and explicit behavior claim.
-4. Verify → review or conclude: evidence selected under `doc/project/rule/testing.md` and the
-   execution constraints in `AGENTS.md`. When review is required, pass the stable diff, behavior
+4. Verify → review or conclude: evidence selected under the active project guidance and repository
+   instructions. When review is required, pass the stable diff, behavior
    claim, contract, implementation report, and evidence to the reviewer.
 5. Correctness review → conclude: for changes routed to `inet-reviewer`, all actionable `inet-code-review` findings are confirmed resolved by the same reviewer after focused reverification, or explicitly accepted by the user with the residual risk recorded. Report reviewed scope, validation, and residual risks.
 6. Architecture review → conclude: required fitness checks and the exact semantic verdict format from
    the applicable canonical checklist.
-7. Baseline or sealing change: the procedure and authorization required by `doc/project/` plus any
-   additional approval required by `AGENTS.md`.
+7. Baseline or sealing change: the procedure and authorization required by the active project
+   guidance, including any additional approval discovered in repository instructions.
 
 Gates may move backward when new evidence invalidates an earlier assumption. Preserve the working diff and artifacts while returning to the earliest affected gate; do not use destructive Git reset as recovery. For a build or focused-test failure, remain in verification when an identified runner or artifact problem caused it, return to implementation when the contract remains valid and the diff caused it, or return to diagnosis/contract definition when it exposes a wrong mechanism, owner, change surface, invariant, or verification mapping. Freeze further writes when evidence invalidates the mechanism or contract, revise and revalidate the affected handoff, then resume forward progress. Reverify every downstream claim made stale by the correction.
 

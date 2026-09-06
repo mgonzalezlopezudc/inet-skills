@@ -1,7 +1,7 @@
 # IEEE 802.11 review checks
 
-Apply `doc/project/domain/ieee80211.md` and
-`doc/project/enforcement/checklist/ieee80211.md` first. This reference adds concrete correctness
+Use the shared project-guidance discovery procedure to apply the active IEEE 802.11 domain and
+checklist guidance first. This reference adds concrete correctness
 traps and high-value cases beyond those canonical WLAN rules.
 
 ## Semantic path coverage

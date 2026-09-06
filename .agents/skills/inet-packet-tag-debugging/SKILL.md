@@ -5,8 +5,9 @@ description: Debug INET Packet, Chunk, and tag behavior. Use to inspect packet o
 
 # Debug packets, chunks, and tags
 
-Read `doc/project/design/packet-anatomy.md` and the applicable `AR-PKT-*` rules for the packet data,
-metadata, chunk, tag, and ownership model. This skill adds a first-divergence debugging procedure.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
+active checkout's packet data, metadata, chunk, tag, and ownership guidance. This skill adds a
+first-divergence debugging procedure.
 
 1. Identify the packet and the last module where metadata is correct and first where it is wrong.
 2. Inspect the checked-out code that adds, removes, copies, peeks, pops, inserts, trims, encapsulates, decapsulates, or duplicates it.

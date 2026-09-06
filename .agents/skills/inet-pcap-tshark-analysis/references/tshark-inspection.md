@@ -6,8 +6,8 @@
 * Analyze TCP exchanges
 * Diagnose missing fields
 
-Apply the evidence and correlation rules in `doc/project/guide/diagnose-a-simulation.md`. This
-reference adds TShark commands, fields, and dissector-specific interpretation.
+Use the shared project-guidance discovery procedure to find the active evidence and correlation
+guidance. This reference adds TShark commands, fields, and dissector-specific interpretation.
 
 ## Validate and scope the capture
 

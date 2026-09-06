@@ -1,8 +1,7 @@
 # Scope and reproducibility
 
-Apply the canonical amendment-gating and model-evidence distinctions in
-`doc/project/domain/ieee80211.md`, and the reproducibility rules in
-`doc/project/guide/diagnose-a-simulation.md`. This reference adds instantiated-model inspection and
+Use the shared project-guidance discovery procedure to find the active amendment-gating,
+model-evidence, and reproducibility guidance. This reference adds instantiated-model inspection and
 diagnostic artifact mechanics.
 
 ## Inspect the instantiated model
@@ -19,7 +18,7 @@ Use `inet-ned-ini-analysis` when inheritance, wildcard precedence, or `typename`
 
 ## Establish feature gates
 
-Apply `AR-WLAN-STD-GATING` from `doc/project/domain/ieee80211.md`. Use `ieee80211-standards` for its
+Apply the active standards-gating guidance. Use `ieee80211-standards` for its
 normative-evidence lane, `inet-ned-ini-analysis` for its effective-configuration lane, and source
 inspection for the checked-out implementation lane.
 

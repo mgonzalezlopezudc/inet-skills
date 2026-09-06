@@ -1,15 +1,14 @@
 # INET review checks
 
-Select canonical context by the changed INET contract. For packet, chunk, tag, or serialization
-contracts, read `doc/project/design/packet-anatomy.md` and the applicable `AR-PKT` rules. For
-protocol interaction, lifecycle, queue, or configuration contracts, read only the applicable
-`AR-COM`, `AR-LIFE`, `AR-QUEUE`, or `AR-CFG` rules. Add another canonical section only when the
-changed contract crosses into it. This reference adds concrete INET correctness traps not stated
+Select project context by the changed INET contract using the shared discovery procedure. For packet,
+chunk, tag, or serialization contracts, follow the active packet guidance. For protocol interaction,
+lifecycle, queue, or configuration contracts, follow only the applicable current routes. Add another
+canonical section only when the changed contract crosses into it. This reference adds concrete INET correctness traps not stated
 there.
 
 ## Packets, chunks, and tags
 
-- **[RP-INET-PACKET-DISPOSITION]** Under `doc/project/rule/quality.md#qr-object-ownership`, inspect every accept, ignore, error, and early-return path for exactly one packet disposition. Moving a packet to a dropped or retirement list is not deletion. Example: if an eviction callback can delete a packet, establish container state and final ownership before notification and never access the packet afterward.
+- **[RP-INET-PACKET-DISPOSITION]** Under the active ownership guidance, inspect every accept, ignore, error, and early-return path for exactly one packet disposition. Moving a packet to a dropped or retirement list is not deletion. Example: if an eviction callback can delete a packet, establish container state and final ownership before notification and never access the packet afterward.
 - **[RP-INET-TAG-PROPAGATION]** Decide whether packet-scope tags must propagate to replacement packets. Verify which request, indication, dispatch, interface, and protocol tags are sender-local, receiver-owned, or preserved across encapsulation. Example: a sender-local requested radio mode must not cross the wireless medium and be mistaken for a receiver-side indication; reconstruct receiver metadata from reception facts.
 - **[RP-INET-REGION-TAG-OFFSETS]** For region tags, compute in absolute packet coordinates using the source front offset, copied interval, and target rebasing. When prepending or trimming chunks (e.g. adding or removing encapsulating headers), verify that region tag start and end offsets are correctly shifted or re-anchored. Exercise no-overlap, boundary-aligned, crossing, first-fragment, and final-fragment cases.
 - **[RP-INET-RECEIVER-TAG-MUTATION]** When receiver processing clears sender-local tags, verify it mutates a duplicate or receiver-owned packet and then restores the metadata required by downstream dispatch.
@@ -22,7 +21,7 @@ there.
 - **[RP-INET-COLLECTION-INTERFACES]** When an INET collection, packet-provider, extractor, queue, buffer, gate, or scheduler interface changes, inspect every implementation and adapter. An older override that made a closed provider appear empty may not cover a new predicate operation.
 - **[RP-INET-SHARED-BUFFER-REMOVAL]** With shared buffers, scope bulk removal to the owning queue and verify callbacks cannot delete excluded or currently processed packets.
 - **[RP-INET-ORDERING-BARRIER]** Define the ordering barrier for every selector, aggregator, or scheduler and verify both selected output and residual queue order. Example: whether an eligible packet may bypass a temporarily blocked predecessor depends on the flow's ordering contract, not merely on forward-scan convenience.
-- **[RP-INET-PROVIDER-OUTCOMES]** Apply `doc/project/rule/architecture.md#ar-org-contracts`: distinguish present-but-empty, absent optional capability, invalid provider/wiring, and out-of-range access, then confirm those outcomes remain consistent across count, peek, remove, clear, and predicate operations rather than collapsing them all into empty or null.
+- **[RP-INET-PROVIDER-OUTCOMES]** Apply the active provider-contract guidance: distinguish present-but-empty, absent optional capability, invalid provider/wiring, and out-of-range access, then confirm those outcomes remain consistent across count, peek, remove, clear, and predicate operations rather than collapsing them all into empty or null.
 - **[RP-INET-UNSUPPORTED-VARIANTS]** Reject unsupported packet or primitive variants at a consistent boundary. Do not require a
   syntactic one-to-one `registerProtocol`/`registerService` pair when the effective dispatcher
   contract uses a different valid route.
@@ -49,8 +48,7 @@ there.
 
 ## Focused verification
 
-Choose the canonical test category and apply
-`doc/project/rule/testing.md#tr-focused-evidence`, then use the smallest INET check that reaches the
+Choose the test category under the active project guidance, then use the smallest INET check that reaches the
 production integration:
 
 | Mechanism | High-value check |
@@ -70,6 +68,6 @@ Use the owning test or simulation skill for the selected check.
 
 **[RP-CPP-COMPATIBILITY-REACHABILITY]** Changes to signatures or enums can reach generated callers, reflection, registration, serializers,
 printers, NED, and external result-analysis tools. Check these consumers when assessing compatibility
-or apparently dead code. For externally visible enum values, apply
-`doc/project/rule/release.md#rr-numeric-stable`; ordinary diagnostic logs establish numeric stability
+or apparently dead code. For externally visible enum values, apply the active release guidance;
+ordinary diagnostic logs establish numeric stability
 only when they are a defined published or tooling interface.

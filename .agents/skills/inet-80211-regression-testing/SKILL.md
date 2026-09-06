@@ -9,7 +9,8 @@ First use `inet-regression-testing` for the behavior claim, invariant, category,
 reproduction, production-path evidence, and bounded campaign decision. This specialization adds only
 the obligations that make that generic design valid for Wi-Fi.
 
-Read `doc/project/domain/ieee80211.md`. For a normative claim, use `ieee80211-standards` to identify
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
+active checkout's current WLAN guidance. For a normative claim, use `ieee80211-standards` to identify
 the applicable standard revision, clause, role, and negotiated conditions before fixing the expected
 exchange. Distinguish normative behavior from an intentional documented model limitation.
 
@@ -26,9 +27,10 @@ Choose the smallest protocol-visible invariant that establishes the claim:
 - the negotiated HT/VHT/HE/EHT capability and operation elements that enable the mechanism.
 
 For HE/EHT behavior, prove both the configured request and the active feature gate selected by the
-effective NED/INI configuration. Under `AR-WLAN-STD-GATING`, show that the mode is standards-derived,
-advertised or negotiated where required, and applied at the production decision point. A helper test
-of a capability predicate is not evidence that the frame path uses it.
+effective NED/INI configuration. Show from the discovered project guidance and source evidence that
+the mode is standards-derived, advertised or negotiated where required, and applied at the
+production decision point. A helper test of a capability predicate is not evidence that the frame
+path uses it.
 
 ## Packet-exchange evidence
 

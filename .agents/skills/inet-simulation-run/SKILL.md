@@ -5,8 +5,9 @@ description: Run and diagnose INET simulations using the INET launcher (`inet`) 
 
 # Run INET simulations
 
-Apply the reproduction and evidence contract in `doc/project/guide/diagnose-a-simulation.md`. This
-skill adds launcher, working-directory, and Cmdenv/Qtenv mechanics.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
+active checkout's current reproduction and evidence guidance. This skill adds launcher,
+working-directory, and Cmdenv/Qtenv mechanics.
 
 Invoke the `inet` launcher directly from the intended working directory. Diagnose environment setup only after a concrete launcher failure.
 
@@ -24,9 +25,9 @@ Use Qtenv only for interactive topology, animation, state inspection, or event s
 inet --debug -u Qtenv -f omnetpp.ini -c <config> -r <run> --debug-on-errors=true
 ```
 
-The commands above use debug mode with matching project libraries under the agent execution
-constraint in `AGENTS.md`; they do not satisfy the contributor's release-mode gate. Use
-`inet --debug --printcmd` when the resolved runner, NED/image paths, or libraries matter.
+Select the build mode required by the active project guidance and record it with the matching project
+libraries. Use `inet --debug --printcmd` when the resolved runner, NED/image paths, or libraries
+matter, if that option exists in the active launcher.
 `--debug-on-errors=true` creates a debugger trap; it does not launch a debugger. Use
 `inet-lldb-debugging` when source-level inspection is required.
 

@@ -15,7 +15,8 @@ Select the test category under the canonical test policy, then derive each direc
   the checkpoint transition, and cross-cutting adaptation mappings.
 
 No mapping is a reported coverage gap, not permission to substitute an unrelated suite. Run one
-scoped build-and-test invocation per attempt with the debug-mode constraints from `AGENTS.md`.
+scoped build-and-test invocation per attempt using the mode and constraints discovered from the
+active project guidance.
 
 ## Comparison controls
 

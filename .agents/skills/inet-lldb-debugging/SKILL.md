@@ -5,8 +5,8 @@ description: Debug INET and OMNeT++ simulations at the C++ source level with LLD
 
 # Debug INET with LLDB
 
-Select the reproduction and report the evidence under
-`doc/project/guide/diagnose-a-simulation.md`. This skill adds debugger mechanics.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
+active checkout's current reproduction and evidence guidance. This skill adds debugger mechanics.
 
 Use matching debug components: `opp_run_dbg`, `libINET_dbg.so`, and debug project libraries. `--debug-on-errors=true` creates a trap but does not launch LLDB.
 

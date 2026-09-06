@@ -5,8 +5,8 @@
 * Diagnose empty or undecoded captures
 * Build automated assertions
 
-Apply the observation-boundary, evidence-classification, and reporting rules in
-`doc/project/guide/diagnose-a-simulation.md`. This reference adds capture comparison and TShark
+Use the shared project-guidance discovery procedure to find the active observation-boundary,
+evidence-classification, and reporting guidance. This reference adds capture comparison and TShark
 diagnostic mechanics.
 
 ## Compare observation points

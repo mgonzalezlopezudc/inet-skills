@@ -1,7 +1,8 @@
 # IEEE 802.11 frame interpretation
 
-Use `doc/project/domain/ieee80211.md` for frame representation and sequence ownership. This
-reference adds capture interpretation and PHY/MAC failure-stage distinctions.
+Use the shared project-guidance discovery procedure to find the active frame-representation and
+sequence-ownership guidance. This reference adds capture interpretation and PHY/MAC failure-stage
+distinctions.
 
 Correctly identify the management, control, or data subtype before reasoning about the exchange. Management state depends on Beacon, Probe, Authentication, Association, Reassociation, Disassociation, Deauthentication, and Action frames; protection and acknowledgment use RTS, CTS, ACK, Block Ack Request, and Block Ack; QoS and null-data subtypes have different delivery and ACK semantics.
 
@@ -20,8 +21,8 @@ Do not assume Address 1 is the final destination. Interpret To DS and From DS fi
 
 ## Retry and fragment identity
 
-Apply `AR-WLAN-MAC-SEQUENCE` in `doc/project/domain/ieee80211.md` for sequence-space ownership and
-retry/fragment identity. Instantiate that identity in the capture with transmitter, receiver,
+Apply the active sequence-space ownership guidance for retry/fragment identity. Instantiate that
+identity in the capture with transmitter, receiver,
 applicable TID, sequence number, fragment number, and Retry bit. Capture frame numbers remain local
 observation indexes, not packet identities.
 

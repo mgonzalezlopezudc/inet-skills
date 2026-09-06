@@ -5,10 +5,9 @@ description: Record and analyze packet exchanges in INET simulations using PcapR
 
 # Analyze INET packet captures
 
-Use the wire and observation boundary in `doc/project/design/packet-anatomy.md` and
-`doc/project/rule/architecture.md`, and the evidence contract in
-`doc/project/guide/diagnose-a-simulation.md`. This skill adds recorder placement, TShark inspection,
-and multi-point correlation mechanics.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
+active checkout's wire, observation, architecture, and evidence guidance. This skill adds recorder
+placement, TShark inspection, and multi-point correlation mechanics.
 
 ## Workflow
 

@@ -80,5 +80,5 @@ last stage; proof that attempt and safe-point refs retain their recorded SHAs; e
 commands and results for every target commit and the final union; every material delta and
 explanation; and each adaptation mapped to the topic and upstream changes that required it. Record
 whether each adaptation remained an independently valid prerequisite or was folded into its causal
-rebased commit. Include the final `PR-*` audit, publication-gate evidence or explicit local-only
+rebased commit. Include the final project-series audit, publication-gate evidence or explicit local-only
 status, and any residual issue outside the authorized rebase scope.

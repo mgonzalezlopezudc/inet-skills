@@ -5,8 +5,9 @@ description: Build INET and run focused unit or module tests in this repository.
 
 # Build and run INET unit tests
 
-Select the test category, scope, and freshness obligation under `doc/project/rule/testing.md` and
-`doc/project/guide/run-the-gates.md`. This skill adds filtered runner mechanics.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
+active checkout's test category, scope, freshness, and gate obligations. This skill adds filtered
+runner mechanics.
 
 Run from the repository root with `inet_run_unit_tests`; do not infer a runner from another project.
 
@@ -17,8 +18,8 @@ make MODE=debug -j$(nproc)
 inet_run_unit_tests -m debug -f '<regex>'
 ```
 
-These agent-run commands use `MODE=debug` and `-m debug` under `AGENTS.md`; they do not satisfy the
-contributor's release-mode gate. The test runner builds selected test executables but does not
+Use the build mode required by the active project guidance and record it with the runner. The test
+runner builds selected test executables but does not
 rebuild `src/libINET_dbg.so`. A `.test`-only change needs no INET rebuild unless compiled support
 inputs changed.
 

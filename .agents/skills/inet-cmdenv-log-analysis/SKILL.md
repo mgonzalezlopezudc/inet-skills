@@ -5,8 +5,9 @@ description: Analyze INET and OMNeT++ Cmdenv logs. Use to find module behavior, 
 
 # Analyze Cmdenv logs
 
-Apply the scope, evidence, correlation, and reporting contract in
-`doc/project/guide/diagnose-a-simulation.md`. This skill adds Cmdenv logging and search mechanics.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
+active checkout's current scope, evidence, correlation, and reporting guidance. This skill adds
+Cmdenv logging and search mechanics.
 
 Save diagnostic output and target only the relevant module subtree. Useful overrides are:
 

@@ -5,16 +5,18 @@ description: Act as an independent read-only OMNeT++/INET maintainer reviewing a
 
 # INET code reviewer
 
-For every correctness review, follow `doc/project/guide/review-a-code-change.md`. For a pull request
-or branch series, additionally follow `doc/project/guide/review-a-pull-request.md` for the
-commit-by-commit `PR-*` audit and integrated branch pass. When the scope reaches `src/inet/`, apply
-the canonical rules, exception ledgers, and general semantic checklist selected through
-`doc/project/README.md`. For IEEE 802.11 production scope, also apply its domain rules and
-`doc/project/enforcement/checklist/ieee80211.md`.
+Start with the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md)
+and read the active checkout's project entry point. Follow its current review route; for a branch or
+pull request, include the route's series and domain checks. Apply the active exception ledgers and
+semantic checklists selected for the reviewed scope. Do not assume that a project document name,
+heading, rule identifier, or checklist path remains unchanged.
 
 **Read-only scope policy:**
 - Remain strictly read-only with respect to committed source files, NED/MSG definitions, configuration files, test scripts, fingerprints, exception ledgers, and sealing status files.
-- **Validation execution is permitted and encouraged:** Rebuilding debug artifacts (`MODE=debug`) and running focused unit/module tests or diagnostic simulations to confirm or refute a suspected defect is standard maintainer practice. Writes are limited to generated build, test-result, simulation-result, and diagnostic artifacts.
+- **Validation execution is permitted and encouraged:** Rebuild the artifacts and run focused tests
+  or diagnostic simulations in the mode required by the active project guidance to confirm or refute
+  a suspected defect. Writes are limited to generated build, test-result, simulation-result, and
+  diagnostic artifacts.
 
 ## Select the review layers
 
@@ -33,15 +35,14 @@ for concrete path coverage; domain references establish the simulation and proto
 Layer references label durable investigation prompts as `RP-<LAYER>-<MECHANISM>`. These are
 non-normative navigation and provenance identifiers: they do not create project requirements,
 determine severity or verdicts, or by themselves justify a finding. A checklist `FLAG` must cite
-the applicable canonical project rule identifier. Do not require `RP-*` identifiers in the
-user-facing review report.
+the applicable identifier found in the active project guidance. Do not require `RP-*` identifiers in
+the user-facing review report.
 
 ## Reviewing Specialized Change Types
 
 ### Test-Only and Benchmark Changes
-- Apply `doc/project/rule/testing.md#tr-focused-evidence` and the production-path distinction in
-  `doc/project/design/test-anatomy.md`; a private-helper test does not prove that the production owner
-  invokes it with the intended inputs.
+- Apply the active test guidance and its production-path distinction; a private-helper test does not
+  prove that the production owner invokes it with the intended inputs.
 - Check that tests clean up dynamically allocated simulation objects (`Packet`, `cMessage`) to avoid false-positive leak reports.
 - Select only layers implicated by the test's own behavior and the production contract it claims to
   cover.
@@ -89,12 +90,11 @@ realistic risk, use the owning skill for the smallest direct check:
 | Fingerprint divergence | `inet-fingerprint-regression` |
 | IEEE 802.11 normative claim | `ieee80211-standards` |
 
-Take test-category and baseline policy from `doc/project/rule/testing.md` and
-`doc/project/guide/change-a-baseline.md`; apply the additional execution constraints in `AGENTS.md`.
+Take test-category, baseline, and execution policy from the active project guidance and repository
+instructions discovered through the shared procedure.
 
 ## Report as a reviewer
 
-Use the terminology, severity basis, deduplication rule, and report order in
-`doc/project/guide/review-a-code-change.md`. Do not convert missing execution into a checklist
-`QUESTION`, duplicate one mechanism as both a full correctness finding and a full checklist
-explanation, or assign severity to an unresolved question.
+Use the terminology, severity basis, deduplication rule, and report order in the active review route.
+Do not convert missing execution into a checklist question, duplicate one mechanism as both a full
+correctness finding and a full checklist explanation, or assign severity to an unresolved question.

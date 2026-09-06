@@ -5,8 +5,9 @@ description: Debug IEEE 802.11 PHY and MAC packet exchanges in OMNeT++/INET usin
 
 # Debug IEEE 802.11 packet exchanges
 
-Apply `doc/project/domain/ieee80211.md` for the model's canonical WLAN boundaries, owners, and
-verification obligations. This skill adds the evidence path for locating a runtime divergence.
+Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to
+discover the active checkout's current WLAN boundaries, owners, and verification obligations. This
+skill adds the evidence path for locating a runtime divergence.
 
 Find the first divergent transition:
 

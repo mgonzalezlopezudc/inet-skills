@@ -1,7 +1,8 @@
 # Analysis patterns
 
-Apply `doc/project/guide/analyze-simulation-results.md` before choosing a pattern. Load only the
-sections needed to implement the selected derived metric or parameter-study plot.
+Use the shared project-guidance discovery procedure to find the active result-analysis guidance
+before choosing a pattern. Load only the sections needed to implement the selected derived metric or
+parameter-study plot.
 
 ## Confidence intervals across runs
 

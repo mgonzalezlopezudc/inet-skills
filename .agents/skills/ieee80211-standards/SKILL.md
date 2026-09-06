@@ -5,8 +5,9 @@ description: Search and inspect IEEE 802.11 standards stored in this repository.
 
 # IEEE 802.11 standards corpus
 
-Use `doc/project/domain/ieee80211.md` and `doc/project/rule/quality.md` for INET's normative
-traceability requirements. This skill adds corpus search, PDF fallback, and citation evidence.
+Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to
+read the active checkout's project entry point and discover any current normative traceability
+guidance. This skill adds corpus search, PDF fallback, and citation evidence.
 
 Use the tracked launcher `./bin/inet_process_standards` from the `inet-skills` repository root; do
 not rely on a similarly named command from `PATH`. Locate the INET worktree from the current

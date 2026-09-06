@@ -15,6 +15,9 @@ This mutates repository history. Start only when the user requested history reco
 
 ## Admission contract
 
+Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to
+discover the active project's current series, protection, baseline, and verification requirements.
+
 Use this skill only when all of these are true:
 
 - `base` and `topic` can be pinned, and `topic` is a linear branch on that unchanged base.
@@ -26,7 +29,8 @@ Use this skill only when all of these are true:
 - Existing baseline changes, if any, are already approved and can remain with their causal source
   change. Cleanup will not create or correct baseline values.
 
-Before planning, use `inet-pull-request-authoring` and read `doc/project/rule/pull-request.md`. Use
+Before planning, use `inet-pull-request-authoring` and discover the active project's current series
+guidance. Use
 `inet-opp-repl` to discover the active interface, map directly related configurations, and normalize
 the verification results.
 
@@ -56,7 +60,7 @@ git rev-list --merges <base-sha>..<clean-sha>
 
 The diff command must succeed, and the merge list must be empty. Tree equality covers baseline files
 too; this fast path has no exception ledger. Also audit the constructed series against the applicable
-`PR-SPLIT-*`, `PR-SERIES-ORDER`, and `PR-MSG-*` rules before spending time on the verification sweep.
+project series and message guidance before spending time on the verification sweep.
 
 ## Verify in one sweep
 
@@ -72,7 +76,7 @@ dispose of the worktree only after verification and evidence collection are comp
 3. Record one concise result row: commit SHA and subject, build command/status, test selector,
    `opp_repl` status, exit code, and artifact or normalized-envelope path.
 
-Do not deliver a candidate until every commit satisfies `PR-SERIES-BUILDS`. After the sweep, run the
+Do not deliver a candidate until every commit satisfies the active per-commit build requirement. After the sweep, run the
 union of the directly related selectors at `clean` HEAD and record its result. Do not repeat
 middle-commit spot checks when the sweep already tested those exact trees and no commit was rewritten
 afterward.

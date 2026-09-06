@@ -13,7 +13,17 @@ SCRIPT_DIRECTORY = Path(__file__).resolve().parent
 if str(SCRIPT_DIRECTORY) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIRECTORY))
 
-from validate_skill_suite import Validation, expand_profile, load_yaml, validate_deployment_artifacts
+from validate_skill_suite import (
+    Validation,
+    expand_profile,
+    load_yaml,
+    validate_dependencies_and_profiles,
+    validate_deployment_artifacts,
+    validate_frontmatter_and_metadata,
+    validate_project_guidance,
+    validate_references,
+    validate_verification_support,
+)
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
@@ -41,11 +51,30 @@ def profile_requirements(
     return requirements
 
 
+def copy_resource(root: Path, output: Path, relative: str) -> None:
+    source = root / relative
+    destination = output / relative
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    if source.is_dir():
+        shutil.copytree(
+            source,
+            destination,
+            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+        )
+    else:
+        shutil.copy2(source, destination)
+
+
 def package_profile(
     *, root: Path, profile_name: str, output: Path, project_root: Path | None
 ) -> tuple[list[str], list[str]]:
     manifest = load_yaml(root / ".agents" / "skill-suite.yaml")
     validation = Validation()
+    validate_project_guidance(root, manifest, validation)
+    validate_frontmatter_and_metadata(root, manifest, validation, write_metadata=False)
+    validate_references(root, manifest, validation)
+    validate_dependencies_and_profiles(manifest, validation)
+    validate_verification_support(root, manifest, validation)
     profiles = manifest.get("profiles", {})
     skills = sorted(expand_profile(profile_name, profiles, validation))
     requirements = sorted(profile_requirements(profile_name, profiles, validation))
@@ -83,25 +112,16 @@ def package_profile(
             for relative in manifest["skills"][skill].get("deployment_files", [])
         }
     )
-    for relative in shared_paths:
-        source = root / relative
-        destination = output / relative
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        if source.is_dir():
-            shutil.copytree(
-                source,
-                destination,
-                ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
-            )
-        else:
-            shutil.copy2(source, destination)
+    shared_paths.extend(manifest.get("shared_resources", []))
+    support = manifest.get("verification_results", {})
+    if isinstance(support, dict):
+        for key in ("schema", "adapter"):
+            relative = support.get(key)
+            if isinstance(relative, str):
+                shared_paths.append(relative)
+    for relative in sorted(set(shared_paths)):
+        copy_resource(root, output, relative)
 
-    shutil.copytree(root / ".agents" / "schemas", output / ".agents" / "schemas")
-    (output / ".agents" / "scripts").mkdir()
-    shutil.copy2(
-        root / ".agents" / "scripts" / "normalize_verification.py",
-        output / ".agents" / "scripts" / "normalize_verification.py",
-    )
     (output / ".agents" / "deployment.json").write_text(
         json.dumps(
             {"manifest_version": manifest["version"], "profile": profile_name, "skills": skills},

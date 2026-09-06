@@ -5,8 +5,9 @@ description: Analyze INET NED and omnetpp.ini configuration behavior. Use to tra
 
 # Analyze NED and INI configuration
 
-Use the NED/configuration authority described in `doc/project/design/decisions.md` and
-`doc/project/rule/architecture.md`. This skill adds the concrete effective-configuration proof.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
+active checkout's NED/configuration authority. This skill adds the concrete effective-configuration
+proof.
 
 1. Identify the INI file, config/`extends` chain, run, network, and working directory.
 2. Trace the relevant NED type, base types, submodule, parameter declaration/default, and `typename` assignments.

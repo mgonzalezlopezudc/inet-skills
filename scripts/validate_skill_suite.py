@@ -27,6 +27,7 @@ REQUIRED_WORKFLOW_AREAS = {
     "branch-rebase",
 }
 GENERATED_KEYS = ("display_name", "short_description", "default_prompt")
+CHECKOUT_REQUIREMENT_KEYS = ("required", "optional")
 
 
 class Validation:
@@ -39,6 +40,11 @@ class Validation:
 
     def warn(self, message: str) -> None:
         self.warnings.append(message)
+
+
+def is_safe_relative_path(value: str) -> bool:
+    path = Path(value)
+    return not path.is_absolute() and ".." not in path.parts
 
 
 def load_yaml(path: Path) -> dict:
@@ -80,6 +86,33 @@ def generated_metadata_paths(root: Path, manifest: dict, skill: str) -> list[Pat
     return [root / ".agents" / "skills" / skill / target for target in targets]
 
 
+def validate_project_guidance(root: Path, manifest: dict, validation: Validation) -> None:
+    """Validate the one stable project input without asserting internal document details."""
+    if "project_compatibility" in manifest:
+        validation.error(
+            "manifest.project_compatibility is obsolete; use project_guidance.entrypoint"
+        )
+    guidance = manifest.get("project_guidance")
+    if not isinstance(guidance, dict):
+        validation.error("manifest.project_guidance must be a mapping")
+        return
+    entrypoint = guidance.get("entrypoint")
+    if entrypoint != "doc/project/README.md":
+        validation.error(
+            "manifest.project_guidance.entrypoint must be the stable "
+            "doc/project/README.md entry point"
+        )
+    resources = manifest.get("shared_resources", [])
+    if not isinstance(resources, list):
+        validation.error("manifest.shared_resources must be a list")
+        return
+    for relative in resources:
+        if not isinstance(relative, str) or not relative or not is_safe_relative_path(relative):
+            validation.error(f"shared resource path is invalid: {relative!r}")
+        elif not (root / relative).exists():
+            validation.error(f"shared resource does not resolve: {relative!r}")
+
+
 def validate_frontmatter_and_metadata(
     root: Path, manifest: dict, validation: Validation, *, write_metadata: bool
 ) -> None:
@@ -89,6 +122,9 @@ def validate_frontmatter_and_metadata(
         return
 
     skills_root = root / ".agents" / "skills"
+    if not skills_root.is_dir():
+        validation.error(f"missing skills directory: {skills_root.relative_to(root)}")
+        return
     actual = {path.name for path in skills_root.iterdir() if path.is_dir()}
     declared_names = set(declared)
     for name in sorted(actual - declared_names):
@@ -122,19 +158,56 @@ def validate_frontmatter_and_metadata(
 
         dependencies = spec.get("dependencies")
         tools = spec.get("required_tools")
-        files = spec.get("required_checkout_files")
+        optional_tools = spec.get("optional_tools", [])
+        checkout = spec.get("checkout_requirements")
         deployment_files = spec.get("deployment_files", [])
         if not isinstance(dependencies, list):
             validation.error(f"skills.{name}.dependencies must be a list")
+        elif any(not isinstance(item, str) or not item for item in dependencies):
+            validation.error(f"skills.{name}.dependencies must contain non-empty strings")
         if not isinstance(tools, list):
             validation.error(f"skills.{name}.required_tools must be a list")
-        if not isinstance(files, list):
-            validation.error(f"skills.{name}.required_checkout_files must be a list")
+        elif any(not isinstance(item, str) or not item for item in tools):
+            validation.error(f"skills.{name}.required_tools must contain non-empty strings")
+        if not isinstance(optional_tools, list):
+            validation.error(f"skills.{name}.optional_tools must be a list")
+        elif any(not isinstance(item, str) or not item for item in optional_tools):
+            validation.error(f"skills.{name}.optional_tools must contain non-empty strings")
+        if "required_checkout_files" in spec:
+            validation.error(
+                f"skills.{name}.required_checkout_files is obsolete; use "
+                "checkout_requirements.required/optional"
+            )
+        if not isinstance(checkout, dict):
+            validation.error(f"skills.{name}.checkout_requirements must be a mapping")
+        else:
+            unknown = set(checkout) - set(CHECKOUT_REQUIREMENT_KEYS)
+            if unknown:
+                validation.error(
+                    f"skills.{name}.checkout_requirements has unknown keys: {sorted(unknown)}"
+                )
+            for key in CHECKOUT_REQUIREMENT_KEYS:
+                values = checkout.get(key)
+                if not isinstance(values, list):
+                    validation.error(
+                        f"skills.{name}.checkout_requirements.{key} must be a list"
+                    )
+                elif any(
+                    not isinstance(item, str) or not item or not is_safe_relative_path(item)
+                    for item in values
+                ):
+                    validation.error(
+                        f"skills.{name}.checkout_requirements.{key} must contain safe relative paths"
+                    )
         if not isinstance(deployment_files, list):
             validation.error(f"skills.{name}.deployment_files must be a list when present")
         else:
             for relative in deployment_files:
-                if not isinstance(relative, str) or not (root / relative).exists():
+                if (
+                    not isinstance(relative, str)
+                    or not is_safe_relative_path(relative)
+                    or not (root / relative).exists()
+                ):
                     validation.error(
                         f"skills.{name}.deployment_files does not resolve: {relative!r}"
                     )
@@ -237,10 +310,49 @@ def expand_profile(name: str, profiles: dict, validation: Validation, stack: tup
     return result
 
 
+def validate_dependency_cycles(manifest: dict, validation: Validation) -> None:
+    """Reject dependency cycles so a package cannot require an unresolvable skill graph."""
+    skills = manifest.get("skills", {})
+    graph = {
+        name: [
+            dependency
+            for dependency in spec.get("dependencies", [])
+            if isinstance(dependency, str) and dependency in skills
+        ]
+        for name, spec in skills.items()
+        if isinstance(spec, dict) and isinstance(spec.get("dependencies", []), list)
+    }
+    state: dict[str, int] = {}
+    stack: list[str] = []
+    reported: set[tuple[str, ...]] = set()
+
+    def visit(name: str) -> None:
+        state[name] = 1
+        stack.append(name)
+        for dependency in graph.get(name, []):
+            if state.get(dependency, 0) == 0:
+                visit(dependency)
+            elif state.get(dependency) == 1:
+                start = stack.index(dependency)
+                cycle = tuple(stack[start:] + [dependency])
+                canonical = min(cycle[i:-1] + cycle[:i] + (cycle[i],) for i in range(len(cycle) - 1))
+                if canonical not in reported:
+                    reported.add(canonical)
+                    validation.error(f"skill dependency cycle: {' -> '.join(canonical)}")
+        stack.pop()
+        state[name] = 2
+
+    for name in sorted(graph):
+        if state.get(name, 0) == 0:
+            visit(name)
+
+
 def validate_dependencies_and_profiles(manifest: dict, validation: Validation) -> None:
     skills = manifest.get("skills", {})
     names = set(skills)
     for name, spec in sorted(skills.items()):
+        if not isinstance(spec, dict):
+            continue
         dependencies = spec.get("dependencies", [])
         duplicates = {item for item in dependencies if dependencies.count(item) > 1}
         if duplicates:
@@ -260,6 +372,8 @@ def validate_dependencies_and_profiles(manifest: dict, validation: Validation) -
             if target == name:
                 validation.error(f"skills.{name} cannot route to itself")
 
+    validate_dependency_cycles(manifest, validation)
+
     profiles = manifest.get("profiles")
     if not isinstance(profiles, dict) or not profiles:
         validation.error("manifest.profiles must be a non-empty mapping")
@@ -269,6 +383,8 @@ def validate_dependencies_and_profiles(manifest: dict, validation: Validation) -
         for unknown in sorted(members - names):
             validation.error(f"profile {name} contains unknown skill: {unknown}")
         for member in sorted(members & names):
+            if not isinstance(skills[member], dict):
+                continue
             missing = set(skills[member].get("dependencies", [])) - members
             if missing:
                 validation.error(
@@ -387,19 +503,23 @@ def validate_capabilities(
         (validation.error if strict_capabilities else validation.warn)(message)
 
     if project_root is not None:
-        for capability in manifest.get("project_compatibility", {}).get("capabilities", []):
-            path = project_root / capability.get("path", "")
+        guidance = manifest.get("project_guidance", {})
+        entrypoint = guidance.get("entrypoint") if isinstance(guidance, dict) else None
+        if isinstance(entrypoint, str):
+            path = project_root / entrypoint
             if not path.is_file():
-                validation.error(f"missing project compatibility file: {path}")
-                continue
-            text = path.read_text(encoding="utf-8", errors="replace")
-            for marker in capability.get("contains", []):
-                if marker not in text:
-                    validation.error(f"project capability marker {marker!r} missing from {path}")
+                # Project guidance is a safety boundary. Missing guidance never grants permission
+                # for a protected action, even when optional task capabilities are being checked.
+                validation.error(f"missing project guidance entrypoint: {path}")
 
         conditional = conditional_skill_names(manifest)
         for name, spec in manifest.get("skills", {}).items():
-            for relative in spec.get("required_checkout_files", []):
+            if not isinstance(spec, dict):
+                continue
+            requirements = spec.get("checkout_requirements", {})
+            if not isinstance(requirements, dict):
+                continue
+            for relative in requirements.get("required", []):
                 path = project_root / relative
                 if not path.exists():
                     message = f"skill {name} unavailable; missing checkout file {path}"
@@ -407,6 +527,10 @@ def validate_capabilities(
                         validation.warn(message)
                     else:
                         capability_issue(message)
+            for relative in requirements.get("optional", []):
+                path = project_root / relative
+                if not path.exists():
+                    validation.warn(f"optional capability unavailable for skill {name}: {path}")
 
         for profile_name, profile in manifest.get("profiles", {}).items():
             requirements = profile.get("activation_requires", {}) if isinstance(profile, dict) else {}
@@ -423,6 +547,7 @@ def validate_capabilities(
             {
                 tool
                 for spec in manifest.get("skills", {}).values()
+                if isinstance(spec, dict)
                 for tool in spec.get("required_tools", [])
             }
         )
@@ -430,6 +555,18 @@ def validate_capabilities(
             present = shutil.which(tool) is not None or any((base / tool).is_file() for base in local_bins)
             if not present:
                 capability_issue(f"required tool is unavailable in PATH or checkout bin/: {tool}")
+        optional_tools = sorted(
+            {
+                tool
+                for spec in manifest.get("skills", {}).values()
+                if isinstance(spec, dict)
+                for tool in spec.get("optional_tools", [])
+            }
+        )
+        for tool in optional_tools:
+            present = shutil.which(tool) is not None or any((base / tool).is_file() for base in local_bins)
+            if not present:
+                validation.warn(f"optional tool is unavailable in PATH or checkout bin/: {tool}")
 
 
 def validate_deployment_artifacts(path: Path | None, validation: Validation) -> None:
@@ -460,6 +597,44 @@ def validate_verification_support(root: Path, manifest: dict, validation: Valida
         value = support.get(key)
         if not isinstance(value, str) or not (root / value).exists():
             validation.error(f"verification_results.{key} does not resolve: {value!r}")
+    runners = support.get("runners")
+    if not isinstance(runners, list) or not runners or any(not isinstance(item, str) for item in runners):
+        validation.error("verification_results.runners must be a non-empty list of strings")
+    required_fixtures = support.get("required_fixtures")
+    if not isinstance(required_fixtures, dict):
+        validation.error("verification_results.required_fixtures must be a mapping")
+    else:
+        fixture_root_value = support.get("fixtures")
+        fixture_root = root / fixture_root_value if isinstance(fixture_root_value, str) else None
+        for runner in runners if isinstance(runners, list) else []:
+            fixtures = required_fixtures.get(runner)
+            if not isinstance(fixtures, list) or not fixtures:
+                validation.error(f"verification_results.required_fixtures.{runner} must be a non-empty list")
+                continue
+            if fixture_root is None:
+                continue
+            for fixture in fixtures:
+                if not isinstance(fixture, str) or not fixture:
+                    validation.error(
+                        f"verification_results.required_fixtures.{runner} has invalid fixture: {fixture!r}"
+                    )
+                elif not (fixture_root / fixture).is_file():
+                    validation.error(
+                        f"missing verification fixture for {runner}: {fixture_root / fixture}"
+                    )
+        undeclared = set()
+        if fixture_root is not None and fixture_root.is_dir():
+            undeclared = {
+                path.name for path in fixture_root.iterdir() if path.is_file()
+            } - {
+                fixture
+                for fixtures in required_fixtures.values()
+                if isinstance(fixtures, list)
+                for fixture in fixtures
+                if isinstance(fixture, str)
+            }
+        for fixture in sorted(undeclared):
+            validation.warn(f"verification fixture is not declared in manifest: {fixture}")
     schema_value = support.get("schema")
     if isinstance(schema_value, str) and (root / schema_value).is_file():
         try:
@@ -513,6 +688,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if manifest.get("version") != 1:
         validation.error("manifest version must be 1")
+    validate_project_guidance(root, manifest, validation)
     validate_frontmatter_and_metadata(
         root, manifest, validation, write_metadata=args.write_metadata
     )

@@ -5,8 +5,8 @@ description: Reconstruct OMNeT++ simulator-level message and event causality fro
 
 # Analyze OMNeT++ event logs
 
-Apply the scope, correlation, and evidence contract in
-`doc/project/guide/diagnose-a-simulation.md`. Use an event log when simulator scheduling or message
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
+active checkout's current scope, correlation, and evidence guidance. Use an event log when simulator scheduling or message
 movement is the missing evidence, and enable it only for the selected reproduction:
 
 ```sh

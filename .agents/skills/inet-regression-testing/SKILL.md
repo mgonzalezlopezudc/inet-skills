@@ -6,8 +6,9 @@ description: Design protocol-neutral INET regression coverage from a behavior cl
 # INET regression testing
 
 Turn a reported or intended behavior into the smallest durable test that would fail if that behavior
-regressed. Obtain category policy from `doc/project/rule/testing.md` and the meaning and limits of
-each category from `doc/project/design/test-anatomy.md`; do not restate or weaken those rules.
+regressed. Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to
+discover the active checkout's category policy and the meaning and limits of each category; do not
+restate or weaken that guidance.
 
 ## Design chain
 
@@ -17,9 +18,8 @@ Complete this chain in order:
    boundary, and expected outcome.
 2. **Invariant** — express the observation that must remain true. Separate exact sequence or value
    claims from statistical or performance claims.
-3. **Matching category** — select `unit`, `module`, `protocol`, `queueing`, `packet`, `networks`,
-   `statistical`, `validation`, `fingerprint`, `speed`, `features`, or `misc` under `TR-CAT-MATCH`.
-   A broad existing suite in the wrong category is not substitute evidence.
+3. **Matching category** — select the category defined by the active project guidance. A broad
+   existing suite in the wrong category is not substitute evidence.
 4. **Minimal deterministic reproduction** — retain only the modules, configuration, inputs, events,
    and time window needed to reach the owner and observation. Pin the configuration, run, seed, and
    relevant parameters.
@@ -28,8 +28,8 @@ Complete this chain in order:
 6. **Bounded campaign** — decide whether the fixed reproduction is sufficient or whether explicitly
    bounded seeds or parameter values are part of the claim.
 
-Map the changed or failing path and symbol to the selected case and invoke it with an explicit
-filter under `TR-FOCUSED-EVIDENCE`. A zero-case selection is `NOT_RUN`, never a pass.
+Map the changed or failing path and symbol to the selected case and invoke it with the explicit
+filter required by the active project guidance. A zero-case selection is `NOT_RUN`, never a pass.
 
 ## Helper and production-path evidence
 

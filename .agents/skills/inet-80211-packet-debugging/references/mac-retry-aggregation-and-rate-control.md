@@ -1,7 +1,7 @@
 # MAC, retry, aggregation, and rate control
 
-Apply the canonical exchange, sequence, QoS, ownership, and PHY-boundary rules in
-`doc/project/domain/ieee80211.md`. This reference adds per-attempt reconstruction and failure
+Use the shared project-guidance discovery procedure to find the active exchange, sequence, QoS,
+ownership, and PHY-boundary guidance. This reference adds per-attempt reconstruction and failure
 diagnostics.
 
 ## Reconstruct one transmission attempt

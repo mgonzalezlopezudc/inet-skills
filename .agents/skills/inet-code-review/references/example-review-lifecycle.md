@@ -1,6 +1,6 @@
 # Example review — UDP application timer lifetime
 
-This concise non-WLAN example follows `doc/project/guide/review-a-code-change.md` and demonstrates a
+This concise non-WLAN example follows the active project review route and demonstrates a
 lifecycle and ownership finding. The proposed diff is synthetic, but every named path, class,
 method, API, and existing test filter was verified against INET commit
 `f07d0e7662dbd3d671495109326821716be82668`.

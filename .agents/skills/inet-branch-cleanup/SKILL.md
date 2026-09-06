@@ -9,11 +9,14 @@ Build a new `clean` branch from a fixed `base`. The original `topic` branch neve
 
 This is a repository-mutating workflow. Start it only when the user has requested history reconstruction. Use `inet-pull-request-authoring` for commit planning, message writing, or compliance auditing that does not require rebuilding the branch. Use `inet-branch-rebase` for a high-risk, `opp_repl`-backed rebase onto changed upstream history; use an ordinary Git workflow for a low-risk one-shot rebase.
 
+Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to
+discover the active project's current series, protection, baseline, and verification requirements.
+
 Commits may be split, merged, reordered, or newly authored, even below hunk level. That freedom is kept honest by the **coverage ledger**, which proves that the cleanup lost nothing and introduced no permanent changes of its own.
 
 Before classifying change groups or planning output commits, use `inet-pull-request-authoring` and
-read `doc/project/rule/pull-request.md`. This skill adds reconstruction mechanics and does not
-restate or override the canonical `PR-*` policy.
+discover the active project's current series guidance. This skill adds reconstruction mechanics and
+does not restate or override project policy.
 
 The cleanup workflow and acceptance contract are INET-specific because they use `opp_repl` as the test oracle. Before starting a cleanup, read both [references/state-log.md](references/state-log.md) and [references/opp-repl-contract.md](references/opp-repl-contract.md).
 
@@ -30,7 +33,7 @@ Cleanup is complete only when:
 
 1. `git diff <topic-sha> <clean-sha> --` is empty for every source and non-baseline file.
 2. Any baseline difference from `topic` reflects the clean branch's actual behavior and follows
-   `doc/project/guide/change-a-baseline.md`: it travels in the causal source commit, or stands alone
+   the active baseline procedure: it travels in the causal source commit, or stands alone
    only when no single source commit caused the movement.
 3. The coverage ledger contains no unassigned material and every temporary detour has closed.
 4. Every output commit has the promised build and `opp_repl` evidence, apart from any explicitly approved relaxation, and the final directly related test contract passes.
@@ -58,7 +61,7 @@ Do not create per-group fossil branches. The group table and the `clean` history
 
 ## Phase 2 — Plan the output commits
 
-Derive commit boundaries, order, subjects, and rationales from the canonical `PR-*` policy. For each
+Derive commit boundaries, order, subjects, and rationales from the active project series policy. For each
 output commit, additionally record its type, feeding groups, and expected test effect. Include an
 approved baseline update in the source commit that causes it. Plan a standalone baseline commit only
 when no single source commit caused the movement.
@@ -101,7 +104,7 @@ For each approved output commit:
 4. Recompute the ledger. Confirm that it moved by exactly the intended slice and that no unrelated file changed.
 5. On a clean pass, record the commit as a **safe point**, append its evidence to the logbook, and continue.
 
-Apply `PR-SERIES-BUILDS` to every output commit. A predicted baseline mismatch is evidence to carry
+Apply the active per-commit build requirement to every output commit. A predicted baseline mismatch is evidence to carry
 into the causal source commit's approved baseline update, not permission to leave the commit red or
 hide an unrelated failure. A standalone baseline commit is valid only for movement with no single
 causal source commit. Any other test-red relaxation needs explicit approval, a logged justification,
@@ -130,7 +133,8 @@ When the ledger contains no unassigned material:
 2. Confirm that no temporary detour remains open.
 3. Run every directly related `opp_repl` test named in the final contract; do not broaden the run into unrelated suites.
 4. Spot-check a risk-based sample of middle safe points with their directly related tests.
-5. Use `inet-pull-request-authoring` to audit the history from top to bottom against the applicable `PR-SPLIT-*`, `PR-SERIES-*`, and `PR-MSG-*` requirements.
+5. Use `inet-pull-request-authoring` to audit the history from top to bottom against the applicable
+   project series, split, and message requirements.
 6. Finish the logbook with the ordered commit list, tree proof, test results, baseline exceptions, safe-point spot checks, and behavior-change-to-evidence mapping.
 
 Cleanup ends with the reconstructed series and its evidence. Draft or publish a pull request only when the user explicitly requests it; pass the finalized history and logbook evidence to `inet-pull-request-authoring` for that work.

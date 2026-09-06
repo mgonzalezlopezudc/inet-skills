@@ -14,8 +14,9 @@ Read this reference after every current group reaches pinned `main`.
    unusable earlier commit. Use original topic and pinned plain upstream as controls where they
    distinguish intended upstream movement from regression.
 4. Use `inet-pull-request-authoring` to audit commit boundaries, order, messages, per-commit evidence,
-   and final branch narrative under the applicable `PR-*` rules.
-5. Run `doc/project/guide/run-the-gates.md` only when publication is requested. For local-only
+   and final branch narrative under the applicable project series guidance.
+5. Run the publication gates discovered from the active project guidance only when publication is
+   requested. For local-only
    delivery, record that publication gates were not run and do not publish.
 6. Complete the state-log finalization with target SHA, group/stage completion, exact per-commit and
    union envelopes, every explained delta, adaptation provenance, final audit, and residual risks.

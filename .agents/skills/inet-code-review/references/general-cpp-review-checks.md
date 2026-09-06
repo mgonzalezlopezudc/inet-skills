@@ -1,8 +1,8 @@
 # C++ contract checks
 
 Use these compact prompts for implementation and review when the changed contract involves the
-mechanism in the selected section. They support the canonical architecture, quality, and testing rules
-in `doc/project/`; they are not additional project requirements or findings by themselves.
+mechanism in the selected section. They support the active project's architecture, quality, and
+testing guidance; they are not additional project requirements or findings by themselves.
 
 ## API and dispatch
 

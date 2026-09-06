@@ -1,8 +1,8 @@
 # Reuse builds across history verification
 
 Read this before building cleanup commits, rebase attempts, controls, or final-series sweeps.
-The build-freshness requirement in `doc/project/guide/run-the-gates.md` means artifacts must match
-the checked-out inputs. A successful incremental build satisfies it; a clean rebuild at each
+The active project's build-freshness requirement means artifacts must match the checked-out inputs.
+A successful incremental build satisfies it; a clean rebuild at each
 stage is unnecessary.
 
 ## Keep the build workspace warm

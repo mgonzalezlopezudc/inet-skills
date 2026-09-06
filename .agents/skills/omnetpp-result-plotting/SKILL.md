@@ -5,9 +5,10 @@ description: Create reproducible, non-interactive plots and derived summaries fr
 
 # Plot OMNeT++ results
 
-Define observational units, conditions, comparisons, derived metrics, uncertainty, and disclosures
-under `doc/project/guide/analyze-simulation-results.md`. This skill adds the native Python API and
-rendering mechanics.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
+active checkout's current result-analysis guidance for observational units, conditions, comparisons,
+derived metrics, uncertainty, and disclosures. This skill adds the native Python API and rendering
+mechanics.
 
 Load results with `from omnetpp.scave import results`; do not manually parse `.sca`/`.vec` files or substitute CSV loading. Run in the configured OMNeT++ environment.
 
@@ -41,8 +42,8 @@ Read [analysis-patterns.md](references/analysis-patterns.md) for implementations
 intervals, vector reduction, time weighting, ECDFs, counter rates, or large-vector handling after
 the canonical analysis contract is defined.
 
-Choose plot geometry under section 6 of `doc/project/guide/analyze-simulation-results.md`; keep only
-the native Python rendering implementation in this skill.
+Choose plot geometry under the active result-analysis guidance; keep only the native Python rendering
+implementation in this skill.
 
 For a direct vector plot:
 

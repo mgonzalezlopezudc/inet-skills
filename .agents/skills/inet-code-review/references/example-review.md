@@ -1,6 +1,6 @@
 # Example review — Block Ack agreement lifetime change
 
-This is a worked example of `doc/project/guide/review-a-code-change.md`. The diff is realistic but
+This is a worked example of the active project review route. The diff is realistic but
 synthetic; canonical architecture and WLAN checklist output is intentionally not copied here.
 
 ## Reviewed change (synthetic)
@@ -74,7 +74,7 @@ Correct this by representing map ownership with `std::unique_ptr`, or by explici
 
 `RecipientBlockAckAgreementHandler.cc:140` removes agreements from the active map without emitting `blockAckAgreementDeletedSignal`. Any subscriber tracking the active-agreement count (statistics, visualizers, or the MAC state machine) will observe an addition without a matching deletion, producing a monotonically growing count that never reflects reality.
 
-**Invariant:** paired semantic signals must be emitted exactly once per lifecycle event, in order: added before deleted (OMNeT++ signals, AR-WLAN-OBS-EVENTS).
+**Invariant:** paired semantic signals must be emitted exactly once per lifecycle event, in order: added before deleted (OMNeT++ signals, WLAN observability guidance).
 **Trigger:** any disassociation while a Block Ack agreement exists.
 **Mechanism:** `handleDisassociation` erases from `blockAckAgreements` without emitting the deletion signal; the agreement is still alive (moved, not deleted), but it is no longer "active" from any subscriber's perspective.
 **Consequence:** observer state drift; `@statistic` recording incorrect agreement count.

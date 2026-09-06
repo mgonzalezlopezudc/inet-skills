@@ -1,7 +1,7 @@
 # Management, forwarding, and feature gates
 
-Apply the canonical component-ownership and amendment-gating rules in
-`doc/project/domain/ieee80211.md`. This reference adds management/forwarding traces and concrete
+Use the shared project-guidance discovery procedure to find the active component-ownership and
+amendment-gating guidance. This reference adds management/forwarding traces and concrete
 false-inference checks.
 
 ## Scanning and association
