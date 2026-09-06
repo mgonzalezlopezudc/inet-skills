@@ -1,0 +1,34 @@
+--- a/.agents/skills/inet-branch-cleanup/SKILL.md
++++ b/.agents/skills/inet-branch-cleanup/SKILL.md
+@@ -16,6 +16,14 @@
+ does not restate or override project policy.
+ 
+ The cleanup workflow and acceptance contract are INET-specific because they use `opp_repl` as the test oracle. Before starting a cleanup, read both [references/state-log.md](references/state-log.md) and [references/opp-repl-contract.md](references/opp-repl-contract.md).
++
++## Select the procedure
++
++Use this entry point for both straightforward and complex cleanup tasks. First inspect the
++[straightforward procedure](../inet-branch-cleanup-simple/SKILL.md) and its admission conditions.
++Use it only when every condition holds; otherwise follow the full procedure below. An unresolved
++ownership-contract overlap requires the full procedure. Preserve the selected procedure's controls,
++verification and approval requirements; this router grants no additional authority.
+ 
+ ## Inputs and acceptance criteria
+ 
+--- a/.agents/skills/inet-branch-rebase/SKILL.md
++++ b/.agents/skills/inet-branch-rebase/SKILL.md
+@@ -17,6 +17,14 @@
+ Use `inet-pull-request-authoring` and the active project's current series guidance before grouping
+ commits. This workflow preserves whole input commits; splitting or squashing is separate authorized
+ scope.
++
++## Select the procedure
++
++Use this entry point for both straightforward and complex rebase tasks. First inspect the
++[straightforward procedure](../inet-branch-rebase-simple/SKILL.md) and its admission conditions.
++Use it only when every condition holds; otherwise follow the full procedure below. An unresolved
++ownership-contract overlap requires the full procedure. Preserve the selected procedure's controls,
++verification and approval requirements; this router grants no additional authority.
+ 
+ ## Progressive references
+ 

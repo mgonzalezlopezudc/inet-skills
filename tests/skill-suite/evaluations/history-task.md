@@ -1,0 +1,5 @@
+For each request below, select the appropriate history workflow from the provided skill snapshot and explain the first necessary checks, whether reconstruction can start, and when escalation is needed. Inspect the relevant skill entrypoints; do not execute Git mutations, simulations or builds. Follow supplied project guidance from <fixture-project>/doc/project/README.md. No baseline value changes are requested.
+
+A. Rebuild a tested linear topic on the same pinned base. The user specifies exactly three commits in this order: shared helper, caller update, directly related regression. The complete diff maps unambiguously to those boundaries. Existing directly related test evidence is available, no temporary content is needed, and final source-tree equality is required. The user has authorized reconstruction but has not requested publication.
+
+B. Rebase a tested topic to a pinned newer upstream. During preflight, you find that upstream changed the return ownership contract of an API used by two topic commits. No implementation adaptation has been designed or tested yet. The user has authorized the rebase but no unrelated repairs or baseline updates.

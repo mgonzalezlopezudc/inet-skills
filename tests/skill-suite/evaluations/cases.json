@@ -1,0 +1,72 @@
+{
+  "version": 1,
+  "cases": [
+    {
+      "id": "ini-precedence",
+      "skills": [
+        "inet-ned-ini-analysis"
+      ],
+      "request": "Determine the effective interval for Lab.sender and whether this configuration guarantees one-second sends. Use the supplied configuration semantics; no simulator execution is needed.",
+      "artifacts": {
+        "omnetpp.ini": "[General]\n**.interval = 2s\nLab.sender.interval = 1s\n",
+        "configuration-semantics.txt": "For this fixture runtime, matching INI assignments are evaluated in written order. The first matching assignment wins. Lab.sender has an interval parameter with default 5s.\n"
+      }
+    },
+    {
+      "id": "stale-library",
+      "skills": [
+        "inet-build-debug-modes",
+        "inet-unit-tests"
+      ],
+      "request": "Assess whether the test establishes that the changed implementation works. State the next necessary command using the project guidance.",
+      "artifacts": {
+        "run.log": "10:00 Built src/libINET_dbg.so from revision A\n10:05 Changed src/inet/example/Owner.cc to revision B\n10:06 inet_run_unit_tests -m debug -f Owner.test\n10:06 Built selected test executable; INET library not rebuilt\n10:07 1 test PASS\n",
+        "tools.txt": "The project build wrapper accepts build-model --mode release. It refreshes the INET library. Unit runner accepts -m release -f <regex>.\n"
+      }
+    },
+    {
+      "id": "zero-selection",
+      "skills": [
+        "inet-unit-tests"
+      ],
+      "request": "Classify this verification result and explain whether it establishes the fix.",
+      "artifacts": {
+        "run.log": "command: inet_run_unit_tests -m release -f MissingCase.test\nselected tests: 0\nexecuted tests: 0\nexit status: 0\n"
+      }
+    },
+    {
+      "id": "ownership",
+      "skills": [
+        "inet-code-authoring"
+      ],
+      "request": "Prepare the smallest correct implementation contract and proposed code correction for this refusal-path defect. Do not edit or run code. Include the direct verification needed.",
+      "artifacts": {
+        "Owner.cc": "// enqueue retains caller ownership on false; takes ownership on true.\nvoid Owner::accept(Packet *packet) {\n    if (!queue.enqueue(packet))\n        return;\n}\n",
+        "Owner.h": "// accept takes ownership of packet on entry.\n// queue.enqueue never calls back and has no other consumers here.\n// Packet must be deleted by its current owner.\n",
+        "tests.txt": "OwnerRefusal.test exercises Owner::accept through its public API with a rejecting queue and checks live packet count returns to its original value. OwnerAccepted.test checks one queued packet and exactly one deletion during queue cleanup. Both can be selected by inet_run_unit_tests -m release -f \"Owner(Refusal|Accepted).test\".\n"
+      }
+    },
+    {
+      "id": "fingerprint",
+      "skills": [
+        "inet-fingerprint-regression"
+      ],
+      "request": "Report what this baseline update establishes and whether the new expected value can be accepted now.",
+      "artifacts": {
+        "update.log": "runner: baseline updater\nconfiguration: Demo\nrun: 0\nseed: 3\nold fingerprint: aaaa-bbbb\nnew fingerprint: cccc-dddd\nresult: UPDATE\nexit status: 0\n",
+        "context.txt": "There is no recorded causal explanation for the change and no baseline approval.\n"
+      }
+    },
+    {
+      "id": "aggregation-clean",
+      "skills": [
+        "omnetpp-result-analysis",
+        "omnetpp-result-plotting"
+      ],
+      "request": "Review the stated reduction for correctness. Report a defect only if the supplied evidence establishes one. Do not render a plot.",
+      "artifacts": {
+        "analysis.txt": "Two independent fixed-condition runs produce run means 10 ms and 20 ms after the same warm-up window. Each run has an equal analysis duration and its state-vector reduction is time weighted. We report the equally weighted mean of run estimates as 15 ms and n=2 independent runs. We do not treat the 1000 within-run observations as independent repetitions and make no confidence-interval claim.\n"
+      }
+    }
+  ]
+}

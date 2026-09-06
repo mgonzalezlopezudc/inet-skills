@@ -1,0 +1,15 @@
+{
+  "core": {
+    "skill_count": 16,
+    "missing_case_skills": [
+      "omnetpp-result-analysis",
+      "omnetpp-result-plotting"
+    ],
+    "packaging_exit_code": 0
+  },
+  "default": {
+    "skill_count": 26,
+    "missing_case_skills": [],
+    "packaging_exit_code": 0
+  }
+}

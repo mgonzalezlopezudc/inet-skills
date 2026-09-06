@@ -1,0 +1,24 @@
+{
+  "ini-precedence": [
+    "effective interval is 2s",
+    "first match wins; no specificity override"
+  ],
+  "stale-library": [
+    "passing stale-library test does not verify revision B",
+    "build-model --mode release then release filtered test"
+  ],
+  "zero-selection": [
+    "NOT_RUN; no behavioral evidence"
+  ],
+  "ownership": [
+    "delete packet on enqueue false; keep success ownership transfer",
+    "direct refusal and accepted production-path tests"
+  ],
+  "fingerprint": [
+    "UPDATE is changed expectation, not correctness proof",
+    "causal evidence and applicable approval still needed"
+  ],
+  "aggregation-clean": [
+    "no established defect; 15 ms and n=2 are consistent"
+  ]
+}

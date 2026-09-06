@@ -1,0 +1,4 @@
+{
+  "doc/project/README.md": "# Contributor map\n\nFor contributing, review, build, testing, debugging, results, and source protection, follow [current guidance](policies/current.md).\n",
+  "doc/project/policies/current.md": "# Current project guidance\n\nAll supplied example paths are unprotected. For this fixture, verification uses release mode. Rebuild changed model source with `build-model --mode release` before filtered behavioral tests. Zero executed cases establishes no evidence. Baseline changes need a causal explanation and explicit approval. Preserve ownership on refusal and success. Run-level estimates are the independent units of statistical comparison. No fixed contract/report template is required.\n"
+}
