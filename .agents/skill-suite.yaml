@@ -54,6 +54,7 @@ profiles:
       - inet-ned-ini-analysis
       - inet-packet-tag-debugging
       - inet-pcap-tshark-analysis
+      - inet-protocol-tests
       - inet-pull-request-authoring
       - inet-regression-testing
       - inet-simulation-run
@@ -67,6 +68,7 @@ profiles:
       - inet-80211-regression-testing
   results:
     skills:
+      - inet-statistical-tests
       - omnetpp-result-analysis
       - omnetpp-result-plotting
   history:
@@ -331,6 +333,17 @@ skills:
       required: []
       optional: []
 
+  inet-protocol-tests:
+    metadata:
+      display_name: INET Protocol Tests
+      short_description: Run and diagnose focused INET protocol suites
+      default_prompt: Use $inet-protocol-tests to run the selected protocol tests with a matching INET build and diagnose any unexpected outcomes.
+    dependencies: []
+    required_tools: [inet_run_protocol_tests, opp_test, opp_makemake, make]
+    checkout_requirements:
+      required: [tests/protocol, python/inet/test/opp.py, python/inet/test/all.py]
+      optional: []
+
   inet-pull-request-authoring:
     metadata:
       display_name: INET Pull Request Authoring
@@ -375,6 +388,17 @@ skills:
     checkout_requirements:
       required: [Makefile]
       optional: []
+
+  inet-statistical-tests:
+    metadata:
+      display_name: INET Statistical Tests
+      short_description: Run and diagnose statistical result regressions
+      default_prompt: Use $inet-statistical-tests to run the relevant statistical result comparisons and diagnose failures against the matching baseline revision.
+    dependencies: []
+    required_tools: [inet_run_statistical_tests, make, opp_scavetool]
+    checkout_requirements:
+      required: [python/inet/test/statistical.py]
+      optional: [statistics]
 
   inet-unit-tests:
     metadata:

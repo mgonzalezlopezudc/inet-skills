@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Statistical Tests"
+  short_description: "Run and diagnose statistical result regressions"
+  default_prompt: "Use $inet-statistical-tests to run the relevant statistical result comparisons and diagnose failures against the matching baseline revision."

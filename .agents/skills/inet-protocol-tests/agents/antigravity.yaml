@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Protocol Tests"
+  short_description: "Run and diagnose focused INET protocol suites"
+  default_prompt: "Use $inet-protocol-tests to run the selected protocol tests with a matching INET build and diagnose any unexpected outcomes."

@@ -3,6 +3,24 @@ version: 1
 # These are selection contracts, not keyword-matching tests. An evaluation runner should present
 # only `prompt` to the model and compare observed skill loads with the expected/forbidden sets.
 cases:
+  - id: protocol-tests-positive
+    kind: positive
+    prompt: Run only the Wi-Fi N_BlockAck protocol test through INET's integrated runner and diagnose any build or assertion failure.
+    expected_skills: [inet-protocol-tests]
+  - id: protocol-tests-negative
+    kind: negative
+    prompt: Run the INET C++ unit tests for packet chunks with inet_run_unit_tests.
+    forbidden_skills: [inet-protocol-tests]
+
+  - id: statistical-tests-positive
+    kind: positive
+    prompt: Run the wireless statistical result regression tests in this INET worktree and diagnose differences against the statistics repository.
+    expected_skills: [inet-statistical-tests]
+  - id: statistical-tests-negative
+    kind: negative
+    prompt: Debug the Rscript check.r postrun check in tests/statistical/ieee80211_accesspoint_tenhost_speed.test.
+    forbidden_skills: [inet-statistical-tests]
+
   - id: standards-positive
     kind: positive
     prompt: Which 802.11be clause defines the EHT Operation channel-width field?
