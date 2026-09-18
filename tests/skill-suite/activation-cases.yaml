@@ -3,6 +3,14 @@ version: 1
 # These are selection contracts, not keyword-matching tests. An evaluation runner should present
 # only `prompt` to the model and compare observed skill loads with the expected/forbidden sets.
 cases:
+  - id: ieee-standards-positive
+    kind: positive
+    prompt: Find the IEEE 802.15.4-2024 unslotted CSMA-CA procedure and cite its exact clause and PDF pages.
+    expected_skills: [ieee-standards]
+  - id: ieee-standards-negative
+    kind: negative
+    prompt: Plot the recorded packet delivery ratio from these existing scalar result files.
+    forbidden_skills: [ieee-standards]
   - id: protocol-tests-positive
     kind: positive
     prompt: Run only the Wi-Fi N_BlockAck protocol test through INET's integrated runner and diagnose any build or assertion failure.

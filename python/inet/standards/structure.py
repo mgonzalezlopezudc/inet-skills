@@ -56,7 +56,7 @@ INDEX_LEADER_RE = re.compile(r"\.{4,}\s*\d+\s*$")
 CONTINUED_RE = re.compile(r"\(continued\)\s*$", re.IGNORECASE)
 MEASUREMENT_TITLE_RE = re.compile(
     r"^(?:\([^)]*\)\s*)?(?:GHz|MHz|kHz|Hz|THz|dB(?:m|i)?|Mb/s|Gb/s|kb/s|"
-    r"ms|[\u00b5\u03bc]s|ns|ps|TU|V|mV|A|mA|W|mW|m|cm|mm)\b",
+    r"[kMG]?symbol/s|ms|[\u00b5\u03bc]s|ns|ps|TU|V|mV|A|mA|W|mW|m|cm|mm)\b",
     re.IGNORECASE,
 )
 PAGE_HEADER_RE = re.compile(

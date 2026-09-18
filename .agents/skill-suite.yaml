@@ -43,6 +43,7 @@ profiles:
     skills: []
   core:
     skills:
+      - ieee-standards
       - inet-agent-orchestration
       - inet-architectural-requirements
       - inet-build-debug-modes
@@ -89,16 +90,27 @@ profiles:
         - examples/ieee80211/analysis/README.md
 
 skills:
+  ieee-standards:
+    metadata:
+      display_name: IEEE Standards
+      short_description: Navigate IEEE 802.11 and 802.15.4 standards
+      default_prompt: Use $ieee-standards to retrieve, verify, and cite the exact IEEE standard edition, clauses, objects, definitions, and cross-references for this question.
+    dependencies: []
+    required_tools: [inet_process_standards]
+    checkout_requirements:
+      required: []
+      optional: [standards]
+
   ieee80211-standards:
     metadata:
       display_name: IEEE 802.11 Standards
       short_description: Navigate IEEE 802.11 structure, definitions, and references
       default_prompt: Use $ieee80211-standards to retrieve, trace, verify, and cite the exact IEEE 802.11 clauses, objects, definitions, and cross-references that govern this question.
-    dependencies: []
+    dependencies: [ieee-standards]
     required_tools: [inet_process_standards]
     checkout_requirements:
-      required: [standards]
-      optional: []
+      required: []
+      optional: [standards]
 
   inet-80211-packet-debugging:
     metadata:

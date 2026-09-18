@@ -13,6 +13,21 @@ except ImportError:
 
 
 class StandardsProcessorTest(unittest.TestCase):
+    def test_802154_discovery_keeps_supporting_pdfs_out(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in ("802154-2024.pdf", "80211ax-2024.pdf", "supporting.pdf"):
+                (root / name).touch()
+            self.assertEqual(
+                {"802154-2024.pdf", "80211ax-2024.pdf"},
+                {path.name for path in processor.discover_pdfs(root)},
+            )
+        profile = processor.profile_for_pdf(Path("802154-2024.pdf"))
+        self.assertEqual("ieee802154-2024", profile.document_id)
+        self.assertEqual("IEEE Std 802.15.4-2024", profile.title)
+        self.assertEqual(model.DocumentKind.BASE_STANDARD, profile.kind)
+        self.assertEqual((), profile.amends)
+
     def test_page_spec_is_sorted_unique_and_rejects_empty_components(self):
         self.assertEqual((1, 2, 4), processor.parse_page_spec("4,1-2,2"))
         with self.assertRaisesRegex(ValueError, "empty component"):

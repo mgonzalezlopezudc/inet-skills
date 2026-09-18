@@ -1,4 +1,4 @@
-"""Command-line interface for the canonical IEEE 802.11 corpus."""
+"""Command-line interface for the canonical IEEE standards corpus."""
 
 from __future__ import annotations
 
@@ -33,7 +33,7 @@ def add_common_options(parser: argparse.ArgumentParser) -> None:
 
 def create_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Build and navigate a canonical IEEE 802.11 standards corpus."
+        description="Build and navigate a canonical IEEE standards corpus."
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 

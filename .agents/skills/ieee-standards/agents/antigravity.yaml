@@ -1,0 +1,4 @@
+interface:
+  display_name: "IEEE Standards"
+  short_description: "Navigate IEEE 802.11 and 802.15.4 standards"
+  default_prompt: "Use $ieee-standards to retrieve, verify, and cite the exact IEEE standard edition, clauses, objects, definitions, and cross-references for this question."

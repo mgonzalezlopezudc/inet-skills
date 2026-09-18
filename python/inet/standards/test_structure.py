@@ -99,6 +99,17 @@ class StandardsStructureTest(unittest.TestCase):
         self.assertEqual(1, len(table_node.source_spans))
         self.assertEqual(1913, figure_node.source_spans[0].pdf_page_start)
 
+    def test_symbol_rate_is_not_a_clause(self):
+        analysis = structure.analyze_structure(
+            self.document(document_id="ieee802154-2024"),
+            ((649, "16.2.5 Preamble parameters\n0.25 Msymbol/s, respectively.\n"),),
+        )
+        self.assertNotIn("0.25", {node.label for node in analysis.nodes})
+        occurrence = self.occurrence(
+            analysis, model.NodeKind.CLAUSE, "0.25", model.OccurrenceClassification.REJECTED
+        )
+        self.assertIn("measurement unit", occurrence.reason)
+
     def test_decimal_measurements_are_retained_as_rejected_candidates(self):
         pages = (
             (

@@ -28,7 +28,7 @@ except ImportError:
 DEFAULT_STANDARDS_DIR = Path("standards")
 DEFAULT_OUTPUT_DIR = DEFAULT_STANDARDS_DIR / "processed"
 EXTRACTOR_IMPLEMENTATION = "poppler-pdftotext"
-EXTRACTOR_VERSION = "1"
+EXTRACTOR_VERSION = "2"
 PDFTOTEXT_ARGS = ("-layout",)
 LICENSE_FOOTER_RE = re.compile(
     r"^\s*Authorized licensed use limited to: .* Downloaded on .* "
@@ -46,8 +46,14 @@ class DocumentProfile:
 
 
 # Reviewed identity contracts. Supporting PDFs are deliberately not auto-ingested
-# by the IEEE 802.11 structural recognizer.
+# by the IEEE structural recognizer.
 DOCUMENT_PROFILES = {
+    "802154-2024.pdf": DocumentProfile(
+        document_id="ieee802154-2024",
+        title="IEEE Std 802.15.4-2024",
+        revision="2024",
+        kind=DocumentKind.BASE_STANDARD,
+    ),
     "80211ax-2024.pdf": DocumentProfile(
         document_id="ieee80211-2024",
         title="IEEE Std 802.11-2024",
