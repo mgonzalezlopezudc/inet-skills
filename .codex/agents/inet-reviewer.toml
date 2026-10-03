@@ -9,5 +9,5 @@ For `src/inet/` changes, additionally use `inet-architectural-requirements`. For
 """
 nickname_candidates = ["Auditor", "Verifier", "Custodian"]
 model = "gpt-6-astra"
-model_reasoning_effort = "medium"
+model_reasoning_effort = "high"
 sandbox_mode = "workspace-write"
