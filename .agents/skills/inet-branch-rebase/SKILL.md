@@ -1,6 +1,6 @@
 ---
 name: inet-branch-rebase
-description: Rebase an opp_repl-tested INET topic branch across approved upstream checkpoints while preserving forensic attempts and proving regression-safe points. Use for high-risk rebases onto changed upstream history; do not use for ordinary one-shot rebases or fixed-base history cleanup.
+description: Rebase an opp_repl-tested INET topic branch across approved upstream checkpoints. Preserve each attempt and its evidence of regression checks. Use for high-risk rebases onto changed upstream history. Do not use for ordinary one-shot rebases or history cleanup on a fixed base.
 ---
 
 # INET branch rebase
@@ -71,13 +71,19 @@ Completion requires:
    superseded group records under fresh IDs and obtain approval for groups, order, and any drop.
 3. **Approve topology.** Select the mode and attributable upstream checkpoints using
    `topology-and-stages.md`; record stage anchors separately from replay manifests.
-4. **Advance immutably.** Build fresh attempt branches, prove ancestry and one-to-one replay, run the
-   scoped `opp_repl` contract, preserve all attempts, and promote only supported safe points.
+4. **Preserve each attempt.** Create fresh attempt branches.
+   Prove ancestry and one-to-one replay.
+   Run the scoped `opp_repl` contract.
+   Preserve all attempts.
+   Promote only safe points supported by the evidence.
 5. **Adapt under a new contract.** On failure, freeze the failed attempt and use
    `failure-recovery.md`. A semantic adaptation requires `inet-code-authoring`; semantic `src/inet/`
    scope also requires architecture/seal resolution. Promote a repaired attempt only after approval.
-6. **Finalize.** Use `finalization.md` to assemble and prove the clean series, test each commit and
-   final union, audit the series, and record local-only or publication-gate status.
+6. **Finalize.** Assemble the clean series under `finalization.md`.
+   Prove its required properties.
+   Test each commit and the final union of selected cases.
+   Audit the series.
+   Record local-only status or publication-gate status.
 
 Maintain `ai-logs/executions/<date>_<name>.md` throughout. Keep curated current state plus an
 append-only attempt log containing branches, SHAs, anchors, manifests, controls, normalized results,

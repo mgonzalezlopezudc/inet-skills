@@ -106,7 +106,7 @@ skills:
     metadata:
       display_name: IEEE Standards
       short_description: Navigate IEEE 802.11 and 802.15.4 standards
-      default_prompt: Use $ieee-standards to retrieve, verify, and cite the exact IEEE standard edition, clauses, objects, definitions, and cross-references for this question.
+      default_prompt: Use $ieee-standards to retrieve the relevant IEEE text. Verify the edition, clauses, objects, definitions, and cross-references. Cite the verified material.
     dependencies: []
     required_tools: [inet_process_standards]
     checkout_requirements:
@@ -117,7 +117,7 @@ skills:
     metadata:
       display_name: IEEE 802.11 Standards
       short_description: Navigate IEEE 802.11 structure, definitions, and references
-      default_prompt: Use $ieee80211-standards to retrieve, trace, verify, and cite the exact IEEE 802.11 clauses, objects, definitions, and cross-references that govern this question.
+      default_prompt: Use $ieee80211-standards to retrieve the relevant IEEE 802.11 text. Trace its cross-references. Verify the clauses, objects, and definitions. Cite the verified material.
     dependencies: [ieee-standards]
     required_tools: [inet_process_standards]
     checkout_requirements:
@@ -127,8 +127,8 @@ skills:
   inet-80211-packet-debugging:
     metadata:
       display_name: INET 802.11 Packet Debugging
-      short_description: Debug reproducible Wi-Fi packet exchanges
-      default_prompt: Use $inet-80211-packet-debugging to trace this Wi-Fi exchange and identify the first evidence-backed divergence.
+      short_description: Debug reproducible Wi-Fi frame exchanges
+      default_prompt: Use $inet-80211-packet-debugging to trace this Wi-Fi exchange. Identify the first divergence that the evidence supports.
     dependencies:
       - ieee80211-standards
       - inet-cmdenv-log-analysis
@@ -161,8 +161,8 @@ skills:
   inet-80211-walkthrough-writer:
     metadata:
       display_name: INET 802.11 Walkthrough Writer
-      short_description: Write concise, script-backed Wi-Fi walkthroughs
-      default_prompt: Use $inet-80211-walkthrough-writer only after confirming the active checkout provides the shared analyzer, then create or improve a concise walkthrough from analysis-script-generated scalar/vector and PCAP evidence.
+      short_description: Explain Wi-Fi features from generated evidence
+      default_prompt: Confirm that the active checkout provides the shared analyzer. Use $inet-80211-walkthrough-writer to explain this feature from generated scalar/vector and PCAP evidence.
     dependencies: []
     required_tools: [python3]
     checkout_requirements:
@@ -175,7 +175,7 @@ skills:
     metadata:
       display_name: INET Agent Orchestration
       short_description: Coordinate delegated INET specialist work
-      default_prompt: Use $inet-agent-orchestration to coordinate the independent evidence lanes and specialist handoffs required by this OMNeT++/INET task.
+      default_prompt: Use $inet-agent-orchestration to coordinate the independent evidence tasks and specialist handoffs required by this OMNeT++/INET task.
     dependencies: []
     deployment_files: [MODELS.md, .codex, .antigravity]
     required_tools: []
@@ -198,7 +198,7 @@ skills:
     metadata:
       display_name: INET Branch Cleanup
       short_description: Rebuild INET branches into reviewable commits
-      default_prompt: Use $inet-branch-cleanup to rebuild this tested INET topic branch as a reviewable commit series without changing its final tree.
+      default_prompt: Use $inet-branch-cleanup to rebuild this tested INET topic branch as a reviewable commit series. Preserve its final tree.
     dependencies: [inet-opp-repl, inet-pull-request-authoring]
     required_tools: [git, opp_repl]
     checkout_requirements:
@@ -208,8 +208,8 @@ skills:
   inet-branch-cleanup-simple:
     metadata:
       display_name: INET Simple Branch Cleanup
-      short_description: Quickly rebuild straightforward INET commit series
-      default_prompt: Use $inet-branch-cleanup-simple to quickly rebuild this straightforward tested INET topic branch as a reviewable commit series.
+      short_description: Rebuild simple INET commit series
+      default_prompt: Use $inet-branch-cleanup-simple to rebuild this tested, linear INET topic branch as a reviewable commit series.
     dependencies: [inet-opp-repl, inet-pull-request-authoring]
     required_tools: [git, opp_repl]
     checkout_requirements:
@@ -235,7 +235,7 @@ skills:
     metadata:
       display_name: INET Simple Branch Rebase
       short_description: Quickly verify a one-shot INET branch rebase
-      default_prompt: Use $inet-branch-rebase-simple to replay this straightforward tested INET topic once onto pinned upstream and verify every resulting commit.
+      default_prompt: Use $inet-branch-rebase-simple to replay this tested, linear INET topic once onto pinned upstream. Verify every resulting commit.
     dependencies: [inet-opp-repl, inet-pull-request-authoring]
     routes_to: [inet-branch-rebase]
     required_tools: [git, opp_repl]
@@ -246,7 +246,7 @@ skills:
   inet-build-debug-modes:
     metadata:
       display_name: INET Debug Builds
-      short_description: Build and diagnose matching INET debug artifacts
+      short_description: Build or diagnose INET debug artifacts
       default_prompt: Use $inet-build-debug-modes to build or diagnose the matching INET debug artifacts for this task.
     dependencies: []
     required_tools: [make]
@@ -268,8 +268,8 @@ skills:
   inet-code-authoring:
     metadata:
       display_name: INET Code Authoring
-      short_description: Prevent correctness defects while implementing INET changes
-      default_prompt: Use $inet-code-authoring to define and implement this INET change with preventive correctness checks.
+      short_description: Prevent defects in INET changes
+      default_prompt: Use $inet-code-authoring to define the contract for this INET change. Implement the validated contract. Check the result against that contract.
     dependencies: [inet-code-review]
     required_tools: [git, rg]
     checkout_requirements:
@@ -280,7 +280,7 @@ skills:
     metadata:
       display_name: INET Code Review
       short_description: Layered C++, OMNeT++, INET, and Wi-Fi review
-      default_prompt: Use $inet-code-review to independently review the current INET diff and report evidence-backed actionable findings.
+      default_prompt: Use $inet-code-review for an independent review of the current INET diff. Report actionable findings with evidence.
     dependencies: []
     required_tools: [git, rg]
     checkout_requirements:
@@ -290,8 +290,8 @@ skills:
   inet-fingerprint-regression:
     metadata:
       display_name: INET Fingerprint Regression
-      short_description: Diagnose and manage fingerprint regressions
-      default_prompt: Use $inet-fingerprint-regression to diagnose this fingerprint change and determine whether it is expected.
+      short_description: Diagnose fingerprint regressions
+      default_prompt: Use $inet-fingerprint-regression to diagnose this fingerprint change. Determine whether the change is expected.
     dependencies: []
     required_tools: [python3]
     checkout_requirements:
@@ -302,7 +302,7 @@ skills:
     metadata:
       display_name: INET LLDB Debugging
       short_description: Debug INET simulations at C++ source level
-      default_prompt: Use $inet-lldb-debugging to reproduce and inspect this INET runtime failure at C++ source level.
+      default_prompt: Use $inet-lldb-debugging to reproduce this INET runtime failure. Inspect the relevant C++ state.
     dependencies: [inet-build-debug-modes, inet-simulation-run]
     required_tools: [lldb]
     checkout_requirements:
@@ -323,8 +323,8 @@ skills:
   inet-opp-repl:
     metadata:
       display_name: INET opp_repl Verification
-      short_description: Run and normalize scoped opp_repl checks
-      default_prompt: Use $inet-opp-repl to discover the active interface, map the directly related scope, and normalize this opp_repl verification run.
+      short_description: Run scoped opp_repl verification
+      default_prompt: Use $inet-opp-repl to discover the active interface. Map the directly related scope. Normalize this verification run.
     dependencies: []
     routes_to:
       - inet-fingerprint-regression
@@ -349,8 +349,8 @@ skills:
   inet-pcap-tshark-analysis:
     metadata:
       display_name: INET PCAP/TShark Analysis
-      short_description: Record and analyze INET packet captures
-      default_prompt: Use $inet-pcap-tshark-analysis to record or inspect this INET packet exchange and correlate the relevant capture points.
+      short_description: Analyze INET packet captures
+      default_prompt: Use $inet-pcap-tshark-analysis to record or inspect this INET packet exchange. Correlate the relevant capture points.
     dependencies: [inet-cmdenv-log-analysis]
     required_tools: [capinfos, tshark]
     checkout_requirements:
@@ -360,8 +360,8 @@ skills:
   inet-protocol-tests:
     metadata:
       display_name: INET Protocol Tests
-      short_description: Run and diagnose focused INET protocol suites
-      default_prompt: Use $inet-protocol-tests to run the selected protocol tests with a matching INET build and diagnose any unexpected outcomes.
+      short_description: Run focused INET protocol suites
+      default_prompt: Use $inet-protocol-tests to run the selected protocol tests with a matching INET build. Diagnose any unexpected outcomes.
     dependencies: []
     required_tools: [inet_run_protocol_tests, opp_test, opp_makemake, make]
     checkout_requirements:
@@ -371,7 +371,7 @@ skills:
   inet-pull-request-authoring:
     metadata:
       display_name: INET Pull Request Authoring
-      short_description: Plan and audit reviewable commits and pull requests
+      short_description: Prepare reviewable commits and pull requests
       default_prompt: Use $inet-pull-request-authoring to plan or audit the commit series and pull request for this INET change.
     dependencies: []
     required_tools: [git]
@@ -406,7 +406,7 @@ skills:
     metadata:
       display_name: INET Simulation Runner
       short_description: Run reproducible INET simulations
-      default_prompt: Use $inet-simulation-run to run this simulation reproducibly and diagnose any initialization or runtime failure.
+      default_prompt: Use $inet-simulation-run to run this simulation reproducibly. Diagnose any initialization or runtime failure.
     dependencies: [inet-build-debug-modes]
     required_tools: [inet]
     checkout_requirements:
@@ -416,8 +416,8 @@ skills:
   inet-statistical-tests:
     metadata:
       display_name: INET Statistical Tests
-      short_description: Run and diagnose statistical result regressions
-      default_prompt: Use $inet-statistical-tests to run the relevant statistical result comparisons and diagnose failures against the matching baseline revision.
+      short_description: Check INET statistical regression results
+      default_prompt: Use $inet-statistical-tests to run the relevant result comparisons. Diagnose failures against the matching baseline revision.
     dependencies: []
     required_tools: [inet_run_statistical_tests, make, opp_scavetool]
     checkout_requirements:
@@ -427,8 +427,8 @@ skills:
   inet-unit-tests:
     metadata:
       display_name: INET Unit Tests
-      short_description: Build and run focused INET unit and module tests
-      default_prompt: Use $inet-unit-tests to build the required debug artifacts and run the focused INET unit or module tests for this change.
+      short_description: Run focused INET unit and module tests
+      default_prompt: Use $inet-unit-tests to build the required debug artifacts. Run the focused INET unit or module tests for this change.
     dependencies: [inet-build-debug-modes]
     required_tools: [inet_run_module_tests, inet_run_unit_tests, make]
     checkout_requirements:
@@ -449,8 +449,8 @@ skills:
   omnetpp-result-analysis:
     metadata:
       display_name: OMNeT++ Result Analysis
-      short_description: Query and export OMNeT++ simulation results
-      default_prompt: Use $omnetpp-result-analysis to query and export the relevant scalar or vector results for this comparison.
+      short_description: Analyze OMNeT++ simulation results
+      default_prompt: Use $omnetpp-result-analysis to query the relevant scalar or vector results. Export those results for this comparison.
     dependencies: []
     required_tools: [opp_scavetool]
     checkout_requirements:
@@ -461,7 +461,7 @@ skills:
     metadata:
       display_name: OMNeT++ Result Plotting
       short_description: Plot reproducible OMNeT++ simulation results
-      default_prompt: Use $omnetpp-result-plotting to create a reproducible non-interactive plot and derived summary for these simulation results.
+      default_prompt: Use $omnetpp-result-plotting to create a reproducible non-interactive plot for these simulation results. Include the derived summary.
     dependencies: [omnetpp-result-analysis]
     required_tools: [python3]
     checkout_requirements:

@@ -1,11 +1,13 @@
 # Example review — Block Ack agreement lifetime change
 
-This is a worked example of the active project review route. The diff is realistic but
-synthetic; canonical architecture and WLAN checklist output is intentionally not copied here.
+This hypothetical example follows the active project review route.
+It omits the canonical architecture and WLAN checklist output.
 
-## Reviewed change (synthetic)
+## Reviewed change (hypothetical)
 
-The change modifies `RecipientBlockAckAgreementHandler` to persist the received Block Ack agreement state across reassociation events, so that a STA that roams back to the same AP does not need to renegotiate agreements from scratch.
+The hypothetical change preserves received Block Ack agreement state across reassociation.
+Its intended result is reuse when a station returns to the same AP, without new agreement negotiation.
+The component that owns this state is `RecipientBlockAckAgreementHandler`.
 
 ```diff
 --- a/src/inet/linklayer/ieee80211/mac/blockack/RecipientBlockAckAgreementHandler.cc
@@ -44,7 +46,9 @@ The change modifies `RecipientBlockAckAgreementHandler` to persist the received 
  }
 ```
 
-The header adds `preservedAgreements` (a `std::map`). In this synthetic subsystem, the existing signal declaration and subscribers define added/deleted events as membership changes in the active `blockAckAgreements` map.
+The header adds `preservedAgreements` (a `std::map`).
+In this hypothetical subsystem, simulation signals report membership changes in the active `blockAckAgreements` map.
+The existing signal declaration and subscribers define that meaning for added/deleted events.
 
 ## Layer selection
 
@@ -92,7 +96,17 @@ The new reuse branch restores the original `RecipientBlockAckAgreement` object, 
 **Mechanism:** the reuse branch removes the old object from `preservedAgreements` and installs it as active after updating only expiration; it does not reset its reorder window from the new request.
 **Consequence:** frames with sequence numbers in the gap between old window and new starting sequence are treated as "before window start" and silently dropped. Effective throughput drops until the window catches up.
 
-Correct this by resetting the reorder window to the starting sequence number from the new ADDBA request when restoring a preserved agreement. Add a focused module test: establish agreement with SSN=0, send frames 0–10, disassociate, reassociate with SSN=100, send frame 100, and assert it is delivered (not dropped as duplicate).
+On agreement restoration, reset the reorder window from the new ADDBA request's starting sequence number.
+Add a focused module test with this sequence:
+
+1. Establish an agreement with starting sequence number SSN=0.
+2. Send frames 0–10.
+3. Disassociate the station.
+4. Reassociate with SSN=100.
+5. Send frame 100.
+6. Assert delivery of frame 100.
+
+The expected result is delivery, without a drop caused by stale duplicate state.
 
 ## Reviewed scope
 

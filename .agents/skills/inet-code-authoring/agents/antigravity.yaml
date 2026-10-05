@@ -1,4 +1,4 @@
 interface:
   display_name: "INET Code Authoring"
-  short_description: "Prevent correctness defects while implementing INET changes"
-  default_prompt: "Use $inet-code-authoring to define and implement this INET change with preventive correctness checks."
+  short_description: "Prevent defects in INET changes"
+  default_prompt: "Use $inet-code-authoring to define the contract for this INET change. Implement the validated contract. Check the result against that contract."

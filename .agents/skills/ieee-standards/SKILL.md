@@ -1,23 +1,25 @@
 ---
 name: ieee-standards
-description: Search and inspect local IEEE 802.11 and IEEE 802.15.4 standards for exact clauses, tables, figures, definitions, cross-references, and normative citations.
+description: Inspect local IEEE 802.11 and IEEE 802.15.4 standards. Use for exact clauses, tables, figures, definitions, cross-references, and normative citations.
 ---
 
 # IEEE standards corpus
 
-Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to
-read the active checkout's project entry point and discover any current normative traceability
-guidance. This skill adds corpus search, PDF fallback, and citation evidence.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to read the active checkout's project entry point.
+Find its current guidance for evidence that supports standards requirements.
+This skill supplies corpus search, PDF fallback, and citation evidence.
 
-Use the tracked launcher `./bin/inet_process_standards` from the `inet-skills` repository root; do
-not rely on a similarly named command from `PATH`. Locate the INET worktree from the current
-workspace or repository context rather than assuming a home-directory layout. Resolve
-`<standards-root>` to the directory actually holding the requested PDFs: the checkout’s
-`standards/` or a shared corpus repository identified by the workspace. Set `<corpus-output>`
-to a writable, ignored generated directory (normally `<inet-worktree>/standards/processed`);
-the source directory may be read-only.
+Use the tracked launcher `./bin/inet_process_standards` from the `inet-skills` repository root.
+Do not rely on a similarly named command from `PATH`.
+Locate the INET worktree from the current workspace or repository context.
+Do not assume a home-directory layout.
 
-Read the relevant family in [documents.md](references/documents.md) before querying:
+Resolve `<standards-root>` to the directory that contains the requested PDFs.
+This can be the checkout's `standards/` or a shared corpus repository identified by the workspace.
+Set `<corpus-output>` to a writable, ignored output directory, normally `<inet-worktree>/standards/processed`.
+The source directory may be read-only.
+
+Read the relevant family in [documents.md](references/documents.md) before the first query:
 
 ```sh
 git -C <inet-worktree> rev-parse --show-toplevel
@@ -25,8 +27,8 @@ git -C <inet-worktree> rev-parse --show-toplevel
   --standards-dir <standards-root> --output <corpus-output>
 ```
 
-If status reports a missing, stale, partial, or incompatible corpus, rebuild it and run the
-corpus linter before relying on retrieval:
+If status reports a missing, stale, partial, or incompatible corpus, rebuild it.
+Run the corpus linter before retrieval:
 
 ```sh
 ./bin/inet_process_standards build \
@@ -66,7 +68,9 @@ to the requested canonical node:
   --standards-dir <standards-root> --output <corpus-output> --json
 ```
 
-When the label is unknown, search first, then retrieve the returned canonical node ID. Use
+When the label is unknown, search first.
+Retrieve the returned canonical node ID next.
+Use
 `--children`, `--ancestors`, or `--context <characters>` only when that extra evidence is needed:
 
 ```sh
@@ -76,18 +80,31 @@ When the label is unknown, search first, then retrieve the returned canonical no
   --standards-dir <standards-root> --output <corpus-output> --json
 ```
 
-Search related terms when one node is insufficient, and confirm every result belongs to the
-requested document and revision. Treat ambiguity and lint findings as evidence to inspect, not as
-permission to choose a plausible occurrence silently. Cross-references are extracted
-conservatively: an unresolved edge is a coverage gap, while an ambiguous edge is not a target.
+Search related terms when one node is insufficient.
+Confirm that every result belongs to the requested document and revision.
+Inspect ambiguity and lint findings.
+Do not silently choose a plausible occurrence.
+An unresolved cross-reference is a coverage gap.
+An ambiguous cross-reference does not identify a target.
 
 The generated corpus is `<corpus-output>/`. It is ignored build output: do not edit or
 commit it.
 
-Consult a source PDF under `<standards-root>/` only when the corpus cannot answer the question,
-visual structure or page verification matters, extraction appears wrong, or the user requests the
-original. Record the document revision, clause or annex, and page.
+Consult a source PDF under `<standards-root>/` only under one of these conditions:
 
-Report the document ID and revision, clause/table/figure/definition, normative/informative status,
-canonical node ID, physical PDF pages or source-span locator, material cross-references and their
-resolution status, and whether PDF inspection was needed.
+- The corpus cannot answer the question.
+- Visual structure or page verification matters.
+- Extraction appears wrong.
+- The user requests the original.
+
+Record the document revision, clause or annex, and page.
+
+Report these evidence fields:
+
+- Document ID and revision.
+- Clause, table, figure, or definition.
+- Normative or informative status.
+- Canonical node ID.
+- Physical PDF pages or source-span locator.
+- Relevant cross-references and their resolution status.
+- Whether PDF inspection was necessary.

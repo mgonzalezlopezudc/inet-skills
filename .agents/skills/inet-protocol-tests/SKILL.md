@@ -1,6 +1,6 @@
 ---
 name: inet-protocol-tests
-description: Run, filter, and diagnose INET protocol suites under tests/protocol using inet_run_protocol_tests and OMNeT++ opp_test. Use for protocol-test execution, generated test builds, shared protocoltest library failures, and expected-result interpretation; not for unit/module tests, statistical baselines, or general regression design.
+description: Run INET protocol suites under tests/protocol with inet_run_protocol_tests and OMNeT++ opp_test. Use for test selection, execution, generated builds, shared protocoltest library failures, and expected-result interpretation. Do not use for unit/module tests, statistical baselines, or general regression design.
 ---
 
 # Run INET protocol tests
@@ -96,8 +96,9 @@ inet_run_protocol_tests -m debug
 ```
 
 Adding `-p` or any filter disables that implicit scope. Supply `-w` when combining filters.
-The protocol runner matches suite roots, so entering a deeper directory such as `wifi/11n` does
-not provide recursive sub-suite selection; use `-w wifi -f '/11n/'` instead.
+The protocol runner matches suite roots.
+A deeper working directory such as `wifi/11n` does not provide recursive sub-suite selection.
+Use `-w wifi -f '/11n/'` for that selection.
 
 ## Understand generated builds and support libraries
 

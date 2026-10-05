@@ -1,6 +1,6 @@
 ---
 name: inet-80211-regression-testing
-description: Add IEEE 802.11-specific invariants, standards obligations, HE/EHT feature gates, and packet-exchange evidence to an INET regression design. Use with inet-regression-testing for Wi-Fi MAC/PHY behavior, management, retries, aggregation, Block Ack, association, or negotiated capability coverage; do not use for protocol-neutral regression design alone.
+description: Add IEEE 802.11 invariants, standards requirements, HE/EHT feature gates, and frame-exchange evidence to an INET regression design. Use with inet-regression-testing for Wi-Fi MAC/PHY, management, retries, aggregation, Block Ack, association, or negotiated capabilities. Do not use for protocol-neutral regression design alone.
 ---
 
 # IEEE 802.11 regression testing
@@ -11,8 +11,9 @@ the obligations that make that generic design valid for Wi-Fi.
 
 Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
 active checkout's current WLAN guidance. For a normative claim, use `ieee80211-standards` to identify
-the applicable standard revision, clause, role, and negotiated conditions before fixing the expected
-exchange. Distinguish normative behavior from an intentional documented model limitation.
+the applicable standard revision, clause, role, and negotiated conditions.
+Define the expected exchange from that evidence.
+Distinguish normative behavior from an intentional documented model limitation.
 
 ## WLAN invariant selection
 
@@ -26,21 +27,25 @@ Choose the smallest protocol-visible invariant that establishes the claim:
 - AP forwarding address roles and duplicate-suppression identity;
 - the negotiated HT/VHT/HE/EHT capability and operation elements that enable the mechanism.
 
-For HE/EHT behavior, prove both the configured request and the active feature gate selected by the
-effective NED/INI configuration. Show from the discovered project guidance and source evidence that
-the mode is standards-derived, advertised or negotiated where required, and applied at the
-production decision point. A helper test of a capability predicate is not evidence that the frame
-path uses it.
+For HE/EHT behavior, prove the configured request and the active feature gate selected by the effective NED/INI configuration.
+Use the discovered project guidance and source evidence to establish these conditions:
 
-## Packet-exchange evidence
+- The mode follows the applicable standard.
+- Advertisement or negotiation occurs where required.
+- The production decision uses the mode.
 
-Prefer a module/protocol assertion when it directly observes the state transition. Use PCAP evidence
-for transmitted frame roles, addresses, sequence control, ACK/Block Ack, aggregation, and retry
-evolution; pair it with targeted logs or source-level evidence when the causal decision is internal
-or a failed/corrupted reception is absent from the capture. Record capture point, simulation time
-window, configuration, run, and seed.
+A helper test of a capability predicate does not establish that the frame path uses it.
 
-Use `inet-ned-ini-analysis` when feature activation is uncertain,
-`inet-80211-packet-debugging` when the exchange mechanism is unresolved, and
-`inet-fingerprint-regression` only for unintended trajectory coverage under the canonical baseline
-procedure.
+## Frame-exchange evidence
+
+Prefer a module/protocol assertion when it directly observes the state transition.
+Use PCAP evidence for transmitted frame roles, addresses, sequence control, ACK/Block Ack, aggregation, and retry changes.
+Add targeted logs or source-level evidence when the causal decision is internal.
+Add the same evidence when a failed or corrupted reception is absent from the capture.
+Record capture point, simulation time window, configuration, run, and seed.
+
+Use the relevant diagnostic skill:
+
+- Use `inet-ned-ini-analysis` when feature activation is uncertain.
+- Use `inet-80211-packet-debugging` when the exchange mechanism is unresolved.
+- Use `inet-fingerprint-regression` for unintended simulation-trajectory changes under the current baseline procedure.

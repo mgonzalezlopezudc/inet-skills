@@ -1,13 +1,14 @@
 ---
 name: inet-branch-cleanup-simple
-description: Quickly rebuild a tested, linear INET topic branch on the same pinned base when the desired squash, reorder, reword, or small split is obvious and needs no new baseline movement, semantic repair, temporary detour, or iterative regrouping; use inet-branch-cleanup for complex or forensic reconstruction.
+description: Rebuild a tested, linear INET topic branch on the same pinned base. Use when the squash, reorder, reword, or small split is clear. The task must need no new baseline change, semantic repair, temporary detour, or repeated group revision. Use inet-branch-cleanup for complex reconstruction or a detailed record of attempts.
 ---
 
 # INET simple branch cleanup
 
-Rebuild a straightforward topic branch as a reviewable commit series without changing its final
-tree. This is the fast path: construct the complete series first, then verify every output commit in
-one sequential sweep. The original topic remains immutable.
+Rebuild a simple topic branch as a reviewable commit series with the same final tree.
+Construct the complete series first.
+Verify every output commit in one sequential run.
+The original topic remains immutable.
 
 This mutates repository history. Start only when the user requested history reconstruction. Use
 `inet-pull-request-authoring` alone when the request is only to plan or audit commits, and use
@@ -47,7 +48,8 @@ already specified the same exact order and boundaries.
 
 ## Construct before testing
 
-Create `clean` from the pinned base and build the approved series without pausing between commits.
+Create `clean` from the pinned base.
+Build the approved series without a pause between commits.
 Use the simplest fitting Git operation; hand-stage only a genuinely small split. Do not add
 scaffolding or repair source behavior during cleanup.
 
@@ -69,8 +71,9 @@ verification worktree with retained build artifacts so the `clean` ref remains p
 SHA. Apply the [incremental build recipe](../inet-opp-repl/references/incremental-builds.md);
 dispose of the worktree only after verification and evidence collection are complete. For each commit:
 
-1. Build the matching INET artifacts and run its explicitly filtered, directly related `opp_repl`
-   cases. Zero executed cases is not evidence.
+1. Build the INET artifacts for the selected commit.
+   Run its explicitly filtered, directly related `opp_repl` cases.
+   Zero executed cases is not evidence.
 2. Require behavior-preserving commits to retain the selected behavior signal. For a fix or feature,
    accept movement only in the predicted, already-approved scope.
 3. Record one concise result row: commit SHA and subject, build command/status, test selector,

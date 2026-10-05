@@ -1,6 +1,6 @@
 ---
 name: ieee80211-standards
-description: Compatibility entry point for IEEE 802.11 standards lookup, including 802.11ax and 802.11be clauses and normative behavior.
+description: Look up IEEE 802.11 standards through the shared standards skill. This compatibility entry point covers 802.11ax and 802.11be normative behavior.
 ---
 
 # IEEE 802.11 standards lookup

@@ -52,4 +52,12 @@ Detailed result files may be temporary. Before discarding them, preserve the exa
 
 ## Finalization
 
-Record the final ordered commit list with types, the exact tree-equality command and exit status, all permitted baseline differences, confirmation that no material is unassigned and no detour remains open, the final test command and result, the middle-safe-point spot checks, and the mapping from every behavior-changing commit to its explanation and baseline update.
+Record the final evidence:
+
+- Ordered commit list and commit types.
+- Exact tree-equality command and exit status.
+- All permitted baseline differences.
+- Confirmation that no material remains unassigned and no temporary detour remains open.
+- Final test command and result.
+- Checks of selected intermediate safe points.
+- Each behavior-changing commit, its explanation, and its baseline update.

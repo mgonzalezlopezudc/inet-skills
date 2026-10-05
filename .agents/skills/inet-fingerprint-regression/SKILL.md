@@ -1,18 +1,19 @@
 ---
 name: inet-fingerprint-regression
-description: Diagnose and manage INET fingerprint regression tests. Use to run fingerprint tests, interpret fingerprint mismatches, decide whether changed fingerprints are expected, update fingerprints with evidence, or distinguish harmless simulation-event changes from behavioral regressions.
+description: Diagnose INET fingerprint regression tests. Use for test execution, mismatch analysis, expected changes, or updates with evidence. Distinguish harmless simulation-event changes from behavioral regressions.
 ---
 
 # INET fingerprint regression
 
-Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover what
-the active checkout's test guidance says a fingerprint establishes, how it should be scoped, and
-what approval is required before changing recorded expectations. This skill adds the filtered runner
-and first-divergence workflow.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to find the active checkout's test guidance.
+Read what a fingerprint establishes.
+Determine the required test scope.
+Check approval requirements before any recorded expectation changes.
+This skill supplies the filtered runner procedure and the search for the first divergence.
 
-After compiled INET source or generated-code inputs change, first use the discovered project
-guidance to select the required build mode, freshness check, repository working directory, and
-build command. The following is a technical debug-mode example when that guidance selects it:
+After compiled INET source or generated-code inputs change, consult the discovered build guidance.
+Select the required mode, freshness check, working directory, and build command.
+This example applies when that guidance selects debug mode:
 
 ```sh
 make MODE=debug -j$(nproc)
@@ -26,8 +27,10 @@ For that debug-mode example, run the wrapper from `tests/fingerprint`:
 
 The working directory is mandatory because default CSV expansion occurs before the wrapper's
 directory option. Treat `Ran 0 tests` or `NO TESTS RAN` as invocation failure. Translate the
-canonical test selection into `-m`/`-x` filters and never invoke this wrapper without a selection
-filter. Use the build mode required by the active project guidance and record it with the run.
+canonical test selection into `-m`/`-x` filters.
+Never invoke this wrapper without a selection filter.
+Use the build mode required by the active project guidance.
+Record the mode with the run.
 
 For a mismatch:
 
@@ -41,8 +44,9 @@ Keep the selected runner and library modes consistent within this invocation. Ap
 evidence rules discovered from the project entry point; any execution failure or zero-test
 run remains incomplete tool output.
 
-For a machine-readable handoff, preserve the raw runner output and use the skill-suite
-`.agents/scripts/normalize_verification.py --runner fingerprint` adapter with the exact command, working
-directory, mode, selector, configuration, run, seed, exit code, and artifacts. Set changed-result
-expectation and approval from recorded facts; the adapter deliberately leaves `UPDATE` or `INSERT`
-as `INCONCLUSIVE` and does not decide whether the new baseline is correct.
+For a machine-readable handoff, preserve the raw runner output.
+Use the skill-suite adapter `.agents/scripts/normalize_verification.py --runner fingerprint`.
+Supply the exact command, working directory, mode, selector, configuration, run, seed, exit code, and artifacts.
+Set changed-result expectation and approval from recorded facts.
+The adapter leaves `UPDATE` or `INSERT` as `INCONCLUSIVE`.
+It does not decide whether the new baseline is correct.

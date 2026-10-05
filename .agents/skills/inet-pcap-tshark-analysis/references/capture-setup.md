@@ -59,7 +59,10 @@ Always include the two global computed-mode overrides on the first diagnostic ca
 
 For native Wi-Fi analysis, select the installed model's IEEE 802.11 MAC representation. If INET cannot determine or convert the link type, inspect the capture module, `dumpProtocols`, packet protocol tags, and available recorder helpers.
 
-Record the computed checksum and FCS overrides with the run command because they may change model behavior. If the investigation depends on the difference between declared and computed modes, preserve an unmodified baseline run for comparison, but keep the capture run serialization-ready from its first attempt.
+Computed checksum and FCS modes may change model behavior.
+Record those overrides with the run command.
+If the investigation depends on declared versus computed modes, preserve an unmodified baseline run for comparison.
+Keep the computed modes effective for the capture run from its first attempt.
 
 ## Bound capture cost
 

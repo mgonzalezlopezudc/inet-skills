@@ -1,11 +1,13 @@
 ---
 name: inet-agent-orchestration
-description: Coordinate project-scoped specialist agents across Codex, Antigravity, and Kimi when OMNeT++/INET work requires delegation, multiple independent evidence lanes, or formal specialist handoffs. Use for genuinely multi-lane diagnosis, standards-to-implementation analysis, delegated implementation and verification, or independent specialist review; do not use merely because a single-agent task is nontrivial.
+description: Coordinate OMNeT++/INET specialist agents across Codex, Antigravity, and Kimi when the task requires delegation or independent evidence. Use for separate diagnostic tasks, standards-to-implementation analysis, delegated implementation and verification, or formal specialist handoffs and reviews. Do not use merely because a task is difficult for one agent.
 ---
 
 # INET agent orchestration
 
-Keep requirements, decisions, and synthesis in the root thread. Delegate bounded evidence or execution outcomes when independent lanes reduce risk or latency.
+Keep requirements, decisions, and combined conclusions in the root thread.
+Delegate bounded evidence or execution tasks when independent work reduces risk or delay.
+An evidence task answers one defined question and returns the facts needed for that answer.
 
 Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to obtain the
 active checkout's current contribution or review policy and gate order. This skill adds agent
@@ -16,19 +18,26 @@ routing, ownership, and handoff mechanics only.
 Choose by change invariant and handoff need, not by raw line count.
 
 1. **Localized path** — a trivial, bounded change with an understood owner and no delegation need.
-   Keep it in one agent and use the lightweight contract in `inet-code-authoring`. Resolve seals and
-   run the smallest direct check. Any API, state-machine, lifecycle, protocol, configuration, or
-   generated-input behavior change is not localized, however small its diff.
+   Keep it in one agent.
+   Use the lightweight contract in `inet-code-authoring`.
+   Resolve source-protection requirements.
+   Run the smallest direct check.
+   Changes to API, state-machine, lifecycle, protocol, configuration, or generated-input behavior require the semantic path, regardless of diff size.
 2. **Mechanical path** — a repetitive, behavior-preserving transformation whose invariant can be
-   stated before editing and independently checked afterward. It may span many files. Examples are
+   stated before the edit and independently checked afterward. It may span many files. Examples are
    a collision-free rename, a format-preserving migration, or regeneration from an unchanged
-   semantic input. Use the mechanical-change reference in `inet-code-authoring`; inventory the full
-   surface, check the invariant and generated artifacts, resolve seals, and run focused
-   verification. If correctness depends on interpreting runtime behavior, use the semantic path.
+   semantic input.
+   Use the mechanical-change reference in `inet-code-authoring`.
+   Inventory the full scope.
+   Check the invariant and generated artifacts.
+   Resolve source-protection requirements.
+   Run focused verification.
+   If correctness depends on runtime interpretation, use the semantic path.
 3. **Semantic path** — a change to behavior, ownership, API contracts, state, protocol decisions,
    effective configuration, lifecycle, timing, or observability. Use the full contract pipeline
-   below. Delegate only when independent evidence or a formal specialist handoff improves the task;
-   otherwise run the same safety gates in the root thread.
+   below.
+   Delegate only when independent evidence or a formal specialist handoff improves the task.
+   Otherwise, run the same checks in the root thread.
 
 The first two paths are classification rules, not permission shortcuts. Uncertainty about whether
 behavior is preserved selects the semantic path.
@@ -51,9 +60,17 @@ graph TD
 - Use at most one production-code writer.
 - Do not duplicate assignments or delegate work simpler than the handoff.
 - Do not let extraction-only agents infer causality, normative meaning, or correctness.
-- Stop opening lanes once decisive evidence exists.
+- Stop new evidence tasks once decisive evidence exists.
 
-Use a soft evidence budget rather than a fixed invocation or token limit. Start with the smallest lane set that can answer the current unresolved questions. Run a lane only when its prompt states both the unresolved question and the evidence expected to resolve it. Parallelize lanes that are already required and independent; run contingent lanes sequentially after reviewing the evidence that determines whether they are needed. Before adding a lane, reuse a suitable active specialist or explain why the existing evidence cannot close the question.
+Use an evidence budget that can change with the task, rather than a fixed invocation or token limit.
+Start with the smallest set of tasks that can answer the unresolved questions.
+Each task prompt must state its question and the evidence expected to resolve it.
+Run required independent tasks in parallel.
+For contingent tasks, inspect the prerequisite evidence first.
+Run each contingent task only when that evidence shows it is necessary.
+
+Before a new task, reuse a suitable active specialist where possible.
+Otherwise, explain why the existing evidence cannot answer the question.
 
 ## Specialist classes
 
@@ -64,16 +81,38 @@ Use a soft evidence budget rather than a fixed invocation or token limit. Start 
 | Implementation | Production implementation, established regression and result-analysis workflows | `inet-implementer`, `inet-regression-guard`, `inet-results-analyst` |
 | Extraction | Explicit searches, inventories, filtering, and structured extraction | `inet-evidence-miner` |
 
-Use the three Codex model tiers in [MODELS.md](../../../MODELS.md): reasoning first, navigation second, and implementation and extraction third. Select the tier by specialist class. For platform-specific runner configurations across Codex, Antigravity, and Kimi, see [platform-bindings.md](references/platform-bindings.md).
+Select the model tier by specialist class under [MODELS.md](../../../MODELS.md):
+
+1. Use the first tier for reasoning.
+2. Use the second tier for navigation.
+3. Use the third tier for implementation and extraction.
+
+Use [platform-bindings.md](references/platform-bindings.md) for the Codex, Antigravity, and Kimi runner configurations.
 
 ## Routing
 
-- **Architecture/configuration:** use `inet-navigator`; add `inet-reviewer` for a formal compliance verdict and `inet-wifi-specialist` only when 802.11 semantics matter.
-- **Standards/model gap:** use `inet-wifi-specialist`; add `inet-navigator` when the implementation path is broad or unclear.
-- **Runtime failure:** lead with `inet-simulation-detective`; add configuration, Wi-Fi, or extraction lanes only for distinct questions.
-- **Patch review:** use `inet-reviewer`, which must use `inet-code-review` for every pull request, branch, commit-range, diff, or working-tree review. It additionally uses `inet-architectural-requirements` for `src/inet/` scope. For a formal architecture, naming, or sealing audit without a concrete correctness diff, use the architecture skill as primary and add code review only if correctness review is also requested.
-- **Production change:** establish the mechanism and change surface, then assign exactly one `inet-implementer`. For a semantic `src/inet/` change, first assign the implementer read-only contract completion using `inet-code-authoring`; require it to return the completed, self-validated contract without writing. Validate that handoff against the authoring checklist, then explicitly authorize the same implementer to write. Use `inet-regression-guard` for behavior changes and `inet-reviewer` on the stable verified diff for architecture-sensitive, nontrivial, or 802.11 changes.
-- **Results/plots:** use `inet-results-analyst`; use `inet-evidence-miner` only for bounded metadata inventory.
+- **Architecture/configuration:** Use `inet-navigator`.
+  Add `inet-reviewer` for a formal compliance verdict.
+  Add `inet-wifi-specialist` only when 802.11 semantics matter.
+- **Standards/model gap:** Use `inet-wifi-specialist`.
+  Add `inet-navigator` when the implementation path is broad or unclear.
+- **Runtime failure:** Assign the investigation to `inet-simulation-detective`.
+  Add configuration, Wi-Fi, or extraction tasks only for distinct questions.
+- **Patch review:** Use `inet-reviewer`.
+  The reviewer must use `inet-code-review` for every pull request, branch, commit-range, diff, or working-tree review.
+  The reviewer also uses `inet-architectural-requirements` for `src/inet/` scope.
+  For architecture, naming, or sealing audits without a correctness diff, use the architecture skill as primary.
+  Add code review only if the task also requests correctness review.
+- **Production change:** Establish the mechanism and change scope.
+  Assign exactly one `inet-implementer`.
+  For semantic `src/inet/` changes, first assign read-only contract completion under `inet-code-authoring`.
+  Require the implementer to return the completed contract and its self-validation before any edit.
+  Validate that handoff against the authoring checklist.
+  Explicitly authorize the same implementer to write.
+  Use `inet-regression-guard` for behavior changes.
+  Use `inet-reviewer` on the stable verified diff for architecture-sensitive, nontrivial, or 802.11 changes.
+- **Results/plots:** Use `inet-results-analyst`.
+  Use `inet-evidence-miner` only for a bounded metadata inventory.
 
 For either single-agent path, follow the canonical contribution workflow in the root thread and use
 the matching pre-write contract and self-audit from `inet-code-authoring`. Do not activate this
@@ -81,40 +120,81 @@ orchestration skill solely to classify or execute such a change.
 
 ## Assignments and gates
 
-Every delegated prompt must say to follow the active repository instructions and applicable repository
-skills, avoid unauthorized delegation, and return to the parent. Specify one deliverable, exact scope
-and inputs, write authority, exclusions, required evidence, definition of done, and concise return
-shape. Include paths, symbols, configuration, run/seed, and artifacts when relevant. For semantic
-`src/inet/` implementation, do not combine unresolved contract completion and write authority in one
-assignment. First provide the available `inet-code-authoring` evidence in a read-only contract
-assignment; after the implementer returns a complete self-validation, the orchestrator validates it
-and sends a separate follow-up that authorizes the first write. Reuse that implementer for the
-authorized implementation and related follow-up work.
+Every delegated prompt must state these requirements:
 
-For implementation, regression, and extraction assignments, include the applicable skill/reference
-sections and the concrete evidence to return. A model binding or high reasoning effort does not
-replace the contract checks: the implementer must load the selected authoring references, the
-regression agent must identify the exercised failure path, and the extractor must report empty or
-ambiguous selections without interpreting them as a pass. Keep causal and normative judgments in
-the specialist classes assigned those responsibilities above.
+- Follow the active repository instructions and applicable skills.
+- Do not delegate without authorization.
+- Return the result to the parent.
+
+Specify one deliverable, exact scope and inputs, write authority, exclusions, required evidence, completion criteria, and a concise response format.
+Include paths, symbols, configuration, run/seed, and artifacts when relevant.
+For semantic `src/inet/` implementation, keep unresolved contract completion separate from write authority.
+First, provide the available `inet-code-authoring` evidence in a read-only assignment.
+
+The implementer returns a complete contract and self-validation.
+The orchestrator validates that result.
+The orchestrator sends a separate follow-up that authorizes the first write.
+Reuse that implementer for the authorized implementation and related follow-up work.
+
+For implementation, regression, and extraction assignments, include the applicable skill sections and the concrete evidence to return.
+A model choice or high reasoning effort does not replace contract checks.
+Apply these role requirements:
+
+- The implementer loads the selected authoring references.
+- The regression agent identifies the failure path that the test exercises.
+- The extractor reports empty or ambiguous selections without a pass conclusion.
+
+Keep causal and normative judgments with the specialist classes assigned those responsibilities above.
 
 Gate handoffs as follows:
 
 1. Diagnose → contract: demonstrated mechanism, bounded change surface, architecture/seal decision, any required approval, and the available evidence for every applicable `inet-code-authoring` contract field.
-2. Contract → implement: the implementer has returned every field complete and self-validated; the orchestrator has independently checked the authoring validation checklist, recorded the result, and explicitly authorized the first write. An unresolved field returns to diagnosis.
+2. Contract → implement: the implementer returns every field complete and self-validated.
+   The orchestrator independently checks the authoring validation checklist.
+   The orchestrator records the result and explicit authorization for the first write.
+   An unresolved field returns the task to diagnosis.
 3. Implement → verify: stable diff and explicit behavior claim.
 4. Verify → review or conclude: evidence selected under the active project guidance and repository
    instructions. When review is required, pass the stable diff, behavior
    claim, contract, implementation report, and evidence to the reviewer.
-5. Correctness review → conclude: for changes routed to `inet-reviewer`, all actionable `inet-code-review` findings are confirmed resolved by the same reviewer after focused reverification, or explicitly accepted by the user with the residual risk recorded. Report reviewed scope, validation, and residual risks.
+5. Correctness review → conclude: the same `inet-reviewer` confirms resolution of every actionable `inet-code-review` finding after focused reverification.
+   Alternatively, the user explicitly accepts a finding with its residual risk recorded.
+   Report reviewed scope, validation, and residual risks.
 6. Architecture review → conclude: required fitness checks and the exact semantic verdict format from
    the applicable canonical checklist.
 7. Baseline or sealing change: the procedure and authorization required by the active project
    guidance, including any additional approval discovered in repository instructions.
 
-Gates may move backward when new evidence invalidates an earlier assumption. Preserve the working diff and artifacts while returning to the earliest affected gate; do not use destructive Git reset as recovery. For a build or focused-test failure, remain in verification when an identified runner or artifact problem caused it, return to implementation when the contract remains valid and the diff caused it, or return to diagnosis/contract definition when it exposes a wrong mechanism, owner, change surface, invariant, or verification mapping. Freeze further writes when evidence invalidates the mechanism or contract, revise and revalidate the affected handoff, then resume forward progress. Reverify every downstream claim made stale by the correction.
+New evidence can invalidate an earlier assumption.
+Preserve the working diff and artifacts before a return to the earliest affected check.
+Do not use destructive Git reset for recovery.
+For a build or focused-test failure, select the next action from its cause:
 
-When context pressure threatens a safe handoff, checkpoint before continuing or transferring ownership. Record the current gate; verified facts and their evidence; working-diff and artifact state; approvals already obtained; invalidated evidence; unresolved questions; and the exact next action or command. Context pressure may reduce optional commentary or defer contingent lanes, but it never waives sealing, contract, focused-verification, approval, or required-review gates.
+- If an identified runner or artifact problem caused the failure, remain in verification.
+- If the diff caused the failure and the contract remains valid, return to implementation.
+- If the mechanism, owner, scope, invariant, or verification mapping is wrong, return to diagnosis and contract definition.
+
+Stop further edits when evidence invalidates the mechanism or contract.
+Revise the affected handoff.
+Revalidate it before further implementation.
+Reverify every later claim that the correction invalidates.
+
+For example, a hypothetical test fails because its runner loads an old library.
+The agent remains in verification to correct the library selection.
+If the correct library exposes a wrong owner in the design, the agent returns to diagnosis.
+
+When limited context threatens a safe handoff, save the current state before further work or ownership transfer.
+Record these details:
+
+- Current workflow step.
+- Verified facts and their evidence.
+- Working diff and artifact state.
+- Existing approvals.
+- Invalidated evidence and unresolved questions.
+- Exact next action or command.
+
+Limited context can justify less optional commentary or deferral of contingent tasks.
+It never waives source protection, contract checks, focused verification, approval, or required review.
 
 ## Dispute Escalation and Deadlock Resolution
 

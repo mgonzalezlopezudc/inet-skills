@@ -14,7 +14,14 @@ Use each playbook to choose the first distinctions to prove, not as a requiremen
 
 ## Channel access and responses
 
-**Queued but never transmitted:** locate the queue/AC and association gate, then reconstruct PHY busy, NAV, AIFS/DIFS, backoff freeze/resume, internal collision, radio state, access grant, lifetime, and queue drop.
+**Queued but never transmitted:** Locate the queue and access category.
+Check whether association state permits transmission.
+Reconstruct these conditions and transitions:
+
+- PHY busy state and NAV.
+- AIFS/DIFS and backoff freeze/resume.
+- Internal collision and radio state.
+- Access grant, frame lifetime, and queue drop.
 
 **DATA without ACK:** first confirm ACK policy and group/unicast status. Then distinguish DATA decode/filtering, ACK generation/transmission, ACK decode, and timeout at the originator.
 

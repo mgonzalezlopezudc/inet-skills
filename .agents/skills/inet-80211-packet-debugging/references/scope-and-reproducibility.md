@@ -10,7 +10,7 @@ Reason from the effective NED and INI configuration, not from a similarly named 
 
 * Wireless interface, MAC, management, agent, queue, classifier, and radio types.
 * Radio-medium and analog representation.
-* Mode set, channel, frequency, and bandwidth.
+* Mode set, channel, frequency, and channel width.
 * Protection, ACK, retry, fragmentation, aggregation, Block Ack, and rate-control policies.
 * Sender, receiver, AP, and relevant intermediate module paths.
 

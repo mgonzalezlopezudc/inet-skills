@@ -1,12 +1,13 @@
 ---
 name: inet-branch-rebase-simple
-description: Quickly rebase an already-tested linear INET topic once onto one pinned upstream target when commits replay one-to-one without conflicts, changed-contract overlap, semantic adaptations, commit restructuring, or new baseline movement; use ordinary Git when no INET evidence is required and inet-branch-rebase for staged or forensic work.
+description: Rebase a tested, linear INET topic once onto one pinned upstream target. Each commit must replay once without conflicts, overlapping contract changes, semantic adaptations, commit restructuring, or new baseline changes. Use ordinary Git when no INET evidence is required. Use inet-branch-rebase for staged work or a detailed record of attempts.
 ---
 
 # INET simple branch rebase
 
-Replay a straightforward topic once onto a pinned upstream target, then verify the final series in a
-single sequential sweep. This is the evidence-backed middle path between an ordinary Git rebase and
+Replay a simple topic once onto a pinned upstream target.
+Verify the final series in a single sequential run.
+This workflow supplies evidence between an ordinary Git rebase and
 the staged forensic `inet-branch-rebase` workflow. The original topic never moves.
 
 This mutates repository history. Start only when the user requested a rebase with INET verification.
@@ -61,8 +62,10 @@ selectors introduced by the topic instead of attempting to treat zero cases on `
 
 ## Replay once and prove equivalence
 
-Create `target` from the immutable topic in a disposable worktree, then rebase only `target` onto
-pinned `main`. Abort immediately on a conflict; do not resolve it on this fast path.
+Create `target` from the immutable topic in a disposable worktree.
+Rebase only `target` onto pinned `main`.
+Abort immediately on a conflict.
+Do not resolve conflicts on this simple path.
 
 Before simulation verification, require all of the following:
 
@@ -86,7 +89,8 @@ reusable verification worktree so `target` remains pinned at its final SHA. Reta
 under the [incremental build recipe](../inet-opp-repl/references/incremental-builds.md) throughout
 the sweep; dispose of the worktree only after verification and evidence collection. For each commit:
 
-1. Build matching INET artifacts and run explicitly filtered, directly related `opp_repl` cases.
+1. Build the INET artifacts for the selected commit.
+   Run explicitly filtered, directly related `opp_repl` cases.
    Zero executed cases is not evidence.
 2. Attribute the selected result to the pinned-main control, the corresponding topic effect, or
    their non-overlapping combination. Any unexplained movement leaves the fast path.

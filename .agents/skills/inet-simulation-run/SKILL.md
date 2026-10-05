@@ -1,6 +1,6 @@
 ---
 name: inet-simulation-run
-description: Run and diagnose INET simulations using the INET launcher (`inet`) with Cmdenv or Qtenv. Use for normal simulation execution, short diagnostic runs, initialization failures, runtime errors, or requests for interactive graphical debugging.
+description: Run INET simulations with the INET launcher (`inet`) and Cmdenv or Qtenv. Use for normal execution, short diagnostic runs, initialization failures, runtime errors, or interactive graphical debugging.
 ---
 
 # Run INET simulations
@@ -25,9 +25,9 @@ Use Qtenv only for interactive topology, animation, state inspection, or event s
 inet --debug -u Qtenv -f omnetpp.ini -c <config> -r <run> --debug-on-errors=true
 ```
 
-Select the build mode required by the active project guidance and record it with the matching project
-libraries. Use `inet --debug --printcmd` when the resolved runner, NED/image paths, or libraries
-matter, if that option exists in the active launcher.
+Select the build mode required by the active project guidance.
+Record the mode and the project libraries that use it.
+If the active launcher supports `inet --debug --printcmd`, use it to inspect runner, NED/image path, or library resolution when necessary.
 `--debug-on-errors=true` creates a debugger trap; it does not launch a debugger. Use
 `inet-lldb-debugging` when source-level inspection is required.
 

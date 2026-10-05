@@ -5,6 +5,11 @@ The project map owns the routes to task procedures and policy documents.
 Read their contents for each task; the map alone does not establish their requirements.
 Internal paths, identifiers, commands, and procedures can change without a skill update.
 
+For example, a hypothetical project map links to a draft approval procedure.
+The draft applies only after maintainer acceptance, which the current task does not establish.
+The link alone does not activate that approval procedure.
+The agent checks the document's status and task instructions before it selects the applicable requirements.
+
 Before applying project policy:
 
 1. Identify the active INET checkout from the task context.

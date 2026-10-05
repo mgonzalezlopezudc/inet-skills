@@ -1,6 +1,6 @@
 ---
 name: inet-cmdenv-log-analysis
-description: Analyze INET and OMNeT++ Cmdenv logs. Use to find module behavior, packet-processing decisions, drops, errors, warnings, event numbers, simulation times, or targeted log context in saved Cmdenv output.
+description: Analyze INET and OMNeT++ Cmdenv logs. Use for module behavior, packet decisions, drops, errors, warnings, event numbers, simulation times, or relevant context in saved output.
 ---
 
 # Analyze Cmdenv logs
@@ -9,7 +9,9 @@ Use [project-guidance-discovery.md](../../references/project-guidance-discovery.
 active checkout's current scope, evidence, correlation, and reporting guidance. This skill adds
 Cmdenv logging and search mechanics.
 
-Save diagnostic output and target only the relevant module subtree. Useful overrides are:
+Save diagnostic output.
+Limit the log scope to the relevant module subtree.
+Useful overrides are:
 
 ```sh
 --cmdenv-express-mode=false
@@ -19,7 +21,8 @@ Save diagnostic output and target only the relevant module subtree. Useful overr
 '--<instantiated-module-path>.cmdenv-log-level=debug'
 ```
 
-Search for the first error or decision, then correlate by packet identity, simulation time, event number, and module:
+Search for the first error or decision.
+Correlate entries by packet identity, simulation time, event number, and module:
 
 ```sh
 rg -n -i 'error|warning|drop|fail|exception|runtime error' <log>
@@ -27,7 +30,17 @@ rg -n -i -C 10 '<packet|sequence|address|retry|timeout|queue>' <log>
 rg -n -C 20 'event=<number>|time=<time>' <log>
 ```
 
-For runtime failures, distinguish initialization from event processing and move to `inet-lldb-debugging` when source state is required. For packet behavior, trace enqueue/dequeue, transmit/receive, drop, timeout/retry, and state transitions; confirm headers with PCAP and aggregates with results when needed.
+For runtime failures, distinguish initialization from event processing.
+Use `inet-lldb-debugging` when the diagnosis requires source state.
+For packet behavior, trace these transitions:
 
-Return the shortest relevant log timeline, then classify and correlate it under the canonical
-diagnosis guide.
+- Queue insertion and removal.
+- Transmission and reception.
+- Drop, timeout, retry, and state changes.
+
+Confirm headers with PCAP when necessary.
+Confirm aggregate measurements with result files when necessary.
+
+Return the shortest relevant log timeline.
+Classify its evidence under the current diagnosis guide.
+Correlate it as that guide requires.

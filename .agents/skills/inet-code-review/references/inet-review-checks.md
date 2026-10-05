@@ -21,7 +21,19 @@ there.
 - **[RP-INET-COLLECTION-INTERFACES]** When an INET collection, packet-provider, extractor, queue, buffer, gate, or scheduler interface changes, inspect every implementation and adapter. An older override that made a closed provider appear empty may not cover a new predicate operation.
 - **[RP-INET-SHARED-BUFFER-REMOVAL]** With shared buffers, scope bulk removal to the owning queue and verify callbacks cannot delete excluded or currently processed packets.
 - **[RP-INET-ORDERING-BARRIER]** Define the ordering barrier for every selector, aggregator, or scheduler and verify both selected output and residual queue order. Example: whether an eligible packet may bypass a temporarily blocked predecessor depends on the flow's ordering contract, not merely on forward-scan convenience.
-- **[RP-INET-PROVIDER-OUTCOMES]** Apply the active provider-contract guidance: distinguish present-but-empty, absent optional capability, invalid provider/wiring, and out-of-range access, then confirm those outcomes remain consistent across count, peek, remove, clear, and predicate operations rather than collapsing them all into empty or null.
+- **[RP-INET-PROVIDER-OUTCOMES]** Apply the active provider-contract guidance.
+  Preserve the distinction between these outcomes:
+  - The provider exists but contains no packets.
+  - An optional capability is absent.
+  - The provider or its connections are invalid.
+  - The requested position is outside the valid range.
+
+  Check consistent outcomes across count, peek, remove, clear, and predicate operations.
+  Do not reduce every outcome to empty or null.
+
+  In a hypothetical example, a valid queue contains no packets, but a second required provider is absent.
+  The count operation reports zero for the empty queue.
+  The absent provider remains a configuration error if the active contract requires that provider.
 - **[RP-INET-UNSUPPORTED-VARIANTS]** Reject unsupported packet or primitive variants at a consistent boundary. Do not require a
   syntactic one-to-one `registerProtocol`/`registerService` pair when the effective dispatcher
   contract uses a different valid route.

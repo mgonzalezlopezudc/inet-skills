@@ -1,6 +1,6 @@
 ---
 name: inet-regression-testing
-description: Design protocol-neutral INET regression coverage from a behavior claim through a deterministic reproduction and direct evidence. Use to choose the matching test category, distinguish helper coverage from production-path proof, decide whether one seed or a bounded campaign is needed, and route execution to the owning test or debugging skill; use a domain specialization for protocol-specific obligations.
+description: Design protocol-neutral INET regression coverage from a behavior claim and deterministic reproduction. Select the test category and direct evidence. Distinguish helper coverage from production-path proof. Define the required seed or parameter scope. Route execution to the relevant test or diagnostic skill. Use a domain specialization for protocol requirements.
 ---
 
 # INET regression testing
@@ -28,24 +28,37 @@ Complete this chain in order:
 6. **Bounded campaign** — decide whether the fixed reproduction is sufficient or whether explicitly
    bounded seeds or parameter values are part of the claim.
 
-Map the changed or failing path and symbol to the selected case and invoke it with the explicit
-filter required by the active project guidance. A zero-case selection is `NOT_RUN`, never a pass.
+Map the changed or failed path and symbol to the selected case.
+Invoke that case with the explicit filter required by the active project guidance.
+A zero-case selection is `NOT_RUN`, never a pass.
 
 ## Helper and production-path evidence
 
 A helper-level unit test establishes the helper's computation or boundary contract. It does not
-establish that a production module calls the helper, passes the intended identity or units, or lets
-the result affect observable behavior. When the claim includes integration, keep useful helper
-coverage and add a module or protocol test that enters through the production gate, API, or
-configuration and observes the outcome. Do not copy production dispatch logic into a fixture and
-call that integration evidence.
+establish that a production module calls the helper with the intended identity or units.
+It also does not establish that the result affects observable behavior.
+When the claim includes integration, retain useful helper coverage.
+Add a module or protocol test through the production gate, API, or configuration.
+Observe the outcome through that path.
+
+Do not copy production dispatch logic into a fixture as a substitute for integration evidence.
+In a hypothetical example, a unit test supplies a duration of two seconds to a timer helper.
+The helper passes, but the production caller supplies an absolute deadline instead of a duration.
+A test through that caller must detect the incorrect expiry time.
 
 ## Select failure-path probes
 
-Use the changed mechanism to choose applicable probes: ownership transfer on refusal/error;
-callback re-entry that replaces or removes state; timeout followed by late completion; repeated
-cleanup; empty/singleton/multiple-item mutation; numeric limits or sequence wrap; and two independent
-peers or flows. Establish reachability from the production entry point before adding a case.
+Choose applicable probes from the changed mechanism:
+
+- Ownership transfer on refusal or error.
+- Callback re-entry that replaces or removes state.
+- Timeout followed by late completion.
+- Repeated cleanup.
+- Mutation of empty, singleton, or multiple-item collections.
+- Numeric limits or sequence wrap.
+- Two independent peers or flows.
+
+Establish reachability from the production entry point before you add a case.
 Record which path each selected test reaches and what assertion would fail before the fix. A
 successful command or a passing neighboring test does not establish that coverage.
 
@@ -55,11 +68,14 @@ One fixed seed is enough when the invariant is deterministic, the reproduction r
 causal path, and the claim is about that path rather than probability, distribution, fairness, or
 robustness. It is also enough to preserve a minimal reproduction of one known seeded failure.
 
-Use a bounded campaign when the claim itself depends on randomized contention, mobility, topology,
-loss, timing boundaries, a distribution, or a range of supported parameter values; when a fix may
-only move a failure to another seed; or when investigating suspected flakiness. Name each varied
-dimension, the finite values or seed count, the stop/failure rule, and how results are aggregated.
-Adding seeds cannot repair a mismatched test category or replace direct evidence.
+Use a bounded campaign under any of these conditions:
+
+- The claim depends on randomized contention, mobility, topology, loss, timing boundaries, a distribution, or supported parameter values.
+- A fix may only move a failure to another seed.
+- The investigation concerns suspected flakiness.
+
+Name each varied dimension, finite values or seed count, stop/failure rule, and result aggregation method.
+Extra seeds cannot repair an incorrect test category or replace direct evidence.
 
 The same seed must reproduce the same trajectory. A different outcome on rerun is a determinism or
 test defect; do not rerun until green.

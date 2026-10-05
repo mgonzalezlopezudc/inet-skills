@@ -1,13 +1,17 @@
 ---
 name: inet-branch-cleanup
-description: Rebuild an opp_repl-tested INET topic branch as a new reviewable commit series while preserving its final source tree. Use when the user asks to split, merge, reorder, or re-author existing commits; do not use for planning or auditing alone, without opp_repl, or for rebasing onto a new upstream.
+description: Rebuild an opp_repl-tested INET topic branch as a reviewable commit series with the same final source tree. Use when the user requests a split, merge, reorder, or new authorship of existing commits. Do not use for a plan or audit alone, without opp_repl, or for a rebase onto new upstream history.
 ---
 
 # INET branch cleanup
 
 Build a new `clean` branch from a fixed `base`. The original `topic` branch never moves: its final tree is the target and the oracle. Cleanup changes only the shape of the history so that a reviewer can distinguish refactors, fixes, features, and chores and validate each one in isolation.
 
-This is a repository-mutating workflow. Start it only when the user has requested history reconstruction. Use `inet-pull-request-authoring` for commit planning, message writing, or compliance auditing that does not require rebuilding the branch. Use `inet-branch-rebase` for a high-risk, `opp_repl`-backed rebase onto changed upstream history; use an ordinary Git workflow for a low-risk one-shot rebase.
+This workflow changes repository history.
+Start only when the user requested history reconstruction.
+Use `inet-pull-request-authoring` for commit plans, messages, or compliance audits that do not require branch reconstruction.
+Use `inet-branch-rebase` for a high-risk rebase onto changed upstream history with `opp_repl` evidence.
+Use an ordinary Git workflow for a low-risk one-shot rebase.
 
 Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to
 discover the active project's current series, protection, baseline, and verification requirements.
@@ -22,7 +26,7 @@ The cleanup workflow and acceptance contract are INET-specific because they use 
 
 ## Inputs and acceptance criteria
 
-Record these inputs verbatim before changing history:
+Record these inputs verbatim before a history change:
 
 - **`topic`** — the branch to clean up. Resolve and pin its HEAD SHA; never modify it.
 - **`base`** — the exact commit on which `clean` starts. Resolve and pin its SHA; do not absorb later upstream movement.
@@ -97,14 +101,19 @@ checkpoint branches preserve history without requiring new build directories or 
 For each approved output commit:
 
 1. Author only its assigned slice. Adopt a whole file only when the group owns the whole file; otherwise apply selected hunks or hand-author the intermediate state.
-2. Build and run the directly related scoped `opp_repl` test. A build failure is an error, and a zero-test selection is not evidence.
+2. Build the artifacts for the directly related scoped `opp_repl` test.
+   Run that test.
+   A build failure is an error.
+   A zero-test selection is not evidence.
 3. Apply the commit-type oracle:
    - **Refactor / chore / docs** — the selected behavior signal must remain identical to the previous safe point. A mismatch means the commit is misclassified or defective. Stop; do not hide it with a baseline update.
    - **Fix / feature** — the signal may change only in the predicted scope and for an explained
      reason. Record the delta.
      Apply the current baseline procedure to any new recorded expectation.
 4. Recompute the ledger. Confirm that it moved by exactly the intended slice and that no unrelated file changed.
-5. On a clean pass, record the commit as a **safe point**, append its evidence to the logbook, and continue.
+5. On a clean pass, record the commit as a **safe point**.
+   Append its evidence to the logbook.
+   Continue to the next approved commit.
 
 Apply the active per-commit build requirement to every output commit.
 A predicted baseline mismatch supplies evidence for the current baseline procedure.

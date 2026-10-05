@@ -1,4 +1,4 @@
 interface:
   display_name: "INET Simple Branch Cleanup"
-  short_description: "Quickly rebuild straightforward INET commit series"
-  default_prompt: "Use $inet-branch-cleanup-simple to quickly rebuild this straightforward tested INET topic branch as a reviewable commit series."
+  short_description: "Rebuild simple INET commit series"
+  default_prompt: "Use $inet-branch-cleanup-simple to rebuild this tested, linear INET topic branch as a reviewable commit series."

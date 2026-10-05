@@ -7,12 +7,20 @@ or upstream checkpoints.
 
 Choose exactly one mode:
 
-- **`parallel-end`** — advance each group independently across plain upstream checkpoints and combine
-  all groups only at pinned `main`.
-- **`lockstep`** — advance every group to one checkpoint, assemble and test their combined state,
-  then continue.
-- **`serial`** — finish one group across every checkpoint, then walk the next group across the same
-  checkpoints on predecessor-group same-stage safe points.
+- **`parallel-end`** — Advance each group independently across plain upstream checkpoints.
+  Combine all groups only at pinned `main`.
+- **`lockstep`** — Advance every group to one checkpoint.
+  Assemble their combined state.
+  Test that state before the next checkpoint.
+- **`serial`** — Finish one group across every checkpoint.
+  Advance the next group across the same checkpoints.
+  At each checkpoint, use the previous group's tested state at that checkpoint as the base.
+
+In a hypothetical serial rebase, groups G1 and G2 must pass checkpoints S1 and S2.
+G1 first passes both checkpoints.
+G2 at S1 starts from G1's tested S1 commit.
+G2 at S2 starts from G1's tested S2 commit.
+Thus, each G2 attempt includes the G1 effects appropriate to that checkpoint.
 
 Record the choice and why it bounds conflicts and regression diagnosis. Obtain approval for the mode
 and each group's ordered checkpoint list before execution.

@@ -1,31 +1,35 @@
 ---
 name: inet-opp-repl
-description: Run and normalize scoped opp_repl verification for INET workflows. Use to discover the active opp_repl interface, map changed paths through dependency data to configurations, distinguish test and baseline-update result semantics, and emit the shared verification envelope; use branch cleanup or rebase skills for history mutation and authorization.
+description: Run scoped opp_repl verification for INET workflows. Use for interface discovery, dependency-based configuration selection, and the shared verification record. Distinguish test results from baseline-update results. Use branch cleanup or rebase skills for history changes and authorization.
 ---
 
 # INET opp_repl verification
 
-Own the shared `opp_repl` mechanics used by history and comparison workflows. The calling skill owns
-the behavior claim, controls, approval gates, and correctness interpretation.
+Use this skill for the shared `opp_repl` procedures in history and comparison workflows.
+The workflow that requests verification owns the behavior claim, controls, approval gates, and correctness interpretation.
 
 Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
 active checkout's test category and directly related scope. Read [workflow-contract.md](references/workflow-contract.md) before the first
 invocation in a workflow.
 
 For repeated history verification, read [incremental-builds.md](references/incremental-builds.md)
-before the first build. Retain compatible artifacts in reusable worktrees and build incrementally;
-fresh evidence at each stage does not require a clean rebuild.
+before the first build.
+Retain compatible artifacts in reusable worktrees.
+Build incrementally.
+Fresh evidence at each stage does not require a clean rebuild.
 
 ## Capability and command discovery
 
-1. Verify `command -v opp_repl` in the active environment and record the resolved executable.
+1. Verify `command -v opp_repl` in the active environment.
+   Record the resolved executable.
 2. Inspect the installed command/API help and the workflow's checked-in `.opp` entrypoints. Do not
    assume function names, keyword arguments, or result stores from another `opp_repl` version.
-3. Resolve the active simulation project and build mode from the active project guidance and record
-   the selected mode.
+3. Resolve the active simulation project and build mode from the active project guidance.
+   Record the selected mode.
 4. If the executable, required entrypoint, dependency store, or selected test data is unavailable,
-   invoke the adapter with `--not-run-reason '<missing capability>'` and return `NOT_RUN`; do not
-   improvise an unscoped substitute.
+   invoke the adapter with `--not-run-reason '<missing capability>'`.
+   Return `NOT_RUN`.
+   Do not improvise an unscoped substitute.
 
 ## Dependency mapping and scope
 
@@ -35,8 +39,10 @@ Use the active `dependency.json` and checked-out NED/package/feature graph to ma
 changed paths or commits -> NED packages -> features -> simulation configurations
 ```
 
-Record the mapping evidence and select only directly related configurations, test types, runs or
-seeds, and result ingredients. A missing mapping is a coverage gap. It does not justify an unrelated
+Record the mapping evidence.
+Select only directly related configurations, test types, runs or seeds, and result ingredients.
+A missing mapping is a coverage gap.
+It does not justify an unrelated
 full-suite run.
 
 The calling workflow supplies the comparison controls and any union rule. Keep build mode,
@@ -44,12 +50,18 @@ configuration, run, seed, time limit, and result ingredients like-for-like acros
 
 ## Result facts
 
-- Test runners: `PASS` means the selected test reported its expected result; `FAIL` means it ran and
-  reported a mismatch; `ERROR` means build/runner/simulation failure; zero executed cases is
-  `NOT_RUN`.
-- Update runners: `KEEP` records no baseline movement; `INSERT` and `UPDATE` record changed
-  expectations; `ERROR` records a failed update. `INSERT` or `UPDATE` is not proof that the new value
-  is correct and never supplies baseline approval.
+| Runner | Result | Meaning |
+| --- | --- | --- |
+| Test | `PASS` | The selected test reported its expected result. |
+| Test | `FAIL` | The selected test ran and reported a mismatch. |
+| Test | `ERROR` | The build, runner, or simulation failed. |
+| Test | `NOT_RUN` | No cases executed. |
+| Update | `KEEP` | The baseline did not change. |
+| Update | `INSERT`, `UPDATE` | The operation changed recorded expectations. |
+| Update | `ERROR` | The update failed. |
+
+An `INSERT` or `UPDATE` result does not prove that the new value is correct.
+It never supplies baseline approval.
 
 For a machine-readable handoff, use the skill-suite
 `.agents/scripts/normalize_verification.py --runner opp_repl` adapter. Supply command, working directory,
@@ -63,5 +75,5 @@ Use `inet-fingerprint-regression` for fingerprint-specific first-divergence and 
 and the result skills for quantitative scalar/vector interpretation. Use `inet-branch-cleanup` or
 `inet-branch-rebase` for branch construction, immutable refs, recovery, and human approval gates.
 
-Return the resolved interface, dependency mapping, exact scoped invocation, normalized envelope,
-raw artifacts, and any unavailable capability or coverage gap.
+Return the resolved interface, dependency mapping, exact scoped invocation, normalized verification record, and raw artifacts.
+Report any unavailable capability or coverage gap.

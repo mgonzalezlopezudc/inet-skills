@@ -1,6 +1,6 @@
 ---
 name: inet-build-debug-modes
-description: Build and diagnose INET debug artifacts, generated code, and model libraries. Use to troubleshoot stale objects, generated message code, opp_makemake or make issues, library naming, custom project libraries, or accidental release/debug mismatches before running tests or LLDB.
+description: Build INET debug artifacts, generated code, and model libraries. Diagnose stale objects, generated message code, opp_makemake or make failures, library names, and custom libraries. Use before tests or LLDB when release/debug components do not match.
 ---
 
 # INET debug builds
@@ -15,13 +15,14 @@ shape; project guidance decides when it is required:
 - runner and INET library: `opp_run_dbg` and `src/libINET_dbg.so`;
 - custom project libraries: their debug variants.
 
-Treat a release runner or library resolved for one of these debug invocations as a mode mismatch and
-correct it before continuing. Use `opp_run_dbg` directly only when LLDB or an exact runner/library
-command requires it. Use `inet --debug --printcmd` to inspect launcher resolution.
+If a debug invocation resolves a release runner or library, the modes do not match.
+Correct the mismatch before the next diagnostic step.
+Use `opp_run_dbg` directly only when LLDB or an exact runner/library command requires it.
+Use `inet --debug --printcmd` to inspect launcher resolution.
 
 Apply the discovered build-freshness requirement. Test-local compilation
-does not rebuild `libINET_dbg.so`; check custom project libraries and generated MSG/NED artifacts
-when diagnosing stale debug output.
+does not rebuild `libINET_dbg.so`.
+For stale debug output, check custom project libraries and generated MSG/NED artifacts.
 
 When LLDB cannot resolve source, locals, or breakpoints, inspect debug symbols, optimization, loaded images, and source/binary revision:
 
@@ -30,5 +31,7 @@ When LLDB cannot resolve source, locals, or breakpoints, inspect debug symbols, 
 (lldb) image lookup --name '<symbol>'
 ```
 
-Do not infer freshness from an existing library or mix modes within one diagnostic invocation. Use
-`inet-unit-tests` for filtered test commands and `inet-simulation-run` for run commands.
+Do not infer freshness from an existing library.
+Do not mix modes within one diagnostic invocation.
+Use `inet-unit-tests` for filtered test commands.
+Use `inet-simulation-run` for run commands.

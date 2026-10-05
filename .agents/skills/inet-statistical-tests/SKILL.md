@@ -1,6 +1,6 @@
 ---
 name: inet-statistical-tests
-description: Run, scope, and diagnose INET statistical result regression tests using inet_run_statistical_tests and the separate statistics baseline repository. Use for scalar baseline comparisons, missing baselines, statistical CI failures, and worktree verification; not for the legacy R-based tests/statistical/*.test harness or hypothesis-test design.
+description: Run INET statistical regression tests with inet_run_statistical_tests and the separate statistics baseline repository. Use for test scope, scalar baseline comparisons, missing baselines, statistical CI failures, or worktree verification. Do not use for the legacy R-based tests/statistical/*.test harness or hypothesis-test design.
 ---
 
 # INET statistical result regression tests
@@ -120,7 +120,8 @@ implementation and actual selected tasks before making any multi-run claim.
 
 ## Diagnose failures
 
-Keep the same filters and serialize the failing selection with more logging:
+Keep the same filters.
+Run the selected failed cases one at a time with more logs:
 
 ```bash
 inet_run_statistical_tests -m debug -w '^examples/wireless(/|$)' \

@@ -35,7 +35,7 @@ traps and high-value cases beyond those canonical WLAN rules.
 - **[RP-WLAN-MODE-IDENTITY]** Prefer typed PHY family and fully qualified mode tuples over bitrate, vector order, first-entry, or stable-sort ties. Equal bitrates can represent semantically different modes.
 - **[RP-WLAN-MODE-SETS]** Keep basic/default/selectable transmit modes separate from supplementary receive and per-packet decode support. Catalog membership, `supportsMode()`, mandatory-rate status, and semantic equivalence are different contracts.
 - **[RP-WLAN-MODE-ATOMICITY]** Apply mode-set and current-mode changes atomically. Check all affected built-in PHY families plus a valid sparse/custom configuration, explicit overrides, width/GI mismatch, and unavailable peer capability.
-- **[RP-WLAN-CHANNEL-SNAPSHOT]** Verify primary/secondary channel, bandwidth, and channel snapshot decisions against the state actually exchanged on the air.
+- **[RP-WLAN-CHANNEL-SNAPSHOT]** Verify primary/secondary channel, channel width, and channel snapshot decisions against the state exchanged on the air.
 
 ## Management and wire elements
 

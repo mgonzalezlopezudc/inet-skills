@@ -1,9 +1,9 @@
 ---
 name: inet-80211-packet-debugging
-description: Debug IEEE 802.11 PHY and MAC packet exchanges in OMNeT++/INET using reproducible evidence. Use for Wi-Fi packet generation, channel access, transmission, reception, ACK/RTS/CTS/Block Ack, aggregation, retransmission, association, roaming, AP forwarding, PHY interference, rate control, or packet-drop investigations using captures, logs, results, source inspection, or LLDB.
+description: Debug IEEE 802.11 PHY and MAC frame exchanges in OMNeT++/INET from reproducible evidence. Use for generation, channel access, transmission, reception, ACK/RTS/CTS/Block Ack, aggregation, or retransmission. Also use for association, roaming, AP forwarding, PHY interference, rate control, or drops. Evidence can include captures, logs, results, source inspection, or LLDB.
 ---
 
-# Debug IEEE 802.11 packet exchanges
+# Debug IEEE 802.11 frame exchanges
 
 Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to
 discover the active checkout's current WLAN boundaries, owners, and verification obligations. This
@@ -27,7 +27,7 @@ Use the owning skills for simulation execution, NED/INI resolution, Cmdenv logs,
 4. Inspect frame type, addresses, Retry bit, sequence/fragment numbers, TID, ACK policy, aggregation, timing, and PHY metadata as relevant.
 5. Add targeted logs, results, or a narrow event log for the first unexplained transition.
 6. Inspect checked-out source for the exact policy/state-machine decision.
-7. Use LLDB only after identifying a suspicious module, event, packet, or source path.
+7. Use LLDB only after you identify a suspicious module, event, packet, or source path.
 
 Use `ieee80211-standards` for normative questions and checked-out source plus observed runs for
 implementation questions. Do not assume a standard feature is implemented or enabled.
@@ -45,4 +45,12 @@ Load only what the question needs:
 - [lldb-80211-breakpoints.md](references/lldb-80211-breakpoints.md): Wi-Fi breakpoint targets.
 - [scenario-playbooks.md](references/scenario-playbooks.md): common failure investigations.
 
-Do not infer PHY reception from a MAC capture, collision or drop from a missing ACK, final destination from Address 1, or airtime from nominal bitrate. Separate direct evidence by source from inference.
+Keep these evidence limits explicit:
+
+- A MAC capture alone does not prove PHY reception.
+- A missing ACK alone does not prove collision or drop.
+- Address 1 does not always identify the final destination.
+- Nominal data rate alone does not establish airtime.
+
+Separate direct evidence from inference.
+Identify the source of each observation.

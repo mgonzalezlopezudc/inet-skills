@@ -1,6 +1,6 @@
 ---
 name: inet-pcap-tshark-analysis
-description: Record and analyze packet exchanges in INET simulations using PcapRecorder, Cmdenv, TShark, and capinfos. Use when asked to find packets, inspect protocol headers, analyze TCP streams or retransmissions, compare captures from different nodes or interfaces, verify whether an exchange occurred, or correlate network packets with Cmdenv simulation logs.
+description: Analyze INET packet exchanges with PcapRecorder, Cmdenv, TShark, and capinfos. Use for capture setup, packet searches, protocol headers, TCP streams, retransmissions, or comparison across nodes and interfaces. Check whether an exchange occurred. Correlate captured packets with Cmdenv logs when necessary.
 ---
 
 # Analyze INET packet captures
@@ -22,11 +22,21 @@ placement, TShark inspection, and multi-point correlation mechanics.
 
 5. Use offline display filters with `-Y` and `-T fields` for exact timelines/headers.
 6. Record the observation points required by the canonical diagnosis guide in separate files.
-7. Correlate `frame.time_epoch` with Cmdenv simulation time using the identifiers selected there.
+7. Correlate `frame.time_epoch` with Cmdenv simulation time through the identifiers selected by that guide.
 
-`moduleNamePatterns` is relative to the recorder's node; `dumpProtocols` selects representation, not observation point. A successful simulation does not prove that recording occurred.
+A recorder needs an observation point and a protocol representation.
+The node-relative pattern `moduleNamePatterns` selects where it observes packets.
+The parameter `dumpProtocols` selects the recorded representation.
+A successful simulation does not prove that the recorder captured packets.
 
-Computed checksum/FCS modes may change packet processing. Preserve those overrides and compare with the baseline when that distinction matters. Preserve original captures when filtering or converting.
+In a hypothetical example, a node contains `wlan[0]` and a recorder.
+The pattern `wlan[0]` selects that interface relative to the node.
+A change to `dumpProtocols` changes the representation, but the recorder still observes the selected interface.
+
+Computed checksum/FCS modes may change packet processing.
+Preserve those overrides.
+Compare with the baseline when that distinction matters.
+Preserve original captures before a filter or conversion changes them.
 
 Read as needed:
 

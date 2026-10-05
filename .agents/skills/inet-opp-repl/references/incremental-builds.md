@@ -5,7 +5,7 @@ The active project's build-freshness requirement means artifacts must match the 
 A successful incremental build satisfies it; a clean rebuild at each
 stage is unnecessary.
 
-## Keep the build workspace warm
+## Retain build artifacts in the workspace
 
 - Prefer an existing, task-owned compatible build workspace. Otherwise create one verification
   worktree for the workflow and retain it through attempts, repairs, controls, and finalization.

@@ -1,6 +1,6 @@
 ---
 name: omnetpp-result-plotting
-description: Create reproducible, non-interactive plots and derived summaries from OMNeT++ .sca and .vec results with the native Python result-analysis API. Use to visualize scalar, vector, statistic, or histogram results; compare configurations or repetitions; compute confidence intervals, ECDFs, or time-weighted summaries; and generate plotting scripts and figure artifacts.
+description: Create reproducible, non-interactive plots from OMNeT++ .sca and .vec results with the native Python result-analysis API. Use for scalar, vector, statistic, or histogram plots and comparisons across configurations or repetitions. Derive confidence intervals, empirical cumulative distribution functions (ECDFs), or summaries with time weighting. Save reproducible scripts and figures.
 ---
 
 # Plot OMNeT++ results
@@ -10,7 +10,10 @@ active checkout's current result-analysis guidance for observational units, cond
 derived metrics, uncertainty, and disclosures. This skill adds the native Python API and rendering
 mechanics.
 
-Load results with `from omnetpp.scave import results`; do not manually parse `.sca`/`.vec` files or substitute CSV loading. Run in the configured OMNeT++ environment.
+Load results with `from omnetpp.scave import results`.
+Do not manually parse `.sca`/`.vec` files.
+Do not substitute CSV loading.
+Run in the configured OMNeT++ environment.
 
 ## Workflow
 
@@ -21,7 +24,12 @@ Load results with `from omnetpp.scave import results`; do not manually parse `.s
      <run.sca> <run.vec> [--filter '<result filter>']
    ```
 
-2. Define the result type/filter, condition columns, independent repetition ID, module aggregation, time window/warm-up, units, per-run reduction, and plot type.
+2. Define the analysis inputs and operations:
+   - Result type and filter.
+   - Condition columns and independent repetition ID.
+   - Module aggregation and per-run reduction.
+   - Time window, warm-up, and units.
+   - Plot type.
 3. Query the native API with metadata:
 
    ```python
@@ -34,9 +42,18 @@ Load results with `from omnetpp.scave import results`; do not manually parse `.s
    )
    ```
 
-   Use the matching vector/statistic/histogram method. Add config entries only when needed; bound large vector queries by time.
+   Use the method for the selected vector, statistic, or histogram type.
+   Add configuration entries only when necessary.
+   Bound large vector queries by time.
 4. Reject empty results, missing columns, incompatible units, unexpected duplicates, invalid vector arrays/timestamps, or missing conditions/repetitions.
-5. Reduce to one justified observational unit, then plot. Keep extraction, transformation, and rendering separate in the saved script.
+5. Define what one observation represents before the plot.
+   Reduce the data to that observational unit under the selected analysis contract.
+   Plot the reduced data.
+   Keep extraction, transformation, and rendering separate in the saved script.
+
+For example, a hypothetical comparison measures each run's mean queue length.
+Each run supplies one observation after vector reduction.
+The plot compares those run means, rather than treating every vector sample as an independent run.
 
 Read [analysis-patterns.md](references/analysis-patterns.md) for implementations of confidence
 intervals, vector reduction, time weighting, ECDFs, counter rates, or large-vector handling after

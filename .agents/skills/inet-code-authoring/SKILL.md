@@ -1,21 +1,26 @@
 ---
 name: inet-code-authoring
-description: Design and implement semantic INET C++, NED, MSG, INI, and test changes with preventive correctness checks before writing and a focused self-audit afterward. Use for production fixes, features, and refactors; use inet-code-review for independent diff review.
+description: Implement INET C++, NED, MSG, INI, and test changes after design checks. Check the result against the design after each change. Use for production fixes, features, and refactors. Use inet-code-review for independent diff review.
 ---
 
 # INET code authoring
 
-Prevent defects while defining and implementing a change. Keep `inet-code-review` independent and read-only; reuse its maintained correctness references without adopting its finding format or reviewer role.
+Prevent defects before and during implementation.
+Keep `inet-code-review` independent and read-only.
+Reuse its correctness references.
+Do not adopt its finding format or reviewer role.
 
-Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) before applying
-the active checkout's contribution, protection, rule, gate, and test guidance. This skill adds a
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to find the active checkout's contribution, protection, rule, gate, and test guidance.
+Read that guidance before its application.
+This skill adds a
 pre-write correctness contract and a post-write self-audit; it does not repeat project policy.
 
 For a requested implementation plan, use `inet-project-guidance` to follow the current plan route before implementation.
 The working contract below does not replace a plan or grant approval.
 
 If the project entry point provides a changed-contract inventory, use it as a preventive self-audit
-aid, without adopting reviewer verdicts, finding severity, or report formatting.
+aid.
+Do not adopt reviewer verdicts, finding severity, or report formats.
 
 For a wide behavior-preserving transformation, use
 [mechanical-migrations.md](references/mechanical-migrations.md).
@@ -32,9 +37,10 @@ Select layers by the changed runtime contract, not only by file extension:
 | INET | packets, chunks, tags, protocol integration, lifecycle operations, queues, serializers, feature composition, or INET tests | [inet-review-checks.md](../inet-code-review/references/inet-review-checks.md) |
 | IEEE 802.11 | Wi-Fi MAC/PHY behavior, management, association, channel access, Block Ack, capabilities, rates, modes, or configuration | [ieee80211-review-checks.md](../inet-code-review/references/ieee80211-review-checks.md) |
 
-Read the selected reference sections before completing the implementation contract, then revisit
-them during the self-audit. The C++ checklist supplies explicit failure-path probes for implementers;
-use domain references for the actual INET and protocol contracts.
+Read the selected reference sections before you complete the implementation contract.
+Revisit those sections during the self-audit.
+The C++ checklist supplies explicit failure-path probes for implementers.
+Use domain references for the actual INET and protocol contracts.
 
 The `RP-*` labels in these references identify non-normative investigation prompts, not new
 authoring requirements. Use them to name preventive checks when useful; take every implementation
@@ -42,12 +48,14 @@ obligation from the applicable canonical project rule.
 
 Apply layers cumulatively only when a higher-layer behavior actually relies on lower-layer
 contracts in the changed control path. For normative IEEE 802.11 behavior, also use
-`ieee80211-standards` and identify the applicable revision and clause before choosing the
-implementation.
+`ieee80211-standards`.
+Identify the applicable revision and clause before the implementation decision.
 
 ## Define the implementation contract
 
-Before editing, write a compact working contract or return it in the parent handoff. Use the templates below directly; do not load a worked example unless the contract fields are genuinely unclear.
+Before an edit, write a compact working contract or return it in the parent handoff.
+Use the templates below directly.
+Load a worked example only when the contract fields remain unclear.
 
 ### Full Contract Template (Default for Semantic Changes)
 
@@ -87,13 +95,23 @@ registration, and generated-input changes that alter runtime meaning.
 Do not start implementation until the contract passes all of these checks:
 
 - Every field contains source- or configuration-backed facts, or a reasoned `N/A`; no `TBD`, placeholder, or unsupported assertion remains.
-- The named owner and effective entry/control path were checked in the current tree, and every presently known affected production, generated-input, configuration, registration, documentation, and test path is listed.
-- Every named verification command and explicit filter exists, and any command offered as behavioral evidence reaches the claimed behavior. If no direct check exists, record the precise coverage gap and do not represent a build or neighboring test as behavioral proof.
+- The owner and effective entry/control path match the current tree.
+  The contract lists every known affected production, generated-input, configuration, registration, documentation, and test path.
+- Every named verification command and explicit filter exists.
+  Commands offered as behavioral evidence reach the claimed behavior.
+  If no direct check exists, record the precise coverage gap.
+  Do not present a build or nearby test as behavioral proof.
 - The contract is internally consistent: its invariant, change surface, siblings, boundary semantics, and verification all describe the same behavior claim.
 
-In single-agent mode, self-validate and record the result before writing. In delegated work, the implementer self-validates before handoff and the parent or orchestrator validates the handoff before authorizing the first write. If a field cannot yet pass, return to discovery instead of weakening the field.
+In single-agent mode, validate the contract before the first edit.
+Record that result.
+In delegated work, the implementer validates the contract before handoff.
+The parent or orchestrator validates the handoff before authorization for the first edit.
+If a field cannot pass, return to discovery.
+Do not weaken the field.
 
-When a filled-in field remains unclear, read the optional [verified non-WLAN contract example](references/example-contract.md). Recheck its paths and facts against the active checkout before adapting it.
+When a completed field remains unclear, read the optional [verified non-WLAN contract example](references/example-contract.md).
+Recheck its paths and facts against the active checkout before reuse.
 
 ## Implement against the contract
 
@@ -106,7 +124,8 @@ When a filled-in field remains unclear, read the optional [verified non-WLAN con
   `numInitStages()`;
   add or update a local override only when that effective count does not cover the stage.
 - Keep current and pending state, peers, interfaces, flows, TIDs, directions, links, and generations separate according to the owning protocol. Use complete identity tuples and domain-correct boundary or wrap semantics.
-- Keep absolute deadlines distinct from relative durations and preserve units and conversion ownership across NED, C++, model fields, serializers, and wire encodings.
+- Keep absolute deadlines distinct from relative durations.
+  Preserve units and conversion ownership across NED, C++, model fields, serializers, and wire encodings.
 - Select and report tests under the active test guidance. Apply its production-path distinction:
   helper-only coverage does not
   prove that the real caller invokes the helper, supplies the intended identity, or handles every
@@ -114,12 +133,18 @@ When a filled-in field remains unclear, read the optional [verified non-WLAN con
 
 ### Handle related scope expansion
 
-When implementation reveals a related target or behavior not covered by the validated contract, pause before modifying that new target. Preserve the current work; do not reset it merely to revisit the contract.
+When implementation reveals a related target or behavior outside the validated contract, pause before an edit to that new target.
+Preserve the current work.
+Do not reset it merely to revisit the contract.
 
 1. Classify the discovery as **required** for the behavior claim or **optional** hardening/follow-up. Keep optional work out of the patch.
 2. Add required owners, paths, consumers, sibling/terminal behavior, and any contract deviation to the working contract.
-3. Rerun sealing and applicable architecture checks for every newly added target, then remap the smallest direct verification and explicit filters.
-4. If the expansion materially exceeds the requested scope, existing authority, or delegated ownership, return the updated contract to the user, parent, or orchestrator before continuing. Otherwise revalidate it and resume.
+3. Rerun source-protection and applicable architecture checks for every new target.
+   Remap the smallest direct verification and explicit filters.
+4. Check whether the expansion materially exceeds the requested scope, existing authority, or delegated ownership.
+   If it does, return the updated contract to the user, parent, or orchestrator before further work.
+   Otherwise, revalidate the contract.
+   Resume within that validated scope.
 
 ## Self-audit and hand off
 

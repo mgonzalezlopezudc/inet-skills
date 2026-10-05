@@ -1,6 +1,6 @@
 ---
 name: inet-code-review
-description: Act as an independent read-only OMNeT++/INET maintainer reviewing a pull request, branch, commit range, diff, or working tree for correctness and regressions. Use to discover and report actionable defects in C++, NED, MSG, INI, tests, and their integration; do not use merely to process existing reviewer comments or to implement fixes.
+description: Review OMNeT++/INET correctness and regressions as an independent maintainer with read-only source access. Use for pull requests, branches, commit ranges, diffs, or working trees. Report actionable defects in C++, NED, MSG, INI, tests, and their integration. Do not use solely to process existing reviewer comments or implement fixes.
 ---
 
 # INET code reviewer
@@ -29,7 +29,8 @@ Select references by the changed runtime contract, including configuration-induc
 | INET | INET packets/chunks/tags, protocol integration, lifecycle operations, queues, serializers, feature composition, or INET tests | [inet-review-checks.md](references/inet-review-checks.md) |
 | IEEE 802.11 | Wi-Fi MAC/PHY behavior, management, association, channel access, Block Ack, capabilities, rates/modes, or 802.11 configuration | [ieee80211-review-checks.md](references/ieee80211-review-checks.md) |
 
-Read the selected reference sections before evaluating the changed contract. Use the C++ checklist
+Read the selected reference sections before evaluation of the changed contract.
+Use the C++ checklist
 for concrete path coverage; domain references establish the simulation and protocol semantics.
 
 Layer references label durable investigation prompts as `RP-<LAYER>-<MECHANISM>`. These are
@@ -68,10 +69,12 @@ the user-facing review report.
 
 ## Authoring handoff discrepancies
 
-When an incorrect authoring contract led to incorrect code, report the actionable code defect and
-identify the contract correction and earliest pipeline gate that must be re-entered. When the code
-is correct but a contract or handoff describes it incorrectly, report a handoff discrepancy outside
-the findings list; do not manufacture a code finding.
+When an incorrect authoring contract caused incorrect code, report the actionable code defect.
+Identify the required contract correction.
+Name the earliest workflow step that the correction must revisit.
+
+When correct code conflicts with its contract or handoff description, report the description error outside the findings list.
+Do not invent a code finding for that error.
 
 ## Validate proportionally
 

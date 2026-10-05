@@ -1,6 +1,6 @@
 ---
 name: inet-project-guidance
-description: Prepare or review INET implementation plans, or edit contributor documents, through the active checkout's project map. Use when the task concerns a plan, project documentation, or discovery of contributor policy; use the specific code, test, or diagnostic skill for execution.
+description: Prepare or review INET implementation plans through the active checkout's project map. Use for contributor documents and policy discovery. Use the specific code, test, or diagnostic skill for execution.
 ---
 
 # Use current INET project guidance
