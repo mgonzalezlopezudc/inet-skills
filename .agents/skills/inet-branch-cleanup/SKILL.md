@@ -32,9 +32,8 @@ Record these inputs verbatim before changing history:
 Cleanup is complete only when:
 
 1. `git diff <topic-sha> <clean-sha> --` is empty for every source and non-baseline file.
-2. Any baseline difference from `topic` reflects the clean branch's actual behavior and follows
-   the active baseline procedure: it travels in the causal source commit, or stands alone
-   only when no single source commit caused the movement.
+2. Any baseline difference from `topic` reflects the clean branch's actual behavior.
+   Its evidence, approval, and commit placement satisfy the current baseline and series procedures.
 3. The coverage ledger contains no unassigned material and every temporary detour has closed.
 4. Every output commit has the promised build and `opp_repl` evidence, apart from any explicitly approved relaxation, and the final directly related test contract passes.
 
@@ -57,18 +56,21 @@ Partition the total diff into independently understandable **change groups**:
 - A group may feed several output commits, and one output commit may combine groups when the result still has one clear intent.
 - When later evidence requires a split or merge, give the replacement groups fresh, increasing IDs and retain the old entries with `superseded-by` links.
 
-Do not create per-group fossil branches. The group table and the `clean` history are the durable record. Propose the groups and obtain human approval before building the branch.
+Do not create per-group fossil branches.
+The group table and the `clean` history are the durable record.
+Present the groups with the ordered commit plan below.
 
 ## Phase 2 — Plan the output commits
 
 Derive commit boundaries, order, subjects, and rationales from the active project series policy. For each
-output commit, additionally record its type, feeding groups, and expected test effect. Include an
-approved baseline update in the source commit that causes it. Plan a standalone baseline commit only
-when no single source commit caused the movement.
+output commit, additionally record its type, feeding groups, and expected test effect.
+Select baseline placement from the current baseline and series procedures.
+Record the causal source change or explain why no single source change caused the movement.
 
 Dependent edits may require an intermediate file state found in neither `base` nor `topic`. Such a state is legitimate when it gives a commit one clear purpose: the coverage ledger still pins the final result to `topic`.
 
-Obtain human approval for the ordered commit plan before building `clean`.
+Obtain approval for the combined group and commit plan before you build `clean`.
+Use existing authorization when it specifies the same groups, boundaries, and order.
 
 ## Phase 3 — Maintain the coverage ledger
 
@@ -99,16 +101,15 @@ For each approved output commit:
 3. Apply the commit-type oracle:
    - **Refactor / chore / docs** — the selected behavior signal must remain identical to the previous safe point. A mismatch means the commit is misclassified or defective. Stop; do not hide it with a baseline update.
    - **Fix / feature** — the signal may change only in the predicted scope and for an explained
-     reason. Record the delta and include any approved re-recording in this causal source commit,
-     following the canonical procedure.
+     reason. Record the delta.
+     Apply the current baseline procedure to any new recorded expectation.
 4. Recompute the ledger. Confirm that it moved by exactly the intended slice and that no unrelated file changed.
 5. On a clean pass, record the commit as a **safe point**, append its evidence to the logbook, and continue.
 
-Apply the active per-commit build requirement to every output commit. A predicted baseline mismatch is evidence to carry
-into the causal source commit's approved baseline update, not permission to leave the commit red or
-hide an unrelated failure. A standalone baseline commit is valid only for movement with no single
-causal source commit. Any other test-red relaxation needs explicit approval, a logged justification,
-and a named restoring commit.
+Apply the active per-commit build requirement to every output commit.
+A predicted baseline mismatch supplies evidence for the current baseline procedure.
+It does not permit an unexplained failure or acceptance of a failed commit.
+Any exception to the verification contract needs explicit approval, a recorded reason, and a named restoring commit.
 
 ## Failure and rework
 
@@ -120,9 +121,16 @@ When a commit fails or surprises the oracle, compare it with `topic`, `base`, an
 
 Prefer append-only progress. Before rewriting an already validated commit, preserve the current tip as `cleanup/<name>/checkpoint-<ISO8601>`, then rebuild forward. Checkpoint branches are fossils: never repoint, rename, or delete them. Use branches, not tags, as the authoritative safe-point references.
 
-Ask for human input at the initial grouping and commit plan, on unexplained or ambiguous behavior
-changes, before changing the approved groups or order, before an exceptional test-red commit, when
-the canonical baseline procedure or repository policy requires approval, and at final delivery.
+Use existing authorization where it covers the proposed action.
+Ask for human input when any of these conditions applies:
+
+- The initial group and commit plan needs approval.
+- A behavior change remains unexplained or ambiguous.
+- A revision changes the approved groups or order.
+- A proposed commit needs an exception to the verification contract.
+- The current baseline procedure or repository policy requires further approval.
+
+Request delivery approval only when current guidance requires it or delivery exceeds existing authorization.
 Do not pause for a clean pass that matches the approved expectation.
 
 ## Phase 5 — Finalize

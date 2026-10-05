@@ -21,5 +21,5 @@ Read this reference after every current group reaches pinned `main`.
 6. Complete the state-log finalization with target SHA, group/stage completion, exact per-commit and
    union envelopes, every explained delta, adaptation provenance, final audit, and residual risks.
 
-Request final delivery approval. Draft or publish a pull request only when the user explicitly asks
-for that additional action.
+Request delivery approval only when current project guidance requires it or delivery exceeds existing authorization.
+Draft or publish a pull request only when the user explicitly requests that additional action.

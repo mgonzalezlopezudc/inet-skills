@@ -44,10 +44,9 @@ For every behavior-changing commit, add these four labelled fields in this order
 1. **What changed** — the code change and the precise test delta, including affected configurations and useful quantitative detail.
 2. **Why the result changed** — the causal mechanism, tied to the lines introduced by this commit.
 3. **Why it's acceptable** — why the new behavior is correct or intended, and why unrelated behavior should not have moved.
-4. **Baseline update** — the exact entries or artifacts re-recorded, the method and result codes when
-   available, the required approval, and the SHA of the causal source commit that contains the
-   update. If no single source commit caused the movement, record the standalone baseline commit and
-   explain why it has no causal source commit, following the active baseline procedure.
+4. **Baseline update** — record the exact entries or artifacts, method, result codes, approval source, and commit SHA for the update.
+   Link the causal source change or explain why no single source change caused the movement.
+   Use the current baseline and series procedures to determine commit placement.
 
 Detailed result files may be temporary. Before discarding them, preserve the exact invocation, decisive evidence, causal explanation, exit status, and any durable artifact paths in the logbook.
 

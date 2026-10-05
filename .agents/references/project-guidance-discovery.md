@@ -1,36 +1,75 @@
 # Discover active project guidance
 
-The skill suite has one project documentation input: the active checkout's
-`doc/project/README.md`. The files and names linked from that entry point are
-project-owned details and may move, be renamed, or be reorganized without a
-skill update.
+The active checkout's `doc/project/README.md` is the skill suite's only fixed path for project guidance.
+The project map owns the routes to task procedures and policy documents.
+Read their contents for each task; the map alone does not establish their requirements.
+Internal paths, identifiers, commands, and procedures can change without a skill update.
 
 Before applying project policy:
 
-1. Identify the active checkout from the task context. When the location is
-   unclear, run `git rev-parse --show-toplevel` in the intended working
-   directory and verify the result.
-2. Read `<checkout>/doc/project/README.md`. Do not use a copy shipped with the
-   skills, a remembered path, or a hardcoded rule identifier.
-3. Follow the entry point's route that matches the task. If it does not expose
-   a route, search the current `doc/project/` tree for the task terms and
-   report the search used. Treat the linked documents and their current text
-   as authoritative.
-4. Extract the obligations needed for this task: ownership and protection,
-   acceptance criteria, build modes, executable gates, test category and
-   filter, approvals, and reporting fields. Record the source paths discovered
-   and the exact commands selected from current guidance.
-5. Refresh the discovery after changing checkout, branch, or project
-   documentation. A changed command, mode, or policy takes effect on the next
-   discovery.
+1. Identify the active INET checkout from the task context.
+   The skill source repository and a deployment directory are not INET checkouts.
+   Use `git rev-parse --show-toplevel` in the intended directory if its location is unclear.
+2. Read `<checkout>/doc/project/README.md`.
+   Do not use a packaged copy, a remembered internal path, or a fixed rule identifier.
+3. Select the route for the requested task.
+   Resolve relative links from the document that contains each link.
+   Read the selected procedure and the relevant sections of its linked policy, design, and enforcement documents.
+   Follow further dependencies when they define a condition that affects the task.
+4. Check each selected document's status, scope, and protection information.
+   Use its current text to determine whether its requirements apply.
+   A link does not make a draft accepted policy.
+   Read the draft's conditions for use and the task instructions before you apply its approval process.
+   Follow the named replacement for a superseded document.
+   Use a snapshot as historical evidence, not as current policy.
+5. Record the applicable obligations and their source paths.
+   Include ownership, protection, acceptance criteria, commands, modes, selectors, approvals, and report fields where the task requires them.
+   Confirm the selected executable and its supported options in the active checkout before execution.
+6. Refresh this discovery when the checkout, branch, or relevant project documents change.
+   Include relevant local edits; a commit identifier alone does not describe changed guidance.
+   Recheck affected decisions and evidence against the new text.
 
-Missing guidance has no permissive meaning. If the entry point or guidance
-needed for a protected or otherwise required action is absent, stop that
-action and report the missing route. If optional domain guidance is absent,
-record the capability gap and continue only with work whose requirements are
-already established. Do not reconstruct policy from skill text or silently
-substitute a similarly named document or executable.
+## Select the task route
 
-This procedure preserves technical task knowledge in the skills while leaving
-project requirements, identifiers, headings, gates, and protection decisions
-in the active checkout.
+Use the current map's links, not this table, to choose document paths.
+The table supplies search terms when a route is unclear.
+
+| Task | Guidance to find |
+| --- | --- |
+| Prepare or review an implementation plan | Plan procedure, status conditions, technical design, verification, approval scope, and revision rules |
+| Implement a change or add a protocol | Contribution procedure, requirements, ownership, reuse, protection, and applicable domain rules |
+| Review code or a pull request | Correctness procedure, series rules, classification, exception ledgers, checklists, and report format |
+| Audit or seal a subsystem | Audit procedure, protection scope, exception disposition, and permission requirements |
+| Select or run tests | Test categories, claim coverage, freshness, focused gates, and publication gates when applicable |
+| Derive tests from a standard | Standard evidence, protocol features, model coverage, failure classes, and expected outcomes |
+| Diagnose a simulation | Reproduction, observation boundaries, evidence classes, controls, and diagnostic report |
+| Compare or plot results | Measurement definition, independent repetitions, reductions, units, uncertainty, and report |
+| Change a recorded expectation | Baseline scope, cause, correctness evidence, permission, and verification |
+| Edit documents or describe a release | Audience, document owner, format, status, protection, compatibility, and release obligations |
+
+## Handle an absent route
+
+Search the current `doc/project/` tree for the task terms if the map lacks a clear route.
+Report the search and the source that establishes applicability.
+If a linked document is missing, report the broken route.
+Use an explicit replacement only when current project guidance establishes it.
+
+Missing guidance does not grant permission.
+Stop an action if its required guidance is absent.
+Continue independent work whose requirements are established.
+Report absent optional domain guidance as a capability gap.
+Do not reconstruct policy from skill text or substitute a document with a similar name.
+
+## Use skill procedures with project policy
+
+Skills supply tool procedures, discovery methods, and safeguards for their specific workflows.
+Project documents supply project policy.
+Adapt command examples to the discovered mode, scope, runner options, and acceptance criteria.
+An example does not select debug mode or authorize a baseline update.
+Use the current project format for a required report.
+Retain the tool facts needed to reproduce the result.
+Do not treat a skill template as an additional project report requirement.
+
+Preserve the user's scope and existing authorization when you apply an approval procedure.
+Request any required approval for a concrete result, after the work permitted before approval is complete.
+Do not request the same approval again when it already covers the action.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Project Guidance"
+  short_description: "Use current project documents for plans and contributor policy"
+  default_prompt: "Use $inet-project-guidance to follow the active INET project map for this plan or document task. Read the applicable current documents before you select requirements, formats, checks, or approvals."

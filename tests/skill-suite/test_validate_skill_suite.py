@@ -176,6 +176,99 @@ class SkillSuiteValidatorTest(unittest.TestCase):
             )
             self.assertTrue(any("missing project guidance entrypoint" in error for error in validation.errors))
 
+    def guidance_source(self, root: Path, instructions: str) -> dict:
+        resource = root / VALIDATOR.PROJECT_GUIDANCE_RESOURCE
+        resource.parent.mkdir(parents=True)
+        resource.write_text("Read the active checkout's `doc/project/README.md`.\n")
+        skill = root / ".agents" / "skills" / "demo" / "SKILL.md"
+        skill.parent.mkdir(parents=True)
+        skill.write_text(instructions)
+        return {
+            "project_guidance": {"entrypoint": "doc/project/README.md"},
+            "shared_resources": [VALIDATOR.PROJECT_GUIDANCE_RESOURCE],
+            "skills": {"demo": {"dependencies": []}},
+        }
+
+    def test_internal_project_path_is_rejected_in_skill_instructions(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest = self.guidance_source(root, "Use `doc/project/rules/old-build.md`.\n")
+            validation = VALIDATOR.Validation()
+            VALIDATOR.validate_project_guidance(root, manifest, validation)
+            self.assertTrue(any("fixed internal project document path" in error for error in validation.errors))
+
+    def test_project_entrypoint_and_task_terms_are_allowed(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest = self.guidance_source(
+                root, "Read `doc/project/README.md`. Search `doc/project/` for the plan procedure.\n"
+            )
+            validation = VALIDATOR.Validation()
+            VALIDATOR.validate_project_guidance(root, manifest, validation)
+            self.assertEqual([], validation.errors)
+
+    def test_internal_project_path_is_rejected_in_manifest(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest = self.guidance_source(root, "Read the current project map.\n")
+            (root / ".agents" / "skill-suite.yaml").write_text(
+                "checkout_requirements:\n  required: [doc/project/rule/testing.md]\n"
+            )
+            validation = VALIDATOR.Validation()
+            VALIDATOR.validate_project_guidance(root, manifest, validation)
+            self.assertTrue(any("fixed internal project document path" in error for error in validation.errors))
+
+    def test_discovery_procedure_must_be_packaged(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest = self.guidance_source(root, "Read the current project map.\n")
+            manifest["shared_resources"] = []
+            validation = VALIDATOR.Validation()
+            VALIDATOR.validate_project_guidance(root, manifest, validation)
+            self.assertTrue(any("must package" in error for error in validation.errors))
+
+    def test_shared_guidance_broken_link_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest = self.guidance_source(root, "Read the current project map.\n")
+            (root / VALIDATOR.PROJECT_GUIDANCE_RESOURCE).write_text("Read [missing](missing.md).\n")
+            validation = VALIDATOR.Validation()
+            VALIDATOR.validate_references(root, manifest, validation)
+            self.assertTrue(any("broken Markdown reference" in error for error in validation.errors))
+
+    def test_policy_relocation_and_mode_change_do_not_change_package(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            temporary = Path(directory)
+            project = self.project_from_fixture(temporary, "reorganized")
+            first = temporary / "first"
+            second = temporary / "second"
+            _, errors = PACKAGER.package_profile(
+                root=ROOT, profile_name="results", output=first, project_root=project,
+            )
+            self.assertEqual([], errors)
+
+            guidance = project / "doc" / "project"
+            shutil.rmtree(guidance)
+            guidance.mkdir()
+            (guidance / "README.md").write_text("Use [current policy](new-policy.md).\n")
+            (guidance / "new-policy.md").write_text(
+                "Verification uses release mode through `tools/new-check --mode release`.\n"
+            )
+            validation = VALIDATOR.Validation()
+            VALIDATOR.validate_capabilities(
+                ROOT, project, self.capability_manifest(), validation,
+                check_tools=False, strict_capabilities=True,
+            )
+            self.assertEqual([], validation.errors)
+            _, errors = PACKAGER.package_profile(
+                root=ROOT, profile_name="results", output=second, project_root=project,
+            )
+            self.assertEqual([], errors)
+            first_files = {path.relative_to(first): path.read_bytes() for path in first.rglob("*") if path.is_file()}
+            second_files = {path.relative_to(second): path.read_bytes() for path in second.rglob("*") if path.is_file()}
+            self.assertEqual(first_files, second_files)
+            self.assertFalse((second / "doc" / "project").exists())
+
     def test_dependency_cycle_is_rejected(self) -> None:
         manifest = {
             "skills": {

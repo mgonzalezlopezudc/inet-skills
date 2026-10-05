@@ -28,7 +28,8 @@ Use this skill only when all of these are true:
 - Complete topic and upstream diffs plus dependency mapping show no overlapping changed contract or
   predicted behavioral coupling. Disjoint file paths alone are not sufficient evidence.
 - Replay is expected to apply without conflicts; this fast path accepts no conflict resolution.
-- Existing baseline changes, if any, are already approved and remain in their causal topic commit.
+- Existing baseline changes satisfy the current baseline and series procedures, including any required approval.
+  They remain in their original topic commits.
   The rebase will not create or correct baseline values.
 
 Before planning, use `inet-pull-request-authoring` and discover the active project's current series

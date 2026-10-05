@@ -41,7 +41,7 @@ graph TD
     ArchGuard -->|Sealed: Request Approval / Unsealed: OK| Contract[inet-code-authoring: Pre-Write Contract]
     Contract -->|Returned & Validated by Orchestrator| Implement[Single Implementer: Write Code]
     Implement -->|Stable Diff| Test[Focused Verification: Unit / Module / Debug Run]
-    Test -->|Evidence Gathered| Review[inet-code-review + Checklist Verdicts]
+    Test -->|Evidence Gathered| Review[inet-code-review + Current Project Checks]
     Review -->|Findings Resolved & Approved| Conclude[Conclude / Persist]
 ```
 
@@ -125,5 +125,6 @@ When specialists disagree or findings conflict:
 3. **Intentional divergence:** Verify an apparent standards divergence against explicit model documentation, a recorded model limitation, or a user-approved design decision. Architecture and naming exception ledgers govern project structure and naming; do not use them as a standards-deviation ledger.
 4. **Escalation Protocol:**
    - Define a minimal reproduction (1 node/pair, 1 seed, shortest time) that isolates the contested behavior.
-   - Run in debug mode (`MODE=debug`, `opp_run_dbg`) with targeted tracing.
+   - Select the mode from current project guidance.
+   - Use targeted tracing with the matching runner and library.
    - A concrete trace or assertion can resolve implementation causality. Resolve normative ambiguity from the applicable standard text; if the intended model behavior remains ambiguous, record a `QUESTION` for user decision rather than guessing.

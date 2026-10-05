@@ -69,12 +69,14 @@ For the library build required by the discovered freshness guidance, the debug c
 make MODE=debug -j$(nproc)
 ```
 
-Focused examples below use debug mode. To reproduce statistical CI, use `MODE=release` for the
-build and `-m release` for the runner; verify the active checkout's workflow command.
+Focused examples below use debug mode.
+For statistical CI, read the active workflow's command and mode.
+Use that mode for both the build and the runner.
 
 ## Preview and run the selected cases
 
-For a requested full statistical CI reproduction, invoke from the INET root after the release build:
+For a requested full statistical CI reproduction, use the active workflow's scope and mode.
+This example applies when that workflow selects release mode:
 
 ```bash
 inet_run_statistical_tests -m release --dry-run

@@ -26,8 +26,8 @@ Use this skill only when all of these are true:
 - One clear mapping from the topic commits or hunks to the intended output commits is visible after
   reading the complete `base..topic` log and diff.
 - Cleanup needs no temporary content absent from both `base` and `topic`.
-- Existing baseline changes, if any, are already approved and can remain with their causal source
-  change. Cleanup will not create or correct baseline values.
+- Existing baseline changes satisfy the current baseline and series procedures, including any required approval and commit placement.
+  Cleanup will not create or correct baseline values.
 
 Before planning, use `inet-pull-request-authoring` and discover the active project's current series
 guidance. Use

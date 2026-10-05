@@ -56,6 +56,7 @@ profiles:
       - inet-packet-tag-debugging
       - inet-pcap-tshark-analysis
       - inet-protocol-tests
+      - inet-project-guidance
       - inet-pull-request-authoring
       - inet-regression-testing
       - inet-simulation-run
@@ -90,6 +91,17 @@ profiles:
         - examples/ieee80211/analysis/README.md
 
 skills:
+  inet-project-guidance:
+    metadata:
+      display_name: INET Project Guidance
+      short_description: Use current project documents for plans and contributor policy
+      default_prompt: Use $inet-project-guidance to follow the active INET project map for this plan or document task. Read the applicable current documents before you select requirements, formats, checks, or approvals.
+    dependencies: []
+    required_tools: []
+    checkout_requirements:
+      required: []
+      optional: []
+
   ieee-standards:
     metadata:
       display_name: IEEE Standards

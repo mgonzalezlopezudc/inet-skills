@@ -11,6 +11,9 @@ Use [project-guidance-discovery.md](../../references/project-guidance-discovery.
 the active checkout's contribution, protection, rule, gate, and test guidance. This skill adds a
 pre-write correctness contract and a post-write self-audit; it does not repeat project policy.
 
+For a requested implementation plan, use `inet-project-guidance` to follow the current plan route before implementation.
+The working contract below does not replace a plan or grant approval.
+
 If the project entry point provides a changed-contract inventory, use it as a preventive self-audit
 aid, without adopting reviewer verdicts, finding severity, or report formatting.
 
@@ -145,7 +148,7 @@ Return this plain-text envelope. Use `None` only when supported by the audit; do
 - Focused evidence:
   - Command: <exact command>
   - Working directory: <path>
-  - Mode / filter: <debug mode and explicit filter>
+  - Mode / filter: <discovered build mode and explicit filter>
   - Exit status: <status>
   - Artifacts: <paths or none>
 - Residual risks / coverage gaps: <remaining uncertainty, unrun checks, or none>

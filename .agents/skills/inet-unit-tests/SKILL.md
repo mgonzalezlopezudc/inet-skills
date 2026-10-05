@@ -11,7 +11,8 @@ runner mechanics.
 
 Run from the repository root with `inet_run_unit_tests`; do not infer a runner from another project.
 
-After compiled INET source or generated-code inputs change, rebuild INET explicitly in debug mode before running tests:
+Select freshness requirements and build mode from the current project guidance.
+This example shows a build and a test when that guidance selects debug mode:
 
 ```sh
 make MODE=debug -j$(nproc)
@@ -20,8 +21,7 @@ inet_run_unit_tests -m debug -f '<regex>'
 
 Use the build mode required by the active project guidance and record it with the runner. The test
 runner builds selected test executables but does not
-rebuild `src/libINET_dbg.so`. A `.test`-only change needs no INET rebuild unless compiled support
-inputs changed.
+rebuild the INET library. Apply the discovered freshness procedure to test definitions and compiled support inputs.
 
 `-f` accepts one regex. Combine groups with alternation and quote it:
 
@@ -29,7 +29,8 @@ inputs changed.
 inet_run_unit_tests -m debug -f '(First|Second|Third).*\.test'
 ```
 
-For module tests, use the same explicit debug mode and filtering rule:
+For module tests, use the same selected mode and an explicit filter.
+This example uses debug mode:
 
 ```sh
 inet_run_module_tests -m debug -f '<directly-related-filter>'
@@ -44,6 +45,6 @@ and a setup failure provides no evidence about the behavior under test.
 
 For a machine-readable handoff, preserve the raw runner output and normalize it with the skill-suite
 `.agents/scripts/normalize_verification.py --runner unit` or `--runner module` adapter. Supply the exact
-command, working directory, debug build mode, filter, exit code, and artifact paths. The v1 envelope
+command, working directory, selected build mode, filter, exit code, and artifact paths. The v1 envelope
 uses `NOT_RUN` for a zero-test selection and records facts only; interpret the cause here, not in the
 adapter.

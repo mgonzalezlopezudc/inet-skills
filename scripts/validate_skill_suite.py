@@ -28,6 +28,8 @@ REQUIRED_WORKFLOW_AREAS = {
 }
 GENERATED_KEYS = ("display_name", "short_description", "default_prompt")
 CHECKOUT_REQUIREMENT_KEYS = ("required", "optional")
+PROJECT_GUIDANCE_RESOURCE = ".agents/references/project-guidance-discovery.md"
+PROJECT_DOCUMENT_RE = re.compile(r"\bdoc/project/([\w./-]+)")
 
 
 class Validation:
@@ -106,11 +108,32 @@ def validate_project_guidance(root: Path, manifest: dict, validation: Validation
     if not isinstance(resources, list):
         validation.error("manifest.shared_resources must be a list")
         return
+    if PROJECT_GUIDANCE_RESOURCE not in resources:
+        validation.error("shared_resources must package the project guidance discovery procedure")
     for relative in resources:
         if not isinstance(relative, str) or not relative or not is_safe_relative_path(relative):
             validation.error(f"shared resource path is invalid: {relative!r}")
         elif not (root / relative).exists():
             validation.error(f"shared resource does not resolve: {relative!r}")
+
+    instruction_files = set((root / ".agents" / "skills").rglob("*.md"))
+    instruction_files.update(
+        root / relative
+        for relative in resources
+        if isinstance(relative, str) and is_safe_relative_path(relative)
+        and (root / relative).is_file() and Path(relative).suffix == ".md"
+    )
+    manifest_file = root / ".agents" / "skill-suite.yaml"
+    if manifest_file.is_file():
+        instruction_files.add(manifest_file)
+    for source in sorted(instruction_files):
+        for match in PROJECT_DOCUMENT_RE.finditer(source.read_text(encoding="utf-8")):
+            relative = match.group(1).rstrip(".")
+            if relative != "README.md":
+                validation.error(
+                    f"fixed internal project document path: {source.relative_to(root)} -> "
+                    f"doc/project/{relative}; discover it through the project entrypoint"
+                )
 
 
 def validate_frontmatter_and_metadata(
@@ -243,13 +266,25 @@ def markdown_target(source: Path, raw_target: str) -> Path | None:
 
 def validate_references(root: Path, manifest: dict, validation: Validation) -> None:
     skills_root = root / ".agents" / "skills"
-    markdown_files = sorted(skills_root.rglob("*.md"))
+    markdown_files = set(skills_root.rglob("*.md"))
+    shared_resources = manifest.get("shared_resources", [])
+    if not isinstance(shared_resources, list):
+        shared_resources = []
+    markdown_files.update(
+        root / relative
+        for relative in shared_resources
+        if isinstance(relative, str) and is_safe_relative_path(relative)
+        and (root / relative).is_file() and Path(relative).suffix == ".md"
+    )
     inbound: defaultdict[Path, list[Path]] = defaultdict(list)
     inferred_dependencies: defaultdict[str, set[str]] = defaultdict(set)
     skill_names = set(manifest.get("skills", {}))
 
-    for source in markdown_files:
-        source_skill = source.relative_to(skills_root).parts[0]
+    for source in sorted(markdown_files):
+        try:
+            source_skill = source.relative_to(skills_root).parts[0]
+        except ValueError:
+            source_skill = None
         text = source.read_text(encoding="utf-8")
         for raw_target in MARKDOWN_LINK_RE.findall(text):
             target = markdown_target(source, raw_target)
@@ -265,7 +300,10 @@ def validate_references(root: Path, manifest: dict, validation: Validation) -> N
                 target_parts = target.relative_to(skills_root.resolve()).parts
             except ValueError:
                 continue
-            if target_parts and target_parts[0] in skill_names and target_parts[0] != source_skill:
+            if (
+                source_skill and target_parts and target_parts[0] in skill_names
+                and target_parts[0] != source_skill
+            ):
                 inferred_dependencies[source_skill].add(target_parts[0])
 
     exceptions = {}

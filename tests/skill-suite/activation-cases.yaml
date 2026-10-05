@@ -3,6 +3,19 @@ version: 1
 # These are selection contracts, not keyword-matching tests. An evaluation runner should present
 # only `prompt` to the model and compare observed skill loads with the expected/forbidden sets.
 cases:
+  - id: project-guidance-plan-positive
+    kind: positive
+    prompt: Prepare an INET implementation plan from current contributor documents. Check whether the draft approval process applies.
+    expected_skills: [inet-project-guidance]
+  - id: project-guidance-doc-positive
+    kind: positive
+    prompt: Revise an INET contributor document with the current project format and protection rules.
+    expected_skills: [inet-project-guidance]
+  - id: project-guidance-negative
+    kind: negative
+    prompt: Run this known unit-test filter. No plan, document edit, or policy discovery task is requested.
+    forbidden_skills: [inet-project-guidance]
+
   - id: ieee-standards-positive
     kind: positive
     prompt: Find the IEEE 802.15.4-2024 unslotted CSMA-CA procedure and cite its exact clause and PDF pages.

@@ -33,13 +33,15 @@ stage is unnecessary.
 2. Inspect the active `.opp` recipe and build wrapper once for clean/rebuild operations, forced
    compilation, temporary checkouts, and output-directory deletion. Use their supported incremental
    path. Discover the installed API before choosing options; do not guess `opp_repl` keywords.
-3. Run the normal dependency-aware build in that workspace, in the mode the tests will load:
+3. Select the build command and mode from current project guidance.
+   Run the dependency-aware build in the retained workspace.
+   This example applies when the selected mode is debug:
 
    ```bash
    make MODE=debug -j$(nproc)
    ```
 
-   Use release when the contract requires it, with its separate outputs. Let make rebuild affected
+   Keep separate outputs for each selected mode. Let make rebuild affected
    dependents and relink; a header change can legitimately rebuild many files. A no-op successful
    build is valid. For configuration, script, baseline, or documentation-only transitions with
    unchanged compiled inputs, retain the matching library and record why compilation is unnecessary.

@@ -34,8 +34,9 @@ for concrete path coverage; domain references establish the simulation and proto
 
 Layer references label durable investigation prompts as `RP-<LAYER>-<MECHANISM>`. These are
 non-normative navigation and provenance identifiers: they do not create project requirements,
-determine severity or verdicts, or by themselves justify a finding. A checklist `FLAG` must cite
-the applicable identifier found in the active project guidance. Do not require `RP-*` identifiers in
+determine severity or verdicts, or by themselves justify a finding.
+Support each checklist verdict with the applicable rule under the current review procedure.
+Do not require `RP-*` identifiers in
 the user-facing review report.
 
 ## Reviewing Specialized Change Types
@@ -57,7 +58,7 @@ the user-facing review report.
 
 - Use `ieee80211-standards` to verify the applicable revision, clause, qualifications, and units.
 - Load the IEEE 802.11 layer plus every lower layer implicated by the mechanism.
-- Run both the general and WLAN tier-4 checklists after the independent correctness pass.
+- Apply the checklists selected by the current review route after the independent correctness pass.
 
 ## Optional references
 

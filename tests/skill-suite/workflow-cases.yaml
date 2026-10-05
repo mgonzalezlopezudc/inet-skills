@@ -2,6 +2,27 @@ version: 1
 
 # Gates name observable decisions or evidence. Evaluations assert these outcomes, not prose.
 cases:
+  - id: current-plan-guidance
+    area: planning
+    prompt: Prepare a plan from the active project map. The linked plan procedure is a draft with conditional approval requirements.
+    expected_skills: [inet-project-guidance]
+    required_gates:
+      - active-checkout-and-local-guidance-state
+      - linked-procedure-and-policy-contents
+      - draft-applicability-before-approval
+      - verified-facts-separated-from-proposals
+      - planned-checks-separated-from-executed-evidence
+
+  - id: changed-project-guidance
+    area: authoring
+    prompt: Continue verification after local project edits move the gate procedure and change its required mode. The old procedure names a replacement.
+    expected_skills: [inet-code-authoring]
+    required_gates:
+      - refresh-guidance-after-document-change
+      - follow-explicit-replacement
+      - current-command-and-mode-selection
+      - recheck-affected-evidence
+
   - id: authoring-semantic-change
     area: authoring
     prompt: Implement a semantic INET packet-processing change and add focused coverage.
