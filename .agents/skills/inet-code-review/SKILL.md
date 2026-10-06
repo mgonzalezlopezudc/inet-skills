@@ -37,6 +37,7 @@ Layer references label durable investigation prompts as `RP-<LAYER>-<MECHANISM>`
 non-normative navigation and provenance identifiers: they do not create project requirements,
 determine severity or verdicts, or by themselves justify a finding.
 Support each checklist verdict with the applicable rule under the current review procedure.
+Find the current quality guidance for minimal design through the project map. Check whether each proposed safeguard addresses a reachable failure under that guidance. Do not turn a checklist prompt into a stronger protocol requirement.
 Do not require `RP-*` identifiers in
 the user-facing review report.
 

@@ -22,30 +22,29 @@ there.
 - **[RP-INET-SHARED-BUFFER-REMOVAL]** With shared buffers, scope bulk removal to the owning queue and verify callbacks cannot delete excluded or currently processed packets.
 - **[RP-INET-ORDERING-BARRIER]** Define the ordering barrier for every selector, aggregator, or scheduler and verify both selected output and residual queue order. Example: whether an eligible packet may bypass a temporarily blocked predecessor depends on the flow's ordering contract, not merely on forward-scan convenience.
 - **[RP-INET-PROVIDER-OUTCOMES]** Apply the active provider-contract guidance.
-  Preserve the distinction between these outcomes:
+  Identify which distinctions the contract declares among these conditions:
   - The provider exists but contains no packets.
   - An optional capability is absent.
   - The provider or its connections are invalid.
   - The requested position is outside the valid range.
 
-  Check consistent outcomes across count, peek, remove, clear, and predicate operations.
-  Do not reduce every outcome to empty or null.
+  Check each operation against its declared outcomes, including count, peek, remove, clear, and predicate operations.
+  Do not collapse a required distinction.
+  Do not add a distinction that no supported caller needs.
 
-  In a hypothetical example, a valid queue contains no packets, but a second required provider is absent.
-  The count operation reports zero for the empty queue.
-  The absent provider remains a configuration error if the active contract requires that provider.
+  In a hypothetical lookup contract, absent and unsupported entries both return `nullptr`. Callers need no distinction, so a new result enum adds no required behavior. A different contract can require an absent provider to cause a configuration error; preserve that requirement where it applies.
 - **[RP-INET-UNSUPPORTED-VARIANTS]** Reject unsupported packet or primitive variants at a consistent boundary. Do not require a
   syntactic one-to-one `registerProtocol`/`registerService` pair when the effective dispatcher
   contract uses a different valid route.
 - **[RP-INET-INHERITED-PRIMITIVE-DISPATCH]** When protocol message classes inherit from one another, make sure broader dispatch does not consume a specialized primitive and produce the wrong confirmation or indication.
-- **[RP-INET-OPERATION-IDENTITY]** Duplicate or stale-operation detection must use the protocol identity and generation defined by the owning protocol, not merely equality of request fields.
+- **[RP-INET-OPERATION-IDENTITY]** Derive duplicate or stale-operation detection from the protocol's identity rules and reachable requests. Require a generation only when those rules or a supported stale-completion path need it.
 
 ## Lifecycle, state, and configuration
 
-- **[RP-INET-LIFECYCLE-OPERATIONS]** Trace lifecycle operations through the component's actual abstraction, such as `OperationalMixin` start/stop/crash handlers or `ILifecycle::handleOperationStage`. Exercise graceful asynchronous stop separately from crash teardown; verify that owned state, timers, messages, packets, and registrations are safe in the promised stopped/dead state and that supported restart re-establishes invariants without stale work.
+- **[RP-INET-LIFECYCLE-OPERATIONS]** Trace supported start, stop, crash, and reset behavior through actual handlers and their inherited cleanup. Examples include `OperationalMixin` handlers and `ILifecycle::handleOperationStage`. Check graceful asynchronous stop separately from crash only where the component supports that distinction. Verify transient cleanup and required retention through the existing owner. Inspect what can survive cancellation before you propose new restart state or counters.
 - **[RP-INET-STATE-SCOPING]** Exercise two supported interfaces, peers, flows, agreements, or directions with different state and verify that activity in one cannot overwrite, clear, or misclassify the other. Let the architecture checklist own state-placement or ownership concerns that have no demonstrated behavioral consequence.
-- **[RP-INET-TRANSACTION-GENERATIONS]** Verify current and pending transactions have distinct ownership and cancellation rules. A late callback from an old generation must not complete or clear the new one.
-- **[RP-INET-TRANSACTION-MACHINERY]** When a narrow race fix adds several identities, generations, tags, counters, or re-entrancy guards, investigate which demonstrated stale, terminal, or lifecycle path each mechanism prevents. Confirm that the machinery is proportionate without assuming a smaller design covers protocol cases that have not been traced.
+- **[RP-INET-TRANSACTION-GENERATIONS]** First establish whether transactions can overlap or a callback can survive replacement. Where they can, check ownership and cancellation against the actual contract. Existing cancellation or identity checks can suffice without a new generation counter.
+- **[RP-INET-TRANSACTION-MACHINERY]** For each added identity, generation, tag, counter, snapshot, or re-entry guard, identify its required behavior and reachable failure. Compare the proposal with the existing owner's guarantees under the current minimal-design guidance. Do not justify added state through alternate callee behavior that the actual implementation and supported contract exclude.
 - **[RP-INET-NED-COMPOSITION]** Resolve INET NED composition, feature declarations, optional modules, radio/medium or protocol pairings, and custom configurations in addition to the underlying OMNeT++ precedence rules.
 - **[RP-INET-NED-PARAMETER-CONTRACT]** For a new or changed NED parameter, confirm that its declaration makes purpose, unit, valid range, sentinel or zero meaning, and interactions with related parameters discoverable. Trace defaults and overrides through validation and C++ consumption, especially where individually valid values can produce invalid ordering, subtraction, expiry, or retry behavior together.
 

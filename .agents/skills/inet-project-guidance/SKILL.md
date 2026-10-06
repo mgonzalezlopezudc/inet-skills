@@ -16,7 +16,10 @@ Read the procedure, its policy, and the technical documents relevant to the prop
 Check their status and conditions for use before you apply an approval process.
 
 Inspect the actual caller, responsible component, consumers, and effective configuration before you describe the design.
-Use the discovered plan structure, review criteria, storage location, and approval procedure.
+Find the current quality guidance for minimal design through the project map. Use it to assess proposed safeguards against actual callee behavior, simulation assumptions, and supported lifecycle operations.
+Follow the plan procedure's routes for model detail, state lifetime, event effects, and lifecycle support where they affect the design.
+Use the discovered plan form, review criteria, storage location, and approval procedure. Prefer its compact form when one explanation covers the relevant decisions. Reuse that explanation for review answers where it already supplies the evidence.
+Apply the procedure's criterion for sufficient investigation before you expand the search to additional paths or mechanisms.
 Keep verified facts, proposed decisions, and unresolved assumptions distinct.
 Keep proposed verification separate from executed evidence.
 State the specific gap when the checkout lacks a required route or a proposed test does not yet exist.

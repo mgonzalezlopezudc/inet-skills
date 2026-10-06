@@ -39,10 +39,12 @@ A helper test of a capability predicate does not establish that the frame path u
 ## Frame-exchange evidence
 
 Prefer a module/protocol assertion when it directly observes the state transition.
-Use PCAP evidence for transmitted frame roles, addresses, sequence control, ACK/Block Ack, aggregation, and retry changes.
-Add targeted logs or source-level evidence when the causal decision is internal.
-Add the same evidence when a failed or corrupted reception is absent from the capture.
-Record capture point, simulation time window, configuration, run, and seed.
+Use PCAP evidence when transmitted frame content or exchange order remains unverified by the selected assertions.
+Add targeted logs or source-level evidence when the causal decision remains unclear.
+A capture can omit failed or corrupted receptions; use another observation when the claim needs those events.
+For a capture, record its point, simulation time window, configuration, run, and seed.
+
+In a hypothetical test, an assertion inspects the frame emitted by the production MAC and checks its receiver address. That assertion can establish the address claim without a second PCAP check. A claim about delivery at the peer needs evidence at that later boundary.
 
 Use the relevant diagnostic skill:
 

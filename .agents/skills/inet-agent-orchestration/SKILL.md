@@ -15,14 +15,14 @@ routing, ownership, and handoff mechanics only.
 
 ## Execution paths
 
-Choose by change invariant and handoff need, not by raw line count.
+Use the contract size criteria in `inet-code-authoring`. Choose delegation from unresolved questions and responsibility transfers.
 
-1. **Localized path** — a trivial, bounded change with an understood owner and no delegation need.
+1. **Localized path** — a bounded change with an understood owner, affected callers, and focused verification.
    Keep it in one agent.
    Use the lightweight contract in `inet-code-authoring`.
    Resolve source-protection requirements.
    Run the smallest direct check.
-   Changes to API, state-machine, lifecycle, protocol, configuration, or generated-input behavior require the semantic path, regardless of diff size.
+   A behavior change can use this path when its interactions remain clear.
 2. **Mechanical path** — a repetitive, behavior-preserving transformation whose invariant can be
    stated before the edit and independently checked afterward. It may span many files. Examples are
    a collision-free rename, a format-preserving migration, or regeneration from an unchanged
@@ -32,25 +32,25 @@ Choose by change invariant and handoff need, not by raw line count.
    Check the invariant and generated artifacts.
    Resolve source-protection requirements.
    Run focused verification.
-   If correctness depends on runtime interpretation, use the semantic path.
-3. **Semantic path** — a change to behavior, ownership, API contracts, state, protocol decisions,
-   effective configuration, lifecycle, timing, or observability. Use the full contract pipeline
-   below.
+   If the change alters runtime behavior, use the authoring skill's appropriate implementation contract.
+3. **Complex or delegated path** — use this path when interacting owners, uncertain behavior, or a specialist handoff needs separate explanation.
    Delegate only when independent evidence or a formal specialist handoff improves the task.
-   Otherwise, run the same checks in the root thread.
+   Otherwise, use the authoring workflow in the root thread.
 
-The first two paths are classification rules, not permission shortcuts. Uncertainty about whether
-behavior is preserved selects the semantic path.
+These paths do not change source protection, verification, or approval requirements. Resolve uncertainty that affects the implementation decision before the dependent edit. Reuse a sufficient plan or contract instead of creating another document.
 
-## Semantic contract pipeline
+## Delegated implementation flow
+
+The diagram applies when unresolved design facts require a separate investigation before implementation. A complete, validated assignment can grant write authority at the initial handoff. Use only the review steps required by project guidance or justified by the task's risks.
 
 ```mermaid
 graph TD
     Root[Root Thread / Orchestrator] -->|1. Seal & Target| ArchGuard[inet-architectural-requirements]
-    ArchGuard -->|Sealed: Request Approval / Unsealed: OK| Contract[inet-code-authoring: Pre-Write Contract]
+    ArchGuard -->|Protection resolved within authorized scope| Contract[inet-code-authoring: Pre-Write Contract]
     Contract -->|Returned & Validated by Orchestrator| Implement[Single Implementer: Write Code]
     Implement -->|Stable Diff| Test[Focused Verification: Unit / Module / Debug Run]
-    Test -->|Evidence Gathered| Review[inet-code-review + Current Project Checks]
+    Test -->|Review required| Review[inet-code-review + Current Project Checks]
+    Test -->|Evidence sufficient and no review required| Conclude[Conclude / Persist]
     Review -->|Findings Resolved & Approved| Conclude[Conclude / Persist]
 ```
 
@@ -104,17 +104,15 @@ Use [platform-bindings.md](references/platform-bindings.md) for the Codex, Antig
   For architecture, naming, or sealing audits without a correctness diff, use the architecture skill as primary.
   Add code review only if the task also requests correctness review.
 - **Production change:** Establish the mechanism and change scope.
-  Assign exactly one `inet-implementer`.
-  For semantic `src/inet/` changes, first assign read-only contract completion under `inet-code-authoring`.
-  Require the implementer to return the completed contract and its self-validation before any edit.
-  Validate that handoff against the authoring checklist.
-  Explicitly authorize the same implementer to write.
-  Use `inet-regression-guard` for behavior changes.
-  Use `inet-reviewer` on the stable verified diff for architecture-sensitive, nontrivial, or 802.11 changes.
+  If implementation needs delegation, assign one `inet-implementer` with explicit write scope and the validated contract.
+  Use a separate read-only contract task only when unresolved facts prevent that assignment.
+  Validate the returned contract before you authorize the dependent edits.
+  Add `inet-regression-guard` when a distinct test task benefits from delegation.
+  Use `inet-reviewer` when independent review is required or materially reduces a specific correctness or architecture risk.
 - **Results/plots:** Use `inet-results-analyst`.
   Use `inet-evidence-miner` only for a bounded metadata inventory.
 
-For either single-agent path, follow the canonical contribution workflow in the root thread and use
+For a single-agent path, follow the canonical contribution workflow in the root thread and use
 the matching pre-write contract and self-audit from `inet-code-authoring`. Do not activate this
 orchestration skill solely to classify or execute such a change.
 
@@ -128,13 +126,7 @@ Every delegated prompt must state these requirements:
 
 Specify one deliverable, exact scope and inputs, write authority, exclusions, required evidence, completion criteria, and a concise response format.
 Include paths, symbols, configuration, run/seed, and artifacts when relevant.
-For semantic `src/inet/` implementation, keep unresolved contract completion separate from write authority.
-First, provide the available `inet-code-authoring` evidence in a read-only assignment.
-
-The implementer returns a complete contract and self-validation.
-The orchestrator validates that result.
-The orchestrator sends a separate follow-up that authorizes the first write.
-Reuse that implementer for the authorized implementation and related follow-up work.
+When design facts remain unresolved, provide the available authoring evidence in a read-only assignment. The implementer returns the resolved contract and self-validation. The orchestrator validates that result before a follow-up grants write authority. When the initial assignment already supplies a validated contract and write authority, no separate approval turn is necessary. Reuse that implementer for the authorized implementation and related follow-up work.
 
 For implementation, regression, and extraction assignments, include the applicable skill sections and the concrete evidence to return.
 A model choice or high reasoning effort does not replace contract checks.
@@ -149,10 +141,10 @@ Keep causal and normative judgments with the specialist classes assigned those r
 Gate handoffs as follows:
 
 1. Diagnose → contract: demonstrated mechanism, bounded change surface, architecture/seal decision, any required approval, and the available evidence for every applicable `inet-code-authoring` contract field.
-2. Contract → implement: the implementer returns every field complete and self-validated.
-   The orchestrator independently checks the authoring validation checklist.
-   The orchestrator records the result and explicit authorization for the first write.
-   An unresolved field returns the task to diagnosis.
+2. Contract → implement: the assignment contains sufficient design evidence and explicit write authority.
+   The implementer checks that evidence against the current tree before the first edit.
+   If a separate contract task was necessary, the orchestrator validates its result before authorization.
+   An unresolved design fact blocks its dependent edit, not independent authorized work.
 3. Implement → verify: stable diff and explicit behavior claim.
 4. Verify → review or conclude: evidence selected under the active project guidance and repository
    instructions. When review is required, pass the stable diff, behavior
@@ -174,7 +166,7 @@ For a build or focused-test failure, select the next action from its cause:
 - If the diff caused the failure and the contract remains valid, return to implementation.
 - If the mechanism, owner, scope, invariant, or verification mapping is wrong, return to diagnosis and contract definition.
 
-Stop further edits when evidence invalidates the mechanism or contract.
+Stop affected edits when evidence invalidates the mechanism or contract.
 Revise the affected handoff.
 Revalidate it before further implementation.
 Reverify every later claim that the correction invalidates.
@@ -200,11 +192,9 @@ It never waives source protection, contract checks, focused verification, approv
 
 When specialists disagree or findings conflict:
 
-1. **Implementation causality:** For claims about what the checked-out model currently does, prefer `reproducible runtime/debugger evidence > packet captures/event logs/results > effective INI/NED > checked-out source > agent hypothesis`.
+1. **Implementation causality:** Match evidence to the disputed claim. A source trace can establish which mutations a complete synchronous path permits. Effective configuration identifies the implementation in use. A runtime trace establishes what occurred in the observed execution, not every supported execution. Reconcile apparent conflicts through the same revision, configuration, loaded artifacts, and observation boundary before you select further checks.
 2. **Normative authority:** For claims about required IEEE 802.11 behavior, the applicable standard revision and clause are authoritative. Runtime and source evidence establish whether INET implements that requirement; they cannot override it.
 3. **Intentional divergence:** Verify an apparent standards divergence against explicit model documentation, a recorded model limitation, or a user-approved design decision. Architecture and naming exception ledgers govern project structure and naming; do not use them as a standards-deviation ledger.
-4. **Escalation Protocol:**
-   - Define a minimal reproduction (1 node/pair, 1 seed, shortest time) that isolates the contested behavior.
-   - Select the mode from current project guidance.
-   - Use targeted tracing with the matching runner and library.
-   - A concrete trace or assertion can resolve implementation causality. Resolve normative ambiguity from the applicable standard text; if the intended model behavior remains ambiguous, record a `QUESTION` for user decision rather than guessing.
+4. **Resolve the remaining gap:** State which fact remains unknown after source and configuration checks. Use a minimal reproduction or targeted trace only when it can resolve that fact. Select the execution mode from current project guidance. Match the runner and library to the inspected source. Resolve normative ambiguity from the applicable standard text. If intended model behavior remains ambiguous, record a `QUESTION` for user decision.
+
+For example, a hypothetical helper only reads immutable fields and returns without callbacks or suspension. Its complete source path excludes timer-driven mutation during that call. A successful simulation of another branch neither adds to that proof nor disproves a failure on an untested path.

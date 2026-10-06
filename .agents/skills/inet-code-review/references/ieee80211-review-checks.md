@@ -7,17 +7,17 @@ traps and high-value cases beyond those canonical WLAN rules.
 ## Semantic path coverage
 
 - **[RP-WLAN-PATH-SIBLINGS]** Enumerate affected siblings explicitly: DCF/HCF, QoS/non-QoS, originator/recipient, AP/STA, infrastructure/ad hoc, unicast/group-addressed, and legacy/HT/VHT/HE/EHT paths as applicable.
-- **[RP-WLAN-TERMINAL-PATHS]** Check success, refusal, timeout, retry exhaustion, cancellation, stale or duplicate completion, and reassociation while another relationship is current.
+- **[RP-WLAN-TERMINAL-PATHS]** Identify affected terminal paths that the protocol and supported implementation can reach. Check success, refusal, timeout, retry exhaustion, cancellation, stale completion, or reassociation only where applicable.
 - **[RP-WLAN-FRAME-PATHS]** Exercise data, ACK, RTS/CTS, Block Ack, management, and control-frame terminal paths implicated by the change. Do not generalize evidence from one exchange to a sibling with a different owner or state machine.
 - **[RP-WLAN-DISPATCH-VARIANTS]** Reject unsupported frame and primitive variants consistently at the dispatch boundary. A broader base-class match must not silently admit a specialized subtype.
 
 ## Association and transaction state
 
 - **[RP-WLAN-ASSOCIATION-CURRENT-PENDING]** Keep current AP/peer state separate from a pending target. Reassociation or roaming cleanup must not erase the active relationship unless that is the intended transition.
-- **[RP-WLAN-TRANSACTION-TIMERS]** Distinguish the whole transaction, individual transmission attempt, response wait, and inactivity timers. Verify retry, cancellation, and late callback behavior for each meaning.
-- **[RP-WLAN-DEFERRED-COMMIT-SNAPSHOT]** When state commits after an ACK or later callback, retain the exact channel, capability, or management information advertised in the transmitted response. Do not recompute it from mutable MIB or radio state at completion.
-- **[RP-WLAN-STATE-BEFORE-CALLBACK]** Establish negotiated state before emitting or invoking anything that can synchronously tear it down. Pair agreement-added and agreement-deleted observability exactly once. Example: clear or move the completing callback state before invoking it so a synchronously started replacement operation is not erased on return.
-- **[RP-WLAN-TRANSACTION-IDENTITY]** Use protocol transaction identity or generation so a terminal event from an older exchange cannot complete a newer one with equal request parameters.
+- **[RP-WLAN-TRANSACTION-TIMERS]** Derive timer roles and lifetimes from the applicable protocol procedure. Check retry, cancellation, and reachable late callbacks against those roles. Existing timer reuse can suffice when the roles cannot overlap.
+- **[RP-WLAN-DEFERRED-COMMIT-SNAPSHOT]** Establish which advertised values the standard requires at completion. Trace whether those values can change before the ACK or callback. Check existing retained data before you propose a snapshot. Hypothetical example: immutable transaction data already holds the transmitted values. The ACK callback reads that data, so another snapshot adds no protection.
+- **[RP-WLAN-STATE-BEFORE-CALLBACK]** Trace actual callbacks and permitted extension behavior before you infer teardown or replacement during a call. Where such mutation is reachable, check state publication, signal pairing, and accesses after return against their contracts. Hypothetical example: a completion callback can start a replacement operation. Cleanup must preserve that replacement; an existing detach-before-callback sequence can already provide this guarantee.
+- **[RP-WLAN-TRANSACTION-IDENTITY]** Establish whether an older exchange can still deliver a terminal event after replacement. If it can, check the protocol identity and existing cancellation guarantees before you propose another identifier or generation counter. Equal request parameters alone do not establish a stale-event path.
 
 ## Sequence, retry, and Block Ack state
 
@@ -25,7 +25,9 @@ traps and high-value cases beyond those canonical WLAN rules.
 - **[RP-WLAN-SEQUENCE-WRAPAROUND]** Use 802.11 cyclic sequence ordering with the defined half-space. Test immediately before, at, and after the window boundary and across `4095 -> 0`; ordinary integer or map ordering is invalid there.
 - **[RP-WLAN-STATE-CONTEXT]** Exercise simultaneous transmitter/receiver, TID, agreement, access-category, direction, or link contexts as applicable and verify that state from one context cannot affect another.
 - **[RP-WLAN-DUPLICATE-IDENTITY]** Base duplicate detection on the specified identity, including retry, transmitter, sequence/fragment, TID, and exchange context as applicable—not only equal payload or request fields.
-- **[RP-WLAN-FRAGMENT-REASSEMBLY]** For fragmentation and reassembly, derive the table key from every discriminating field, place fragments by fragment number, tolerate supported out-of-order and duplicate arrivals, and expire incomplete entries. Example: orders such as `2 (More Fragments clear), 0, 1` and `1, 0, 2 (More Fragments clear)` must not join fragments from different transmitters or complete before every required fragment is present.
+- **[RP-WLAN-FRAGMENT-REASSEMBLY]** Identify the applicable fragmentation procedure, negotiated capabilities, and supported input sequences before you select checks. Derive identity, duplicate handling, expiry, and completion from that procedure. Separate required rejection of invalid input from support for valid reordered fragments.
+
+  For example, IEEE Std 802.11-2024, 10.4 requires transmission in fragment-number order. Clause 26.3.2.1 retains that order for dynamic fragmentation levels 1 and 2, but permits unordered transmission for level 3. An input order such as `2, 0, 1` therefore needs a stated procedure and reachability argument. It does not by itself justify a general reorder buffer.
 - **[RP-WLAN-WINDOW-BOUNDARIES]** Exercise empty, singleton, full, overflow, fragmented, stale, and wraparound windows, plus retry exhaustion and agreement teardown.
 
 ## Capabilities, modes, and channels
@@ -34,7 +36,7 @@ traps and high-value cases beyond those canonical WLAN rules.
 - **[RP-WLAN-CAPABILITY-CONTEXT]** Exercise peers, TIDs, agreements, links, or directions with different capabilities and verify that a decision for one does not reuse another's state. Do not infer an exact MCS map or bitmap from a summary count.
 - **[RP-WLAN-MODE-IDENTITY]** Prefer typed PHY family and fully qualified mode tuples over bitrate, vector order, first-entry, or stable-sort ties. Equal bitrates can represent semantically different modes.
 - **[RP-WLAN-MODE-SETS]** Keep basic/default/selectable transmit modes separate from supplementary receive and per-packet decode support. Catalog membership, `supportsMode()`, mandatory-rate status, and semantic equivalence are different contracts.
-- **[RP-WLAN-MODE-ATOMICITY]** Apply mode-set and current-mode changes atomically. Check all affected built-in PHY families plus a valid sparse/custom configuration, explicit overrides, width/GI mismatch, and unavailable peer capability.
+- **[RP-WLAN-MODE-ATOMICITY]** Identify where consumers can observe mode-set and current-mode changes. Check consistency at those boundaries under the applicable contract. Do not add synchronization for intermediate state that no supported consumer can observe. Select affected PHY families and configurations that exercise distinct changed behavior.
 - **[RP-WLAN-CHANNEL-SNAPSHOT]** Verify primary/secondary channel, channel width, and channel snapshot decisions against the state exchanged on the air.
 
 ## Management and wire elements

@@ -51,13 +51,18 @@ contracts in the changed control path. For normative IEEE 802.11 behavior, also 
 `ieee80211-standards`.
 Identify the applicable revision and clause before the implementation decision.
 
+Find the current quality guidance for minimal design through the project map. Apply it before you add state, stronger invariants, or defensive branches. Use its guidance on state lifetime before you choose additional state. Check event effects before you defer work or repeat a calculation. Trace the actual failure path before you select a preventive check. A checklist example does not establish that the failure can occur in this implementation.
+
 ## Define the implementation contract
 
-Before an edit, write a compact working contract or return it in the parent handoff.
-Use the templates below directly.
+Before an edit, explain the requirement, responsible owner, affected path, proposed change, and verification.
+Reuse an existing plan or handoff when it already contains that information and matches the current code.
+Use the templates below only where they help explain the change and its risks.
 Load a worked example only when the contract fields remain unclear.
 
-### Full Contract Template (Default for Semantic Changes)
+### Full contract template
+
+Use this template when multiple owners, event boundaries, or interacting contracts need separate explanation.
 
 ```text
 ### Pre-Write Implementation Contract Template
@@ -69,13 +74,9 @@ Load a worked example only when the contract fields remain unclear.
 - Mapped Verification: <smallest direct unit/module/fingerprint test command>
 ```
 
-### Lightweight Contract Template (Localized Changes Only)
+### Lightweight contract template
 
-Use this template only for a trivial bounded, behavior-preserving change with an understood owner
-and no externally observable effect. Any change to a computation, algorithm, ownership, API,
-serialization, timing, state machine, lifecycle, protocol decision, configuration, generated-input
-meaning, or observability requires the full semantic contract. Diff size alone cannot qualify a
-change.
+Use this template for a local change with a clear owner, understood callers, and focused verification. A behavior change can qualify when these fields explain its requirements and affected paths. Add relevant boundary or lifecycle details when necessary. Use the full template if the compact form hides an important interaction. Diff size alone does not determine the choice.
 
 ```text
 ### Lightweight Pre-Write Contract
@@ -86,29 +87,31 @@ change.
 - Direct Verification: <smallest test or build check command>
 ```
 
-For a wide mechanical change, use the contract and checks in `mechanical-migrations.md`. The full
-semantic template remains mandatory for behavioral API migrations, renames that change dispatch or
-registration, and generated-input changes that alter runtime meaning.
+For a wide mechanical change, use the contract and checks in `mechanical-migrations.md`. For changes to API behavior, dispatch, registration, or generated semantics, explain the affected runtime contracts. Choose the amount of detail from those interactions, not the file type or edit category.
 
 ### Validate the contract before the first write
 
 Do not start implementation until the contract passes all of these checks:
 
-- Every field contains source- or configuration-backed facts, or a reasoned `N/A`; no `TBD`, placeholder, or unsupported assertion remains.
+- Claims about current behavior have source or configuration evidence. Proposed changes and tests are clearly identified. No unresolved assumption controls the implementation decision.
 - The owner and effective entry/control path match the current tree.
   The contract lists every known affected production, generated-input, configuration, registration, documentation, and test path.
-- Every named verification command and explicit filter exists.
-  Commands offered as behavioral evidence reach the claimed behavior.
-  If no direct check exists, record the precise coverage gap.
+- Commands and filters for existing checks resolve to the intended tests.
+  Label new tests and their commands as proposed until they exist.
+  For a proposed test, name its trigger, production path, and expected result.
+  Verify its command and selection after implementation, before you report execution evidence.
+  If no direct check exists or is proposed, record the precise coverage gap.
   Do not present a build or nearby test as behavioral proof.
 - The contract is internally consistent: its invariant, change surface, siblings, boundary semantics, and verification all describe the same behavior claim.
 
 In single-agent mode, validate the contract before the first edit.
 Record that result.
-In delegated work, the implementer validates the contract before handoff.
-The parent or orchestrator validates the handoff before authorization for the first edit.
-If a field cannot pass, return to discovery.
-Do not weaken the field.
+In delegated work, the implementer checks the assignment's contract against the current tree before the first edit.
+Use a separate contract handoff when unresolved design facts prevent an implementation assignment.
+The parent validates that result before it grants write authority.
+An initial assignment with a validated contract and explicit write authority needs no second approval turn.
+Resolve any missing fact that affects the implementation decision before the dependent edit.
+An explicitly proposed test does not need to exist before implementation starts.
 
 When a completed field remains unclear, read the optional [verified non-WLAN contract example](references/example-contract.md).
 Recheck its paths and facts against the active checkout before reuse.
@@ -123,7 +126,7 @@ Recheck its paths and facts against the active checkout before reuse.
   identify the highest named stage handled by the class and compare it with the effective inherited
   `numInitStages()`;
   add or update a local override only when that effective count does not cover the stage.
-- Keep current and pending state, peers, interfaces, flows, TIDs, directions, links, and generations separate according to the owning protocol. Use complete identity tuples and domain-correct boundary or wrap semantics.
+- Derive state distinctions and identity fields from the applicable protocol and supported callers. Add generations only when the traced completion or lifecycle path requires them. Use the protocol's boundary and wrap semantics.
 - Keep absolute deadlines distinct from relative durations.
   Preserve units and conversion ownership across NED, C++, model fields, serializers, and wire encodings.
 - Select and report tests under the active test guidance. Apply its production-path distinction:
@@ -153,8 +156,7 @@ selected domain reference:
 
 - [ ] Stable diff matches the validated behavior claim; every deviation and required scope expansion is recorded.
 - [ ] Effective owner/control path, affected consumers, siblings, and terminal paths were retraced in the resulting tree.
-- [ ] The applicable canonical project rules and selected preventive references are each checked or
-      recorded as reasoned `N/A`.
+- [ ] Applicable project rules and relevant preventive checks were assessed. Record exclusions only where their absence could mislead the reader.
 - [ ] Focused commands reach the production behavior and have recorded exit status and artifacts;
       gaps and approval needs are explicit.
 
@@ -162,7 +164,7 @@ Use the owning build, test, simulation, packet, result, and fingerprint skills. 
 and baseline policy through the shared discovery procedure. Apply any additional execution
 constraints discovered from the active checkout's repository instructions.
 
-Return this plain-text envelope. Use `None` only when supported by the audit; do not omit fields.
+Use the report format required by the active project guidance. Otherwise, report the result, verification, and material gaps in proportion to the change. Reuse the design explanation instead of repeating it. The optional template below helps with a complex handoff; omit irrelevant fields.
 
 ```text
 ### Implementation Report

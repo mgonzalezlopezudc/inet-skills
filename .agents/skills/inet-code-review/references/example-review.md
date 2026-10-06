@@ -2,6 +2,7 @@
 
 This hypothetical example follows the active project review route.
 It omits the canonical architecture and WLAN checklist output.
+Its findings concern ownership and the stated signal contract. The example does not establish that agreement preservation complies with IEEE 802.11.
 
 ## Reviewed change (hypothetical)
 
@@ -87,26 +88,11 @@ Emit `blockAckAgreementDeletedSignal` for each agreement moved out of the active
 
 ---
 
-### [moderate] Preserved agreement uses stale reorder-window state on restoration
+## Unverified concern: retained receive state
 
-The new reuse branch restores the original `RecipientBlockAckAgreement` object, whose reorder window (`startingSequenceNumber`, received-bitmap) reflects the last frame received before disassociation. If the peer's new ADDBA request supplies a different starting sequence number, the preserved window is never reinitialized from that request and can classify frames against the previous agreement context.
+The shown reuse branch retains the agreement object and changes its expiration. The excerpt does not define the receive window, its size, or the algorithm that consumes it. It therefore does not prove that retained state causes frame loss. Establish the applicable agreement transition and receive path before a correctness finding or reset recommendation.
 
-**Invariant:** Block Ack reorder-window state must reflect the current agreement context; sequence comparison uses cyclic ordering with the defined half-space (IEEE 802.11 layer, `ieee80211-review-checks.md` §Sequence, retry, and Block Ack state).
-**Trigger:** peer disassociates, advances its sequence counter, then reassociates and sends a new ADDBA whose starting sequence number is ahead of the preserved window.
-**Mechanism:** the reuse branch removes the old object from `preservedAgreements` and installs it as active after updating only expiration; it does not reset its reorder window from the new request.
-**Consequence:** frames with sequence numbers in the gap between old window and new starting sequence are treated as "before window start" and silently dropped. Effective throughput drops until the window catches up.
-
-On agreement restoration, reset the reorder window from the new ADDBA request's starting sequence number.
-Add a focused module test with this sequence:
-
-1. Establish an agreement with starting sequence number SSN=0.
-2. Send frames 0–10.
-3. Disassociate the station.
-4. Reassociate with SSN=100.
-5. Send frame 100.
-6. Assert delivery of frame 100.
-
-The expected result is delivery, without a drop caused by stale duplicate state.
+For example, this hypothetical trace starts with sequence numbers 0–10, then supplies a new ADDBA request with SSN 100. A test sends frame 100 and checks delivery. That test does not necessarily distinguish old and corrected behavior: an algorithm could advance the old window and deliver the frame. Identify the actual incorrect observation before you prescribe a test or correction.
 
 ## Reviewed scope
 
@@ -117,7 +103,7 @@ The expected result is delivery, without a drop caused by stale duplicate state.
 
 ## Residual risks
 
-- The change does not update the originator side (`OriginatorBlockAckAgreementHandler`). If the originator also persists agreements, the same leak and signal issues likely apply. Not reviewed (outside diff scope).
+- The originator side (`OriginatorBlockAckAgreementHandler`) is outside this example's scope. Its ownership, signals, and agreement behavior remain unverified.
 - No test accompanies the change; existing fingerprint coverage does not exercise reassociation with active Block Ack agreements.
 
 ## Canonical checklist output

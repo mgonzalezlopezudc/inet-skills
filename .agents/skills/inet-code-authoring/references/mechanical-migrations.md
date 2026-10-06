@@ -7,7 +7,7 @@ change.
 
 Do not use it for an API contract change, a state or protocol transition, different effective NED
 or INI selection, changed serialization, altered generated semantics, or any transformation whose
-correctness requires a runtime-behavior judgment. Route those through the full semantic contract.
+correctness requires a runtime-behavior judgment. Use the main skill's implementation contract with detail appropriate to the affected runtime behavior.
 
 ## Mechanical contract
 

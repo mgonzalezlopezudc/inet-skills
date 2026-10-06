@@ -41,9 +41,9 @@ The table supplies search terms when a route is unclear.
 
 | Task | Guidance to find |
 | --- | --- |
-| Prepare or review an implementation plan | Plan procedure, status conditions, technical design, verification, approval scope, and revision rules |
-| Implement a change or add a protocol | Contribution procedure, requirements, ownership, reuse, protection, and applicable domain rules |
-| Review code or a pull request | Correctness procedure, series rules, classification, exception ledgers, checklists, and report format |
+| Prepare or review an implementation plan | Plan procedure, status conditions, technical design, minimal design, simulation assumptions, lifecycle scope, verification, approval scope, and revision rules |
+| Implement a change or add a protocol | Contribution procedure, requirements, minimal design, ownership, reuse, protection, and applicable domain rules |
+| Review code or a pull request | Correctness procedure, minimal design, series rules, classification, exception ledgers, checklists, and report format |
 | Audit or seal a subsystem | Audit procedure, protection scope, exception disposition, and permission requirements |
 | Select or run tests | Test categories, claim coverage, freshness, focused gates, and publication gates when applicable |
 | Derive tests from a standard | Standard evidence, protocol features, model coverage, failure classes, and expected outcomes |
