@@ -1,8 +1,6 @@
 # IEEE 802.11 review checks
 
-Use the shared project-guidance discovery procedure to apply the active IEEE 802.11 domain and
-checklist guidance first. This reference adds concrete correctness
-traps and high-value cases beyond those canonical WLAN rules.
+Use the shared project-guidance discovery procedure to apply the active IEEE 802.11 domain and checklist guidance first. This reference adds concrete correctness traps and high-value cases beyond those canonical WLAN rules.
 
 ## Semantic path coverage
 

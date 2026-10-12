@@ -7,20 +7,13 @@ description: Rebuild an opp_repl-tested INET topic branch as a reviewable commit
 
 Build a new `clean` branch from a fixed `base`. The original `topic` branch never moves: its final tree is the target and the oracle. Cleanup changes only the shape of the history so that a reviewer can distinguish refactors, fixes, features, and chores and validate each one in isolation.
 
-This workflow changes repository history.
-Start only when the user requested history reconstruction.
-Use `inet-pull-request-authoring` for commit plans, messages, or compliance audits that do not require branch reconstruction.
-Use `inet-branch-rebase` for a high-risk rebase onto changed upstream history with `opp_repl` evidence.
-Use an ordinary Git workflow for a low-risk one-shot rebase.
+This workflow changes repository history. Start only when the user requested history reconstruction. Use `inet-pull-request-authoring` for commit plans, messages, or compliance audits that do not require branch reconstruction. Use `inet-branch-rebase` for a high-risk rebase onto changed upstream history with `opp_repl` evidence. Use an ordinary Git workflow for a low-risk one-shot rebase.
 
-Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to
-discover the active project's current series, protection, baseline, and verification requirements.
+Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active project's current series, protection, baseline, and verification requirements.
 
 Commits may be split, merged, reordered, or newly authored, even below hunk level. That freedom is kept honest by the **coverage ledger**, which proves that the cleanup lost nothing and introduced no permanent changes of its own.
 
-Before classifying change groups or planning output commits, use `inet-pull-request-authoring` and
-discover the active project's current series guidance. This skill adds reconstruction mechanics and
-does not restate or override project policy.
+Before classifying change groups or planning output commits, use `inet-pull-request-authoring` and discover the active project's current series guidance. This skill adds reconstruction mechanics and does not restate or override project policy.
 
 The cleanup workflow and acceptance contract are INET-specific because they use `opp_repl` as the test oracle. Before starting a cleanup, read both [references/state-log.md](references/state-log.md) and [references/opp-repl-contract.md](references/opp-repl-contract.md).
 
@@ -36,13 +29,11 @@ Record these inputs verbatim before a history change:
 Cleanup is complete only when:
 
 1. `git diff <topic-sha> <clean-sha> --` is empty for every source and non-baseline file.
-2. Any baseline difference from `topic` reflects the clean branch's actual behavior.
-   Its evidence, approval, and commit placement satisfy the current baseline and series procedures.
+2. Any baseline difference from `topic` reflects the clean branch's actual behavior. Its evidence, approval, and commit placement satisfy the current baseline and series procedures.
 3. The coverage ledger contains no unassigned material and every temporary detour has closed.
 4. Every output commit has the promised build and `opp_repl` evidence, apart from any explicitly approved relaxation, and the final directly related test contract passes.
 
-The baseline exception is narrow: it may correct a stale test artifact under the canonical baseline
-procedure, but it may never authorize a source difference from `topic`.
+The baseline exception is narrow: it may correct a stale test artifact under the canonical baseline procedure, but it may never authorize a source difference from `topic`.
 
 ## Phase 0 — Understand the total change
 
@@ -60,21 +51,15 @@ Partition the total diff into independently understandable **change groups**:
 - A group may feed several output commits, and one output commit may combine groups when the result still has one clear intent.
 - When later evidence requires a split or merge, give the replacement groups fresh, increasing IDs and retain the old entries with `superseded-by` links.
 
-Do not create per-group fossil branches.
-The group table and the `clean` history are the durable record.
-Present the groups with the ordered commit plan below.
+Do not create per-group fossil branches. The group table and the `clean` history are the durable record. Present the groups with the ordered commit plan below.
 
 ## Phase 2 — Plan the output commits
 
-Derive commit boundaries, order, subjects, and rationales from the active project series policy. For each
-output commit, additionally record its type, feeding groups, and expected test effect.
-Select baseline placement from the current baseline and series procedures.
-Record the causal source change or explain why no single source change caused the movement.
+Derive commit boundaries, order, subjects, and rationales from the active project series policy. For each output commit, additionally record its type, feeding groups, and expected test effect. Select baseline placement from the current baseline and series procedures. Record the causal source change or explain why no single source change caused the movement.
 
 Dependent edits may require an intermediate file state found in neither `base` nor `topic`. Such a state is legitimate when it gives a commit one clear purpose: the coverage ledger still pins the final result to `topic`.
 
-Obtain approval for the combined group and commit plan before you build `clean`.
-Use existing authorization when it specifies the same groups, boundaries, and order.
+Obtain approval for the combined group and commit plan before you build `clean`. Use existing authorization when it specifies the same groups, boundaries, and order.
 
 ## Phase 3 — Maintain the coverage ledger
 
@@ -94,31 +79,19 @@ Finalization requires `remaining` to be empty or contain only approved baseline 
 
 ## Phase 4 — Build forward
 
-Use the shared [incremental build recipe](../inet-opp-repl/references/incremental-builds.md).
-Retain one compatible build workspace across output commits, rework, and final spot checks;
-checkpoint branches preserve history without requiring new build directories or clean rebuilds.
+Use the shared [incremental build recipe](../inet-opp-repl/references/incremental-builds.md). Retain one compatible build workspace across output commits, rework, and final spot checks; checkpoint branches preserve history without requiring new build directories or clean rebuilds.
 
 For each approved output commit:
 
 1. Author only its assigned slice. Adopt a whole file only when the group owns the whole file; otherwise apply selected hunks or hand-author the intermediate state.
-2. Build the artifacts for the directly related scoped `opp_repl` test.
-   Run that test.
-   A build failure is an error.
-   A zero-test selection is not evidence.
+2. Build the artifacts for the directly related scoped `opp_repl` test. Run that test. A build failure is an error. A zero-test selection is not evidence.
 3. Apply the commit-type oracle:
    - **Refactor / chore / docs** — the selected behavior signal must remain identical to the previous safe point. A mismatch means the commit is misclassified or defective. Stop; do not hide it with a baseline update.
-   - **Fix / feature** — the signal may change only in the predicted scope and for an explained
-     reason. Record the delta.
-     Apply the current baseline procedure to any new recorded expectation.
+   - **Fix / feature** — the signal may change only in the predicted scope and for an explained reason. Record the delta. Apply the current baseline procedure to any new recorded expectation.
 4. Recompute the ledger. Confirm that it moved by exactly the intended slice and that no unrelated file changed.
-5. On a clean pass, record the commit as a **safe point**.
-   Append its evidence to the logbook.
-   Continue to the next approved commit.
+5. On a clean pass, record the commit as a **safe point**. Append its evidence to the logbook. Continue to the next approved commit.
 
-Apply the active per-commit build requirement to every output commit.
-A predicted baseline mismatch supplies evidence for the current baseline procedure.
-It does not permit an unexplained failure or acceptance of a failed commit.
-Any exception to the verification contract needs explicit approval, a recorded reason, and a named restoring commit.
+Apply the active per-commit build requirement to every output commit. A predicted baseline mismatch supplies evidence for the current baseline procedure. It does not permit an unexplained failure or acceptance of a failed commit. Any exception to the verification contract needs explicit approval, a recorded reason, and a named restoring commit.
 
 ## Failure and rework
 
@@ -130,8 +103,7 @@ When a commit fails or surprises the oracle, compare it with `topic`, `base`, an
 
 Prefer append-only progress. Before rewriting an already validated commit, preserve the current tip as `cleanup/<name>/checkpoint-<ISO8601>`, then rebuild forward. Checkpoint branches are fossils: never repoint, rename, or delete them. Use branches, not tags, as the authoritative safe-point references.
 
-Use existing authorization where it covers the proposed action.
-Ask for human input when any of these conditions applies:
+Use existing authorization where it covers the proposed action. Ask for human input when any of these conditions applies:
 
 - The initial group and commit plan needs approval.
 - A behavior change remains unexplained or ambiguous.
@@ -139,8 +111,7 @@ Ask for human input when any of these conditions applies:
 - A proposed commit needs an exception to the verification contract.
 - The current baseline procedure or repository policy requires further approval.
 
-Request delivery approval only when current guidance requires it or delivery exceeds existing authorization.
-Do not pause for a clean pass that matches the approved expectation.
+Request delivery approval only when current guidance requires it or delivery exceeds existing authorization. Do not pause for a clean pass that matches the approved expectation.
 
 ## Phase 5 — Finalize
 
@@ -150,8 +121,7 @@ When the ledger contains no unassigned material:
 2. Confirm that no temporary detour remains open.
 3. Run every directly related `opp_repl` test named in the final contract; do not broaden the run into unrelated suites.
 4. Spot-check a risk-based sample of middle safe points with their directly related tests.
-5. Use `inet-pull-request-authoring` to audit the history from top to bottom against the applicable
-   project series, split, and message requirements.
+5. Use `inet-pull-request-authoring` to audit the history from top to bottom against the applicable project series, split, and message requirements.
 6. Finish the logbook with the ordered commit list, tree proof, test results, baseline exceptions, safe-point spot checks, and behavior-change-to-evidence mapping.
 
 Cleanup ends with the reconstructed series and its evidence. Draft or publish a pull request only when the user explicitly requests it; pass the finalized history and logbook evidence to `inet-pull-request-authoring` for that work.

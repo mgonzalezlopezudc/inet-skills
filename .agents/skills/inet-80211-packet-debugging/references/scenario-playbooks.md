@@ -14,9 +14,7 @@ Use each playbook to choose the first distinctions to prove, not as a requiremen
 
 ## Channel access and responses
 
-**Queued but never transmitted:** Locate the queue and access category.
-Check whether association state permits transmission.
-Reconstruct these conditions and transitions:
+**Queued but never transmitted:** Locate the queue and access category. Check whether association state permits transmission. Reconstruct these conditions and transitions:
 
 - PHY busy state and NAV.
 - AIFS/DIFS and backoff freeze/resume.

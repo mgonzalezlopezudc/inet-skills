@@ -28,6 +28,4 @@ When running on platforms without declarative agent registration, instantiate th
 - Report inherited model/effort when per-agent selection is unavailable.
 
 ## Fallback Rules
-If the assigned binding is unavailable on the host platform, choose an equal- or higher-capability
-model for the same specialist role. Never silently downgrade reasoning work; disclose the actual
-model and verification used to the parent thread.
+If the assigned binding is unavailable on the host platform, choose an equal- or higher-capability model for the same specialist role. Never silently downgrade reasoning work; disclose the actual model and verification used to the parent thread.

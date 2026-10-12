@@ -1,8 +1,6 @@
 # Vocabulary for IEEE 802.11 development
 
-This file defines the project vocabulary for Simplified Technical English (STE).
-The vocabulary covers IEEE 802.11 protocols, INET models, and simulation evidence.
-IEEE means Institute of Electrical and Electronics Engineers.
+This file defines the project vocabulary for Simplified Technical English (STE). The vocabulary covers IEEE 802.11 protocols, INET models, and simulation evidence. IEEE means Institute of Electrical and Electronics Engineers.
 
 ## Use of the vocabulary
 
@@ -13,10 +11,7 @@ IEEE means Institute of Electrical and Electronics Engineers.
 5. Preserve exact code identifiers, commands, configuration keys, error strings, and quotations.
 6. Use the cited standard for protocol requirements.
 
-The tables define vocabulary, not the features that an INET checkout supports.
-The definitions describe concepts in plain English.
-Official acronym expansions retain their exact technical words.
-An acronym in a definition refers to its entry in this file.
+The tables define vocabulary, not the features that an INET checkout supports. The definitions describe concepts in plain English. Official acronym expansions retain their exact technical words. An acronym in a definition refers to its entry in this file.
 
 ## Protocol layers and stations
 
@@ -193,8 +188,7 @@ _Avoid_: `aggregation` as proof of A-MPDU support. Name the aggregate format.
 | rate selection | noun | The choice of a PHY mode for a frame or transmission. |
 | rate control | noun | A procedure that adapts rate selection to observed link conditions. |
 
-_Avoid_: `bandwidth` when the intended quantity is `channel width` or `data rate`. Name the quantity.
-_Avoid_: `SINR` in place of the INET term `SNIR` when the text describes an INET API or result.
+_Avoid_: `bandwidth` when the intended quantity is `channel width` or `data rate`. Name the quantity. _Avoid_: `SINR` in place of the INET term `SNIR` when the text describes an INET API or result.
 
 ## INET models and simulation evidence
 
@@ -235,8 +229,7 @@ _Avoid_: `SINR` in place of the INET term `SNIR` when the text describes an INET
 | data rate | noun | The number of data bits per unit of time at a specified protocol layer. |
 | latency | noun | The elapsed time between specified start and end events. State both events. |
 
-_Avoid_: `signal` without qualification when a simulation signal and a wireless signal are both possible.
-_Avoid_: `throughput`, `goodput`, and `data rate` as interchangeable terms.
+_Avoid_: `signal` without qualification when a simulation signal and a wireless signal are both possible. _Avoid_: `throughput`, `goodput`, and `data rate` as interchangeable terms.
 
 ## Approved technical verbs
 
@@ -256,21 +249,14 @@ _Avoid_: `throughput`, `goodput`, and `data rate` as interchangeable terms.
 
 ## Definition sources
 
-The protocol vocabulary follows IEEE Std 802.11-2024 and IEEE Std 802.11be-2024.
-The sources define terminology; they do not establish support in a particular INET checkout.
+The protocol vocabulary follows IEEE Std 802.11-2024 and IEEE Std 802.11be-2024. The sources define terminology; they do not establish support in a particular INET checkout.
 
-- IEEE Std 802.11-2024, Clauses 3.1 and 3.2: protocol definitions.
-  The TXOP definition is in Clause 3.1, physical PDF page 278.
-  The corpus identifier is `ieee80211-2024:definition:transmission%20opportunity%20%28TXOP%29`.
-- IEEE Std 802.11-2024, Clause 3.4: acronyms and abbreviations, physical PDF pages 324–339.
-  The corpus identifier is `ieee80211-2024:clause:3.4`.
-- IEEE Std 802.11be-2024, Clause 3.4: EHT, MLO, and MLD expansions, physical PDF pages 65–66.
-  The corpus identifier is `ieee80211be-2024:clause:3.4`.
+- IEEE Std 802.11-2024, Clauses 3.1 and 3.2: protocol definitions. The TXOP definition is in Clause 3.1, physical PDF page 278. The corpus identifier is `ieee80211-2024:definition:transmission%20opportunity%20%28TXOP%29`.
+- IEEE Std 802.11-2024, Clause 3.4: acronyms and abbreviations, physical PDF pages 324–339. The corpus identifier is `ieee80211-2024:clause:3.4`.
+- IEEE Std 802.11be-2024, Clause 3.4: EHT, MLO, and MLD expansions, physical PDF pages 65–66. The corpus identifier is `ieee80211be-2024:clause:3.4`.
 - [IEEE 802.11 QoS tutorial](https://www.ieee802.org/1/files/public/docs2008/avb-gs-802-11-qos-tutorial-1108.pdf): explanations of EDCA and TXOP.
 - [IEEE 802.11 packet analysis references](.agents/skills/inet-80211-packet-debugging/SKILL.md): frame, channel access, aggregation, and PHY concepts used by this repository.
 - [INET packet analysis skill](.agents/skills/inet-packet-tag-debugging/SKILL.md): Packet, chunk, and tag concepts.
 - [OMNeT++ result analysis skill](.agents/skills/omnetpp-result-analysis/SKILL.md): scalar and vector evidence.
 
-The local standards corpus supplied the standard text and page locations.
-The entries above cite definition and acronym clauses.
-No PDF inspection was necessary.
+The local standards corpus supplied the standard text and page locations. The entries above cite definition and acronym clauses. No PDF inspection was necessary.

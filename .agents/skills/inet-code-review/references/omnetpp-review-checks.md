@@ -1,8 +1,6 @@
 # OMNeT++ review checks
 
-Use the shared project-guidance discovery procedure to apply the active lifecycle, observability,
-configuration, determinism, and testing guidance first. This reference adds OMNeT++ kernel and
-configuration failure modes.
+Use the shared project-guidance discovery procedure to apply the active lifecycle, observability, configuration, determinism, and testing guidance first. This reference adds OMNeT++ kernel and configuration failure modes.
 
 ## Determinism diagnostics
 
@@ -11,10 +9,7 @@ configuration failure modes.
 ## Module lifecycle and initialization
 
 - **[RP-OMNET-INIT-STAGE-DEPENDENCIES]** Trace the exact initialization stage that establishes each field, subscription, module reference, and published value. Resolve the checked-out version's registered stage dependencies; do not infer order from declaration order or a remembered stage list. Determine whether an event or synchronous call can observe partially initialized state.
-- **[RP-OMNET-INIT-STAGE-COUNT]** Use the active lifecycle guidance. Identify the highest named stage the class
-  actually handles and trace the effective `numInitStages()` through inheritance. Require a local
-  override only when the inherited count does not cover that stage, and verify that any override is
-  a stage-independent constant expression that also preserves the base requirement.
+- **[RP-OMNET-INIT-STAGE-COUNT]** Use the active lifecycle guidance. Identify the highest named stage the class actually handles and trace the effective `numInitStages()` through inheritance. Require a local override only when the inherited count does not cover that stage, and verify that any override is a stage-independent constant expression that also preserves the base requirement.
 - **[RP-OMNET-LIFECYCLE-PHASES]** Check `initialize()` staging, `finish()`, dynamic module creation/deletion, and destructor behavior separately. Do not assume normal end-of-simulation order matches runtime deletion.
 - **[RP-OMNET-DELETION-ORDER]** Respect OMNeT++ deletion order. Cleanup that traverses child modules may be safe in `finish()` or `preDelete()` but unsafe in a destructor after descendants have been destroyed.
 - **[RP-OMNET-CROSS-MODULE-CALLS]** For cross-module calls, verify module/gate discovery direction, method-entry requirements such as `Enter_Method`, and whether the callee may retain or delete arguments.
@@ -46,15 +41,12 @@ configuration failure modes.
 
 - **[RP-OMNET-PARAMETER-VOLATILITY]** Respect the evaluation semantics of `volatile` parameters. Caching a `volatile` parameter in a member during `initialize()` silently freezes a value defined to be re-evaluated at every read; re-reading a non-volatile parameter mid-operation is equally wrong when the contract requires a stable value. Verify that each read site's timing matches the declared volatility and the intended contract.
 - **[RP-OMNET-OPTIONAL-CONFIGURATION]** Check feature-off and optional-submodule configurations, including missing gates or empty typenames.
-- **[RP-OMNET-MSG-GENERATED-CONSUMERS]** Trace generated ownership, copying, packing/unpacking, descriptors, and consumers when a `.msg`
-  field or inheritance relationship changes.
+- **[RP-OMNET-MSG-GENERATED-CONSUMERS]** Trace generated ownership, copying, packing/unpacking, descriptors, and consumers when a `.msg` field or inheritance relationship changes.
 - **[RP-OMNET-MSG-FIELD-INITIALIZATION]** For every semantically consumed generated field, audit factories, success/reject paths, copies, and reconstruction paths for deliberate initialization or copying. If an optional field's schema default is also a valid value, require explicit presence or an out-of-domain sentinel only when the consumer must distinguish absence. Example: constructing a radio command to change bitrate must not make a default channel value look like an explicit channel request.
 
 ## Focused verification
 
-Select evidence under the active test guidance. Use a filtered module test
-or one Cmdenv configuration/run/seed when kernel behavior is necessary to prove the path. High-value
-cases include:
+Select evidence under the active test guidance. Use a filtered module test or one Cmdenv configuration/run/seed when kernel behavior is necessary to prove the path. High-value cases include:
 
 | Mechanism | High-value check |
 | --- | --- |
@@ -66,6 +58,4 @@ cases include:
 | Configuration resolution | inherited default, explicit override, wildcard collision, feature off |
 | MSG change | copy, parsim pack/unpack, and derived type dispatch |
 
-For trajectory changes, take fingerprint meaning and baseline handling from the active project
-guidance; use
-`inet-fingerprint-regression` for the operational diagnosis.
+For trajectory changes, take fingerprint meaning and baseline handling from the active project guidance; use `inet-fingerprint-regression` for the operational diagnosis.

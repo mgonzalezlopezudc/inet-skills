@@ -1,8 +1,6 @@
 # Specialist model classes
 
-This is an overview of model bindings for the semantic specialist classes. Classes describe the
-kind of work, so different classes may intentionally share a model binding. The platform runner
-configuration is authoritative when a binding differs from this table.
+This is an overview of model bindings for the semantic specialist classes. Classes describe the kind of work, so different classes may intentionally share a model binding. The platform runner configuration is authoritative when a binding differs from this table.
 
 | Class | Codex | Antigravity | Kimi |
 | --- | --- | --- | --- |

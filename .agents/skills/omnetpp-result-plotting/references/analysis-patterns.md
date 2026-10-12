@@ -1,13 +1,10 @@
 # Analysis patterns
 
-Use the shared project-guidance discovery procedure to find the active result-analysis guidance
-before choosing a pattern. Load only the sections needed to implement the selected derived metric or
-parameter-study plot.
+Use the shared project-guidance discovery procedure to find the active result-analysis guidance before choosing a pattern. Load only the sections needed to implement the selected derived metric or parameter-study plot.
 
 ## Confidence intervals across runs
 
-Pass the per-run table and full condition key defined by the canonical guide as `per_run` and
-`condition_columns`.
+Pass the per-run table and full condition key defined by the canonical guide as `per_run` and `condition_columns`.
 
 ```python
 import numpy as np
@@ -46,8 +43,7 @@ Do not replace the undefined confidence interval for a single run with zero.
 
 ## Reduce vectors per run
 
-For a metric whose canonical analysis definition calls for an arithmetic per-run reduction after a
-warm-up, use:
+For a metric whose canonical analysis definition calls for an arithmetic per-run reduction after a warm-up, use:
 
 ```python
 records = []
@@ -63,8 +59,7 @@ for _, row in vectors.iterrows():
 per_run = pd.DataFrame.from_records(records)
 ```
 
-Perform any module aggregation selected by the canonical analysis definition before calling the
-across-run summary.
+Perform any module aggregation selected by the canonical analysis definition before calling the across-run summary.
 
 ## Time-weighted mean
 
@@ -104,8 +99,7 @@ x, probability = ecdf(values)
 axis.step(x, probability, where="post")
 ```
 
-Apply the canonical disclosure rule when selecting one-run, pooled, or balanced samples. This ECDF
-function operates on exactly the values passed to it.
+Apply the canonical disclosure rule when selecting one-run, pooled, or balanced samples. This ECDF function operates on exactly the values passed to it.
 
 ## Rate from a cumulative counter
 

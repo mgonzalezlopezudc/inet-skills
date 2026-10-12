@@ -1,8 +1,6 @@
 # Scope and reproducibility
 
-Use the shared project-guidance discovery procedure to find the active amendment-gating,
-model-evidence, and reproducibility guidance. This reference adds instantiated-model inspection and
-diagnostic artifact mechanics.
+Use the shared project-guidance discovery procedure to find the active amendment-gating, model-evidence, and reproducibility guidance. This reference adds instantiated-model inspection and diagnostic artifact mechanics.
 
 ## Inspect the instantiated model
 
@@ -18,13 +16,10 @@ Use `inet-ned-ini-analysis` when inheritance, wildcard precedence, or `typename`
 
 ## Establish feature gates
 
-Apply the active standards-gating guidance. Use `ieee80211-standards` for its
-normative-evidence lane, `inet-ned-ini-analysis` for its effective-configuration lane, and source
-inspection for the checked-out implementation lane.
+Apply the active standards-gating guidance. Use `ieee80211-standards` for its normative-evidence lane, `inet-ned-ini-analysis` for its effective-configuration lane, and source inspection for the checked-out implementation lane.
 
 ## Preserve comparable runs
 
 Use command-line overrides for temporary capture, logging, event-log, and result diagnostics. Create a dedicated debug configuration only when repeated investigation would otherwise be error-prone.
 
-Name generated captures, logs, event logs, and result files by configuration and run, then report
-them through the canonical diagnosis guide.
+Name generated captures, logs, event logs, and result files by configuration and run, then report them through the canonical diagnosis guide.

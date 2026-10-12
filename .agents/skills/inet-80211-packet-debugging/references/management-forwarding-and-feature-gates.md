@@ -1,14 +1,10 @@
 # Management, forwarding, and feature gates
 
-Use the shared project-guidance discovery procedure to find the active component-ownership and
-amendment-gating guidance. This reference adds management/forwarding traces and concrete
-false-inference checks.
+Use the shared project-guidance discovery procedure to find the active component-ownership and amendment-gating guidance. This reference adds management/forwarding traces and concrete false-inference checks.
 
 ## Scanning and association
 
-Read the management-model description in `doc/src/users-guide/ch-80211.rst`, then resolve the
-instantiated management type before choosing which scanning, authentication, association, or
-roaming transitions to trace.
+Read the management-model description in `doc/src/users-guide/ch-80211.rst`, then resolve the instantiated management type before choosing which scanning, authentication, association, or roaming transitions to trace.
 
 For infrastructure setup, trace state and frames through:
 
@@ -43,8 +39,7 @@ Apply power-save expectations only after confirming implementation. Track radio 
 
 ## Modern feature gate
 
-After passing the canonical feature gate for HT, VHT, HE, EHT, DMG/EDMG, S1G, OCB, or vehicular
-behavior, do not infer:
+After passing the canonical feature gate for HT, VHT, HE, EHT, DMG/EDMG, S1G, OCB, or vehicular behavior, do not infer:
 
 * Actual MIMO or beamforming from a spatial-stream count.
 * A-MPDU from generic aggregation.

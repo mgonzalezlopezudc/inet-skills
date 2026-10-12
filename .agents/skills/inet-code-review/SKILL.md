@@ -5,18 +5,11 @@ description: Review OMNeT++/INET correctness and regressions as an independent m
 
 # INET code reviewer
 
-Start with the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md)
-and read the active checkout's project entry point. Follow its current review route; for a branch or
-pull request, include the route's series and domain checks. Apply the active exception ledgers and
-semantic checklists selected for the reviewed scope. Do not assume that a project document name,
-heading, rule identifier, or checklist path remains unchanged.
+Start with the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) and read the active checkout's project entry point. Follow its current review route; for a branch or pull request, include the route's series and domain checks. Apply the active exception ledgers and semantic checklists selected for the reviewed scope. Do not assume that a project document name, heading, rule identifier, or checklist path remains unchanged.
 
 **Read-only scope policy:**
 - Remain strictly read-only with respect to committed source files, NED/MSG definitions, configuration files, test scripts, fingerprints, exception ledgers, and sealing status files.
-- **Validation execution is permitted and encouraged:** Rebuild the artifacts and run focused tests
-  or diagnostic simulations in the mode required by the active project guidance to confirm or refute
-  a suspected defect. Writes are limited to generated build, test-result, simulation-result, and
-  diagnostic artifacts.
+- **Validation execution is permitted and encouraged:** Rebuild the artifacts and run focused tests or diagnostic simulations in the mode required by the active project guidance to confirm or refute a suspected defect. Writes are limited to generated build, test-result, simulation-result, and diagnostic artifacts.
 
 ## Select the review layers
 
@@ -29,26 +22,16 @@ Select references by the changed runtime contract, including configuration-induc
 | INET | INET packets/chunks/tags, protocol integration, lifecycle operations, queues, serializers, feature composition, or INET tests | [inet-review-checks.md](references/inet-review-checks.md) |
 | IEEE 802.11 | Wi-Fi MAC/PHY behavior, management, association, channel access, Block Ack, capabilities, rates/modes, or 802.11 configuration | [ieee80211-review-checks.md](references/ieee80211-review-checks.md) |
 
-Read the selected reference sections before evaluation of the changed contract.
-Use the C++ checklist
-for concrete path coverage; domain references establish the simulation and protocol semantics.
+Read the selected reference sections before evaluation of the changed contract. Use the C++ checklist for concrete path coverage; domain references establish the simulation and protocol semantics.
 
-Layer references label durable investigation prompts as `RP-<LAYER>-<MECHANISM>`. These are
-non-normative navigation and provenance identifiers: they do not create project requirements,
-determine severity or verdicts, or by themselves justify a finding.
-Support each checklist verdict with the applicable rule under the current review procedure.
-Find the current quality guidance for minimal design through the project map. Check whether each proposed safeguard addresses a reachable failure under that guidance. Do not turn a checklist prompt into a stronger protocol requirement.
-Do not require `RP-*` identifiers in
-the user-facing review report.
+Layer references label durable investigation prompts as `RP-<LAYER>-<MECHANISM>`. These are non-normative navigation and provenance identifiers: they do not create project requirements, determine severity or verdicts, or by themselves justify a finding. Support each checklist verdict with the applicable rule under the current review procedure. Find the current quality guidance for minimal design through the project map. Check whether each proposed safeguard addresses a reachable failure under that guidance. Do not turn a checklist prompt into a stronger protocol requirement. Do not require `RP-*` identifiers in the user-facing review report.
 
 ## Reviewing Specialized Change Types
 
 ### Test-Only and Benchmark Changes
-- Apply the active test guidance and its production-path distinction; a private-helper test does not
-  prove that the production owner invokes it with the intended inputs.
+- Apply the active test guidance and its production-path distinction; a private-helper test does not prove that the production owner invokes it with the intended inputs.
 - Check that tests clean up dynamically allocated simulation objects (`Packet`, `cMessage`) to avoid false-positive leak reports.
-- Select only layers implicated by the test's own behavior and the production contract it claims to
-  cover.
+- Select only layers implicated by the test's own behavior and the production contract it claims to cover.
 
 ### Configuration-Only (INI / NED) Changes
 - Start with the OMNeT++ and INET references; add IEEE 802.11 only for WLAN configuration.
@@ -70,17 +53,13 @@ the user-facing review report.
 
 ## Authoring handoff discrepancies
 
-When an incorrect authoring contract caused incorrect code, report the actionable code defect.
-Identify the required contract correction.
-Name the earliest workflow step that the correction must revisit.
+When an incorrect authoring contract caused incorrect code, report the actionable code defect. Identify the required contract correction. Name the earliest workflow step that the correction must revisit.
 
-When correct code conflicts with its contract or handoff description, report the description error outside the findings list.
-Do not invent a code finding for that error.
+When correct code conflicts with its contract or handoff description, report the description error outside the findings list. Do not invent a code finding for that error.
 
 ## Validate proportionally
 
-Use read-only inspection first. When execution materially strengthens a finding or clears a
-realistic risk, use the owning skill for the smallest direct check:
+Use read-only inspection first. When execution materially strengthens a finding or clears a realistic risk, use the owning skill for the smallest direct check:
 
 | Evidence needed | Route |
 | --- | --- |
@@ -95,11 +74,8 @@ realistic risk, use the owning skill for the smallest direct check:
 | Fingerprint divergence | `inet-fingerprint-regression` |
 | IEEE 802.11 normative claim | `ieee80211-standards` |
 
-Take test-category, baseline, and execution policy from the active project guidance and repository
-instructions discovered through the shared procedure.
+Take test-category, baseline, and execution policy from the active project guidance and repository instructions discovered through the shared procedure.
 
 ## Report as a reviewer
 
-Use the terminology, severity basis, deduplication rule, and report order in the active review route.
-Do not convert missing execution into a checklist question, duplicate one mechanism as both a full
-correctness finding and a full checklist explanation, or assign severity to an unresolved question.
+Use the terminology, severity basis, deduplication rule, and report order in the active review route. Do not convert missing execution into a checklist question, duplicate one mechanism as both a full correctness finding and a full checklist explanation, or assign severity to an unresolved question.

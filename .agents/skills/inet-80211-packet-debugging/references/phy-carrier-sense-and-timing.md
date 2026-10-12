@@ -1,8 +1,6 @@
 # PHY, carrier sense, and timing
 
-Use the shared project-guidance discovery procedure to find the active PHY authority, timing,
-signal, and fidelity guidance first. This reference adds the diagnostic transition
-and isolation procedures.
+Use the shared project-guidance discovery procedure to find the active PHY authority, timing, signal, and fidelity guidance first. This reference adds the diagnostic transition and isolation procedures.
 
 ## Locate the first failed PHY transition
 
@@ -20,11 +18,7 @@ Do not infer these stages from a MAC capture alone.
 
 ## Model compatibility and radio state
 
-Use the IEEE 802.11 radio/medium inventory in `doc/src/users-guide/ch-80211.rst` and the abstraction,
-compatibility, and fidelity descriptions in `doc/src/users-guide/ch-physicallayer.rst` rather than
-maintaining them here. Resolve the instantiated radio and medium types, confirm that their analog
-representations are compatible, and state which link-budget or interference claims that selected
-abstraction can establish.
+Use the IEEE 802.11 radio/medium inventory in `doc/src/users-guide/ch-80211.rst` and the abstraction, compatibility, and fidelity descriptions in `doc/src/users-guide/ch-physicallayer.rst` rather than maintaining them here. Resolve the instantiated radio and medium types, confirm that their analog representations are compatible, and state which link-budget or interference claims that selected abstraction can establish.
 
 Track transmit, receive, sleep/off, switching, and channel-change intervals. A half-duplex radio cannot ordinarily receive while transmitting; verify that it returns to receive state before SIFS responses and completes channel switching before scan observations.
 
@@ -63,9 +57,7 @@ Investigate which signal caused PHY busy, which decodable frame set NAV, the rep
 
 ## Mode, airtime, and response timing
 
-Use the canonical mode authority for airtime and timing. In a failed exchange, compare its installed
-calculator inputs and outputs, response-mode compatibility, and radio switching; distinguish late
-scheduling, incompatible response rate, collision, receiver still transmitting, and timeout expiry.
+Use the canonical mode authority for airtime and timing. In a failed exchange, compare its installed calculator inputs and outputs, response-mode compatibility, and radio switching; distinguish late scheduling, incompatible response rate, collision, receiver still transmitting, and timeout expiry.
 
 For backoff, reconstruct the chosen counter, eligible idle slots, freeze/resume intervals, transmission time, success/failure, contention-window update, and retry counter. Close transmission times alone do not prove a backoff defect.
 

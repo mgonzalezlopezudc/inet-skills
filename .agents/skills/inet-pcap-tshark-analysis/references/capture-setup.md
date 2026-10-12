@@ -6,8 +6,7 @@
 * Bound capture cost
 * Validate the artifact
 
-Select and interpret observation points under the active diagnosis guidance discovered through the
-project entry point. This reference adds PcapRecorder configuration mechanics.
+Select and interpret observation points under the active diagnosis guidance discovered through the project entry point. This reference adds PcapRecorder configuration mechanics.
 
 ## Select the capture point
 
@@ -59,10 +58,7 @@ Always include the two global computed-mode overrides on the first diagnostic ca
 
 For native Wi-Fi analysis, select the installed model's IEEE 802.11 MAC representation. If INET cannot determine or convert the link type, inspect the capture module, `dumpProtocols`, packet protocol tags, and available recorder helpers.
 
-Computed checksum and FCS modes may change model behavior.
-Record those overrides with the run command.
-If the investigation depends on declared versus computed modes, preserve an unmodified baseline run for comparison.
-Keep the computed modes effective for the capture run from its first attempt.
+Computed checksum and FCS modes may change model behavior. Record those overrides with the run command. If the investigation depends on declared versus computed modes, preserve an unmodified baseline run for comparison. Keep the computed modes effective for the capture run from its first attempt.
 
 ## Bound capture cost
 

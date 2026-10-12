@@ -5,14 +5,11 @@
 * Diagnose empty or undecoded captures
 * Build automated assertions
 
-Use the shared project-guidance discovery procedure to find the active observation-boundary,
-evidence-classification, and reporting guidance. This reference adds capture comparison and TShark
-diagnostic mechanics.
+Use the shared project-guidance discovery procedure to find the active observation-boundary, evidence-classification, and reporting guidance. This reference adds capture comparison and TShark diagnostic mechanics.
 
 ## Compare observation points
 
-Once the canonical guide identifies the required observation points, use separate files for each
-node and interface.
+Once the canonical guide identifies the required observation points, use separate files for each node and interface.
 
 Do not match packets by `frame.number`; each capture has independent numbering. Correlate with the strongest available identity:
 
@@ -22,8 +19,7 @@ Do not match packets by `frame.number`; each capture has independent numbering. 
 * Payload length or contents.
 * Simulation timestamp.
 
-Add an intermediate capture, targeted log, result counter, or event log when the selected observation
-points do not locate the first missing transition.
+Add an intermediate capture, targeted log, result counter, or event log when the selected observation points do not locate the first missing transition.
 
 ## Account for duplicate observations
 
@@ -53,14 +49,8 @@ test -s "$FILTERED"
 capinfos "$FILTERED"
 ```
 
-Add capture points and files, recorder options that affect interpretation, filters, matching frames
-and `frame.time_epoch` values, packet identifiers, observation-point differences, decoding
-limitations, and TShark heuristics to the canonical diagnosis report.
+Add capture points and files, recorder options that affect interpretation, filters, matching frames and `frame.time_epoch` values, packet identifiers, observation-point differences, decoding limitations, and TShark heuristics to the canonical diagnosis report.
 
 ## Walkthrough Tables for IEEE 802.11 Examples
 
-Route any request to generate or publish walkthrough tables through
-`inet-80211-walkthrough-writer`. Its capability and canonical-placement gate must pass before any
-analyzer command is used. If the active checkout lacks the tracked analyzer and README, report that
-the workflow is unsupported; do not reconstruct it or substitute direct TShark output for the
-script-owned presentation.
+Route any request to generate or publish walkthrough tables through `inet-80211-walkthrough-writer`. Its capability and canonical-placement gate must pass before any analyzer command is used. If the active checkout lacks the tracked analyzer and README, report that the workflow is unsupported; do not reconstruct it or substitute direct TShark output for the script-owned presentation.

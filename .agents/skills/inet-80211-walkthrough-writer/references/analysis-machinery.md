@@ -1,10 +1,6 @@
 # Shared IEEE 802.11 analysis machinery
 
-`examples/ieee80211/analysis/wifi_analysis.py` is the walkthrough's
-authoritative analysis interface only when it and the adjacent README are tracked in the active
-checkout and the owning skill's placement gate passes. If either file is absent, stop; do not
-reconstruct the workflow from history, ignored artifacts, or this reference. Read
-`examples/ieee80211/analysis/README.md`, then run from the repository root:
+`examples/ieee80211/analysis/wifi_analysis.py` is the walkthrough's authoritative analysis interface only when it and the adjacent README are tracked in the active checkout and the owning skill's placement gate passes. If either file is absent, stop; do not reconstruct the workflow from history, ignored artifacts, or this reference. Read `examples/ieee80211/analysis/README.md`, then run from the repository root:
 
 ```sh
 python3 examples/ieee80211/analysis/wifi_analysis.py inspect <scenario>
@@ -16,10 +12,7 @@ python3 examples/ieee80211/analysis/wifi_analysis.py publish <scenario> \
   --session-id <YYYYMMDDTHHMMSSZ> --update
 ```
 
-Use suite options reported by `inspect`; do not guess them. `run` records
-scalar/vector evidence for all runs and PCAP evidence for representative run
-0. `report` generates evidence without editing the walkthrough. `publish` is
-the only command allowed to insert or update walkthrough analysis blocks.
+Use suite options reported by `inspect`; do not guess them. `run` records scalar/vector evidence for all runs and PCAP evidence for representative run 0. `report` generates evidence without editing the walkthrough. `publish` is the only command allowed to insert or update walkthrough analysis blocks.
 
 ## Exclusive output ownership
 
@@ -29,9 +22,7 @@ The shared analyzer and its suite-owned components generate:
 - PCAP packet statistics, tables, plots, and provenance; and
 - representative frame-exchange timelines/tables.
 
-Authors interpret these outputs. They do not reproduce them with direct
-`opp_scavetool`, TShark, plotting libraries, spreadsheets, manual
-calculations, or hand-authored Markdown.
+Authors interpret these outputs. They do not reproduce them with direct `opp_scavetool`, TShark, plotting libraries, spreadsheets, manual calculations, or hand-authored Markdown.
 
 If output is missing, use these extension points in order:
 
@@ -40,19 +31,14 @@ If output is missing, use these extension points in order:
 3. typed PHY profile;
 4. shared machinery, only for cross-suite behavior.
 
-Never add a scenario-local duplicate of campaign, result, PCAP, provenance,
-plotting, table, or timeline logic.
+Never add a scenario-local duplicate of campaign, result, PCAP, provenance, plotting, table, or timeline logic.
 
 ## Evidence constraints
 
-- Use one session for matched scalar/vector and PCAP claims. Separate sessions
-  cannot prove event-level causality.
-- Publication normally requires five independent scalar/vector runs. A
-  one-run diagnostic is not publication evidence.
-- Trust only fields marked authoritative by the typed PHY profile (`legacy`,
-  `ht`, `vht`, `he`, or `eht`). Missing or ambiguous fields remain unknown.
-- Preserve script-generated markers, provenance sidecars, hashes, counting
-  semantics, capture points, run/seed scope, and session ledger entries.
+- Use one session for matched scalar/vector and PCAP claims. Separate sessions cannot prove event-level causality.
+- Publication normally requires five independent scalar/vector runs. A one-run diagnostic is not publication evidence.
+- Trust only fields marked authoritative by the typed PHY profile (`legacy`, `ht`, `vht`, `he`, or `eht`). Missing or ambiguous fields remain unknown.
+- Preserve script-generated markers, provenance sidecars, hashes, counting semantics, capture points, run/seed scope, and session ledger entries.
 - Keep generation-specific decoding in typed profiles.
 
 ## Validation

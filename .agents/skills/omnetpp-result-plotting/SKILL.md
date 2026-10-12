@@ -5,15 +5,9 @@ description: Create reproducible, non-interactive plots from OMNeT++ .sca and .v
 
 # Plot OMNeT++ results
 
-Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
-active checkout's current result-analysis guidance for observational units, conditions, comparisons,
-derived metrics, uncertainty, and disclosures. This skill adds the native Python API and rendering
-mechanics.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active checkout's current result-analysis guidance for observational units, conditions, comparisons, derived metrics, uncertainty, and disclosures. This skill adds the native Python API and rendering mechanics.
 
-Load results with `from omnetpp.scave import results`.
-Do not manually parse `.sca`/`.vec` files.
-Do not substitute CSV loading.
-Run in the configured OMNeT++ environment.
+Load results with `from omnetpp.scave import results`. Do not manually parse `.sca`/`.vec` files. Do not substitute CSV loading. Run in the configured OMNeT++ environment.
 
 ## Workflow
 
@@ -42,25 +36,15 @@ Run in the configured OMNeT++ environment.
    )
    ```
 
-   Use the method for the selected vector, statistic, or histogram type.
-   Add configuration entries only when necessary.
-   Bound large vector queries by time.
+   Use the method for the selected vector, statistic, or histogram type. Add configuration entries only when necessary. Bound large vector queries by time.
 4. Reject empty results, missing columns, incompatible units, unexpected duplicates, invalid vector arrays/timestamps, or missing conditions/repetitions.
-5. Define what one observation represents before the plot.
-   Reduce the data to that observational unit under the selected analysis contract.
-   Plot the reduced data.
-   Keep extraction, transformation, and rendering separate in the saved script.
+5. Define what one observation represents before the plot. Reduce the data to that observational unit under the selected analysis contract. Plot the reduced data. Keep extraction, transformation, and rendering separate in the saved script.
 
-For example, a hypothetical comparison measures each run's mean queue length.
-Each run supplies one observation after vector reduction.
-The plot compares those run means, rather than treating every vector sample as an independent run.
+For example, a hypothetical comparison measures each run's mean queue length. Each run supplies one observation after vector reduction. The plot compares those run means, rather than treating every vector sample as an independent run.
 
-Read [analysis-patterns.md](references/analysis-patterns.md) for implementations of confidence
-intervals, vector reduction, time weighting, ECDFs, counter rates, or large-vector handling after
-the canonical analysis contract is defined.
+Read [analysis-patterns.md](references/analysis-patterns.md) for implementations of confidence intervals, vector reduction, time weighting, ECDFs, counter rates, or large-vector handling after the canonical analysis contract is defined.
 
-Choose plot geometry under the active result-analysis guidance; keep only the native Python rendering
-implementation in this skill.
+Choose plot geometry under the active result-analysis guidance; keep only the native Python rendering implementation in this skill.
 
 For a direct vector plot:
 

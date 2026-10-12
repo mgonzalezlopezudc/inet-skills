@@ -1,12 +1,8 @@
 # Bug-pattern example index
 
-Use these catalogs only when a selected `RP-*` investigation prompt is too abstract to apply
-confidently or when a concrete counterexample would help challenge a reachable path. The examples
-illustrate triggers and failure mechanisms; they do not establish project requirements, severity,
-reachability, or a mandatory correction.
+Use these catalogs only when a selected `RP-*` investigation prompt is too abstract to apply confidently or when a concrete counterexample would help challenge a reachable path. The examples illustrate triggers and failure mechanisms; they do not establish project requirements, severity, reachability, or a mandatory correction.
 
-Entries retain their original numbers for provenance and list related domain prompts.
-Choose the catalog by the mechanism being investigated, not merely by the changed file type.
+Entries retain their original numbers for provenance and list related domain prompts. Choose the catalog by the mechanism being investigated, not merely by the changed file type.
 
 | Primary mechanism | Catalog | Source examples |
 | --- | --- | --- |
@@ -14,6 +10,4 @@ Choose the catalog by the mechanism being investigated, not merely by the change
 | INET packets, chunks, tags, queues, lifecycle, configuration, and dispatch | [INET examples](bug-pattern-examples/inet.md) | 1, 18, 19, 21, 23, 26, 27, 30, 31, 33, 34, 46, 48 |
 | IEEE 802.11 transactions, reassembly, and management wire formats | [IEEE 802.11 examples](bug-pattern-examples/ieee80211.md) | 11–13, 15 |
 
-Read only the catalog selected by the primary mechanism. Add another catalog only when the actual
-contract crosses that boundary; overlapping prompt IDs in an entry are navigation aids, not a
-requirement to load every named layer.
+Read only the catalog selected by the primary mechanism. Add another catalog only when the actual contract crosses that boundary; overlapping prompt IDs in an entry are navigation aids, not a requirement to load every named layer.

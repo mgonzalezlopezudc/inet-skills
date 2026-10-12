@@ -6,8 +6,7 @@
 * Analyze TCP exchanges
 * Diagnose missing fields
 
-Use the shared project-guidance discovery procedure to find the active evidence and correlation
-guidance. This reference adds TShark commands, fields, and dissector-specific interpretation.
+Use the shared project-guidance discovery procedure to find the active evidence and correlation guidance. This reference adds TShark commands, fields, and dissector-specific interpretation.
 
 ## Validate and scope the capture
 
@@ -65,10 +64,7 @@ Remove irrelevant fields and add protocol-specific sequence, flag, or identifier
 
 INET records simulation time as the packet timestamp. Correlate `frame.time_epoch` with `%t` in Cmdenv logs. `frame.time_relative` is relative to the capture and is unsuitable for direct simulation-time correlation.
 
-Apply the canonical cross-source correlation rule. Within captures, match packets using addresses,
-protocol fields, sequence identifiers, payload length or identity, and timestamp rather than the
-capture-local `frame.number`. For TCP, prefer `tcp.seq_raw` or explicitly disable relative sequence
-numbering because `tcp.seq` may be capture-local.
+Apply the canonical cross-source correlation rule. Within captures, match packets using addresses, protocol fields, sequence identifiers, payload length or identity, and timestamp rather than the capture-local `frame.number`. For TCP, prefer `tcp.seq_raw` or explicitly disable relative sequence numbering because `tcp.seq` may be capture-local.
 
 When the exact timestamp formatting differs, search a small surrounding interval in the Cmdenv log; the decision that caused a transmission may precede the captured packet.
 
@@ -82,9 +78,7 @@ tshark -n -r "$PCAP" -Y 'tcp' -T fields -e tcp.stream
 tshark -n -r "$PCAP" -Y "tcp.stream == $STREAM"
 ```
 
-For retransmission diagnosis, export `frame.time_epoch`, endpoints, `tcp.seq`, `tcp.ack`, `tcp.len`,
-flags, and the relevant `tcp.analysis.*` fields. Report these fields as TShark heuristics and combine
-evidence sources as required by the canonical guide.
+For retransmission diagnosis, export `frame.time_epoch`, endpoints, `tcp.seq`, `tcp.ack`, `tcp.len`, flags, and the relevant `tcp.analysis.*` fields. Report these fields as TShark heuristics and combine evidence sources as required by the canonical guide.
 
 Use stream following only when payload reconstruction matters:
 

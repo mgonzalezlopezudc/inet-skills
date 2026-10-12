@@ -46,26 +46,19 @@ The inventory contains 1,481 top-level lines / 12,666 words, plus 34 references 
 
 ### What I would add
 
-1. **A skill evaluation and lint harness — highest priority.**  
-   Test positive and negative triggers, required workflow steps, broken/orphan references, unavailable commands, dependency declarations, compatibility with the active `doc/project/` revision, and frontmatter/body mismatches. Add representative end-to-end tasks and measure correctness, turns, tokens, runtime, and unnecessary skill activation. Without this, “effectiveness” remains inferred.
+1. **A skill evaluation and lint harness — highest priority.** Test positive and negative triggers, required workflow steps, broken/orphan references, unavailable commands, dependency declarations, compatibility with the active `doc/project/` revision, and frontmatter/body mismatches. Add representative end-to-end tasks and measure correctness, turns, tokens, runtime, and unnecessary skill activation. Without this, “effectiveness” remains inferred.
 
-2. **`inet-regression-testing`.**  
-   Make it protocol-neutral: behavior claim → invariant → test category → minimal deterministic reproduction → seed/parameter campaign → direct evidence. Then make `inet-80211-regression-testing` a thin WLAN specialization or reference.
+2. **`inet-regression-testing`.** Make it protocol-neutral: behavior claim → invariant → test category → minimal deterministic reproduction → seed/parameter campaign → direct evidence. Then make `inet-80211-regression-testing` a thin WLAN specialization or reference.
 
-3. **A non-triggering capability/dependency manifest.**  
-   Map change type and path glob → primary skill → supporting skills → specialist agent → required files/tools → compatible project revision. Also define deployment profiles such as `core`, `wifi`, `results`, `history`, and `walkthrough`. Generate runtime-specific metadata from this manifest where possible.
+3. **A non-triggering capability/dependency manifest.** Map change type and path glob → primary skill → supporting skills → specialist agent → required files/tools → compatible project revision. Also define deployment profiles such as `core`, `wifi`, `results`, `history`, and `walkthrough`. Generate runtime-specific metadata from this manifest where possible.
 
-4. **A structured verification-result adapter.**  
-   Normalize stable runner output into a small JSON envelope containing command, working directory, mode, selector, cases run, status, first failure, artifact paths, and whether the result was flaky or expected to change. Start with unit/module, fingerprint, and `opp_repl`; let the same adapter ingest CI logs when available. Keep causal interpretation with the responsible skill rather than encoding it in the parser.
+4. **A structured verification-result adapter.** Normalize stable runner output into a small JSON envelope containing command, working directory, mode, selector, cases run, status, first failure, artifact paths, and whether the result was flaky or expected to change. Start with unit/module, fingerprint, and `opp_repl`; let the same adapter ingest CI logs when available. Keep causal interpretation with the responsible skill rather than encoding it in the parser.
 
-5. **`inet-opp-repl`, if branch reconstruction remains important.**  
-   Centralize command discovery, dependency mapping, result semantics, and common evidence fields now distributed between cleanup and rebase.
+5. **`inet-opp-repl`, if branch reconstruction remains important.** Centralize command discovery, dependency mapping, result semantics, and common evidence fields now distributed between cleanup and rebase.
 
-6. **Authoring context tiers and a wide-mechanical-change path.**  
-   Mirror the small/medium/large structure from code review so low-risk changes do not load every preventive reference. Add a selectively loaded migration/refactoring playbook for broad renames, API migrations, and generated-artifact updates; this fills the current gap between the ≤5-line fast track and the full semantic-change pipeline without creating another top-level skill.
+6. **Authoring context tiers and a wide-mechanical-change path.** Mirror the small/medium/large structure from code review so low-risk changes do not load every preventive reference. Add a selectively loaded migration/refactoring playbook for broad renames, API migrations, and generated-artifact updates; this fills the current gap between the ≤5-line fast track and the full semantic-change pipeline without creating another top-level skill.
 
-7. **Performance/scalability support, if speed work is recurring.**  
-   Add `inet-performance-analysis` or a reference owned by generic regression testing for reproducible wall-clock and memory measurements, profiler use, warm-up and repetition policy, before/after comparison, and `tests/speed` integration. Establish demand with actual performance tasks before making it part of the default profile.
+7. **Performance/scalability support, if speed work is recurring.** Add `inet-performance-analysis` or a reference owned by generic regression testing for reproducible wall-clock and memory measurements, profiler use, warm-up and repetition policy, before/after comparison, and `tests/speed` integration. Establish demand with actual performance tasks before making it part of the default profile.
 
 ### What I would remove or streamline
 

@@ -1,16 +1,10 @@
 # IEEE 802.11 evidence tools
 
-Use the shared project-guidance discovery procedure to find the active observation and trace
-boundaries, then the generic capture, log, event-log, result, and LLDB skills. This reference contains
-only Wi-Fi-specific additions.
+Use the shared project-guidance discovery procedure to find the active observation and trace boundaries, then the generic capture, log, event-log, result, and LLDB skills. This reference contains only Wi-Fi-specific additions.
 
 ## Capture representation and limits
 
-Apply the `PcapRecorder` representation and computed checksum/FCS guidance in
-`doc/src/users-guide/ch-collecting-results.rst`, and use `inet-pcap-tshark-analysis` for concrete
-recorder commands. For native MAC analysis, select the installed IEEE 802.11 representation and
-keep observation points in separate files. Preserve computed-mode overrides with the reproduction
-because they can affect packet-processing behavior.
+Apply the `PcapRecorder` representation and computed checksum/FCS guidance in `doc/src/users-guide/ch-collecting-results.rst`, and use `inet-pcap-tshark-analysis` for concrete recorder commands. For native MAC analysis, select the installed IEEE 802.11 representation and keep observation points in separate files. Preserve computed-mode overrides with the reproduction because they can affect packet-processing behavior.
 
 Confirm whether the capture contains native 802.11, Ethernet-converted frames, radiotap-like metadata, bad frames, and transmit or receive observations. A MAC capture usually cannot prove:
 

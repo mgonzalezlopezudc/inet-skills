@@ -1,14 +1,10 @@
 # Example review — Block Ack agreement lifetime change
 
-This hypothetical example follows the active project review route.
-It omits the canonical architecture and WLAN checklist output.
-Its findings concern ownership and the stated signal contract. The example does not establish that agreement preservation complies with IEEE 802.11.
+This hypothetical example follows the active project review route. It omits the canonical architecture and WLAN checklist output. Its findings concern ownership and the stated signal contract. The example does not establish that agreement preservation complies with IEEE 802.11.
 
 ## Reviewed change (hypothetical)
 
-The hypothetical change preserves received Block Ack agreement state across reassociation.
-Its intended result is reuse when a station returns to the same AP, without new agreement negotiation.
-The component that owns this state is `RecipientBlockAckAgreementHandler`.
+The hypothetical change preserves received Block Ack agreement state across reassociation. Its intended result is reuse when a station returns to the same AP, without new agreement negotiation. The component that owns this state is `RecipientBlockAckAgreementHandler`.
 
 ```diff
 --- a/src/inet/linklayer/ieee80211/mac/blockack/RecipientBlockAckAgreementHandler.cc
@@ -47,9 +43,7 @@ The component that owns this state is `RecipientBlockAckAgreementHandler`.
  }
 ```
 
-The header adds `preservedAgreements` (a `std::map`).
-In this hypothetical subsystem, simulation signals report membership changes in the active `blockAckAgreements` map.
-The existing signal declaration and subscribers define that meaning for added/deleted events.
+The header adds `preservedAgreements` (a `std::map`). In this hypothetical subsystem, simulation signals report membership changes in the active `blockAckAgreements` map. The existing signal declaration and subscribers define that meaning for added/deleted events.
 
 ## Layer selection
 
@@ -66,10 +60,7 @@ The existing signal declaration and subscribers define that meaning for added/de
 
 `preservedAgreements` owns the raw agreement pointers placed into it, but `processReceivedDelba` erases a preserved entry directly at line 115 without disposing of the object.
 
-**Invariant:** every owned object must be reachable by exactly one cleanup path (general C++ ownership).
-**Trigger:** establish an agreement, disassociate so it moves to `preservedAgreements`, then receive a delayed DELBA for that peer/TID before reassociation.
-**Mechanism:** `std::map::erase` does not delete the pointed-to object; after the erase no owner can reach the allocation.
-**Consequence:** one agreement allocation leaks per such delayed DELBA even though the map's key count may remain bounded.
+**Invariant:** every owned object must be reachable by exactly one cleanup path (general C++ ownership). **Trigger:** establish an agreement, disassociate so it moves to `preservedAgreements`, then receive a delayed DELBA for that peer/TID before reassociation. **Mechanism:** `std::map::erase` does not delete the pointed-to object; after the erase no owner can reach the allocation. **Consequence:** one agreement allocation leaks per such delayed DELBA even though the map's key count may remain bounded.
 
 Correct this by representing map ownership with `std::unique_ptr`, or by explicitly deleting before erase and cleaning up remaining entries at destruction and any applicable lifecycle teardown. Separately decide whether preservation needs expiry based on the supported roaming model; retention alone is not a leak while it remains owned and bounded. Add a module test that delivers DELBA after disassociation, destroys the module, and asserts the agreement live-object count returns to zero.
 
@@ -79,10 +70,7 @@ Correct this by representing map ownership with `std::unique_ptr`, or by explici
 
 `RecipientBlockAckAgreementHandler.cc:140` removes agreements from the active map without emitting `blockAckAgreementDeletedSignal`. Any subscriber tracking the active-agreement count (statistics, visualizers, or the MAC state machine) will observe an addition without a matching deletion, producing a monotonically growing count that never reflects reality.
 
-**Invariant:** paired semantic signals must be emitted exactly once per lifecycle event, in order: added before deleted (OMNeT++ signals, WLAN observability guidance).
-**Trigger:** any disassociation while a Block Ack agreement exists.
-**Mechanism:** `handleDisassociation` erases from `blockAckAgreements` without emitting the deletion signal; the agreement is still alive (moved, not deleted), but it is no longer "active" from any subscriber's perspective.
-**Consequence:** observer state drift; `@statistic` recording incorrect agreement count.
+**Invariant:** paired semantic signals must be emitted exactly once per lifecycle event, in order: added before deleted (OMNeT++ signals, WLAN observability guidance). **Trigger:** any disassociation while a Block Ack agreement exists. **Mechanism:** `handleDisassociation` erases from `blockAckAgreements` without emitting the deletion signal; the agreement is still alive (moved, not deleted), but it is no longer "active" from any subscriber's perspective. **Consequence:** observer state drift; `@statistic` recording incorrect agreement count.
 
 Emit `blockAckAgreementDeletedSignal` for each agreement moved out of the active map. When a preserved agreement is later restored, emit `blockAckAgreementAddedSignal` again. Add a test that subscribes to both signals and verifies the count reaches zero after disassociation.
 
@@ -98,8 +86,7 @@ For example, this hypothetical trace starts with sequence numbers 0–10, then s
 
 - Files: `RecipientBlockAckAgreementHandler.cc`, `.h` (diff only).
 - Pre-existing code inspected: `processReceivedAddbaRequest`, `processReceivedDelba`, destruction and lifecycle handlers, signal declarations.
-- Validation: read-only inspection. Runtime verification was not run, so the focused reproductions
-  named above are `not verified`.
+- Validation: read-only inspection. Runtime verification was not run, so the focused reproductions named above are `not verified`.
 
 ## Residual risks
 
@@ -108,5 +95,4 @@ For example, this hypothetical trace starts with sequence numbers 0–10, then s
 
 ## Canonical checklist output
 
-Omitted from this mechanics example. In an actual review, any checklist `FLAG` for a mechanism
-already proved above would reference the corresponding correctness finding rather than repeat it.
+Omitted from this mechanics example. In an actual review, any checklist `FLAG` for a mechanism already proved above would reference the corresponding correctness finding rather than repeat it.

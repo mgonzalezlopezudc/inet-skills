@@ -5,5 +5,4 @@ description: Look up IEEE 802.11 standards through the shared standards skill. T
 
 # IEEE 802.11 standards lookup
 
-Use [ieee-standards](../ieee-standards/SKILL.md) for corpus discovery, retrieval, PDF fallback,
-and citations. Select the IEEE 802.11 document identities in its family reference.
+Use [ieee-standards](../ieee-standards/SKILL.md) for corpus discovery, retrieval, PDF fallback, and citations. Select the IEEE 802.11 document identities in its family reference.

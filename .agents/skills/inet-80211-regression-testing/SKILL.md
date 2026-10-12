@@ -5,15 +5,9 @@ description: Add IEEE 802.11 invariants, standards requirements, HE/EHT feature 
 
 # IEEE 802.11 regression testing
 
-First use `inet-regression-testing` for the behavior claim, invariant, category, minimal deterministic
-reproduction, production-path evidence, and bounded campaign decision. This specialization adds only
-the obligations that make that generic design valid for Wi-Fi.
+First use `inet-regression-testing` for the behavior claim, invariant, category, minimal deterministic reproduction, production-path evidence, and bounded campaign decision. This specialization adds only the obligations that make that generic design valid for Wi-Fi.
 
-Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
-active checkout's current WLAN guidance. For a normative claim, use `ieee80211-standards` to identify
-the applicable standard revision, clause, role, and negotiated conditions.
-Define the expected exchange from that evidence.
-Distinguish normative behavior from an intentional documented model limitation.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active checkout's current WLAN guidance. For a normative claim, use `ieee80211-standards` to identify the applicable standard revision, clause, role, and negotiated conditions. Define the expected exchange from that evidence. Distinguish normative behavior from an intentional documented model limitation.
 
 ## WLAN invariant selection
 
@@ -27,8 +21,7 @@ Choose the smallest protocol-visible invariant that establishes the claim:
 - AP forwarding address roles and duplicate-suppression identity;
 - the negotiated HT/VHT/HE/EHT capability and operation elements that enable the mechanism.
 
-For HE/EHT behavior, prove the configured request and the active feature gate selected by the effective NED/INI configuration.
-Use the discovered project guidance and source evidence to establish these conditions:
+For HE/EHT behavior, prove the configured request and the active feature gate selected by the effective NED/INI configuration. Use the discovered project guidance and source evidence to establish these conditions:
 
 - The mode follows the applicable standard.
 - Advertisement or negotiation occurs where required.
@@ -38,11 +31,7 @@ A helper test of a capability predicate does not establish that the frame path u
 
 ## Frame-exchange evidence
 
-Prefer a module/protocol assertion when it directly observes the state transition.
-Use PCAP evidence when transmitted frame content or exchange order remains unverified by the selected assertions.
-Add targeted logs or source-level evidence when the causal decision remains unclear.
-A capture can omit failed or corrupted receptions; use another observation when the claim needs those events.
-For a capture, record its point, simulation time window, configuration, run, and seed.
+Prefer a module/protocol assertion when it directly observes the state transition. Use PCAP evidence when transmitted frame content or exchange order remains unverified by the selected assertions. Add targeted logs or source-level evidence when the causal decision remains unclear. A capture can omit failed or corrupted receptions; use another observation when the claim needs those events. For a capture, record its point, simulation time window, configuration, run, and seed.
 
 In a hypothetical test, an assertion inspects the frame emitted by the production MAC and checks its receiver address. That assertion can establish the address claim without a second PCAP check. A claim about delivery at the peer needs evidence at that later boundary.
 

@@ -1,8 +1,6 @@
 # MAC, retry, aggregation, and rate control
 
-Use the shared project-guidance discovery procedure to find the active exchange, sequence, QoS,
-ownership, and PHY-boundary guidance. This reference adds per-attempt reconstruction and failure
-diagnostics.
+Use the shared project-guidance discovery procedure to find the active exchange, sequence, QoS, ownership, and PHY-boundary guidance. This reference adds per-attempt reconstruction and failure diagnostics.
 
 ## Reconstruct one transmission attempt
 

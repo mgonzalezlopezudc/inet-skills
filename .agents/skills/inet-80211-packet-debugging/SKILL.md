@@ -5,9 +5,7 @@ description: Debug IEEE 802.11 PHY and MAC frame exchanges in OMNeT++/INET from 
 
 # Debug IEEE 802.11 frame exchanges
 
-Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to
-discover the active checkout's current WLAN boundaries, owners, and verification obligations. This
-skill adds the evidence path for locating a runtime divergence.
+Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active checkout's current WLAN boundaries, owners, and verification obligations. This skill adds the evidence path for locating a runtime divergence.
 
 Find the first divergent transition:
 
@@ -29,8 +27,7 @@ Use the owning skills for simulation execution, NED/INI resolution, Cmdenv logs,
 6. Inspect checked-out source for the exact policy/state-machine decision.
 7. Use LLDB only after you identify a suspicious module, event, packet, or source path.
 
-Use `ieee80211-standards` for normative questions and checked-out source plus observed runs for
-implementation questions. Do not assume a standard feature is implemented or enabled.
+Use `ieee80211-standards` for normative questions and checked-out source plus observed runs for implementation questions. Do not assume a standard feature is implemented or enabled.
 
 ## References
 
@@ -52,5 +49,4 @@ Keep these evidence limits explicit:
 - Address 1 does not always identify the final destination.
 - Nominal data rate alone does not establish airtime.
 
-Separate direct evidence from inference.
-Identify the source of each observation.
+Separate direct evidence from inference. Identify the source of each observation.

@@ -5,9 +5,7 @@ description: Analyze INET packet exchanges with PcapRecorder, Cmdenv, TShark, an
 
 # Analyze INET packet captures
 
-Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the
-active checkout's wire, observation, architecture, and evidence guidance. This skill adds recorder
-placement, TShark inspection, and multi-point correlation mechanics.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active checkout's wire, observation, architecture, and evidence guidance. This skill adds recorder placement, TShark inspection, and multi-point correlation mechanics.
 
 ## Workflow
 
@@ -24,19 +22,11 @@ placement, TShark inspection, and multi-point correlation mechanics.
 6. Record the observation points required by the canonical diagnosis guide in separate files.
 7. Correlate `frame.time_epoch` with Cmdenv simulation time through the identifiers selected by that guide.
 
-A recorder needs an observation point and a protocol representation.
-The node-relative pattern `moduleNamePatterns` selects where it observes packets.
-The parameter `dumpProtocols` selects the recorded representation.
-A successful simulation does not prove that the recorder captured packets.
+A recorder needs an observation point and a protocol representation. The node-relative pattern `moduleNamePatterns` selects where it observes packets. The parameter `dumpProtocols` selects the recorded representation. A successful simulation does not prove that the recorder captured packets.
 
-In a hypothetical example, a node contains `wlan[0]` and a recorder.
-The pattern `wlan[0]` selects that interface relative to the node.
-A change to `dumpProtocols` changes the representation, but the recorder still observes the selected interface.
+In a hypothetical example, a node contains `wlan[0]` and a recorder. The pattern `wlan[0]` selects that interface relative to the node. A change to `dumpProtocols` changes the representation, but the recorder still observes the selected interface.
 
-Computed checksum/FCS modes may change packet processing.
-Preserve those overrides.
-Compare with the baseline when that distinction matters.
-Preserve original captures before a filter or conversion changes them.
+Computed checksum/FCS modes may change packet processing. Preserve those overrides. Compare with the baseline when that distinction matters. Preserve original captures before a filter or conversion changes them.
 
 Read as needed:
 
@@ -44,5 +34,4 @@ Read as needed:
 - [tshark-inspection.md](references/tshark-inspection.md): fields, timelines, TCP analysis, and correlation.
 - [comparison-diagnostics-reporting.md](references/comparison-diagnostics-reporting.md): multi-point comparison and empty/undecoded captures.
 
-Interpret observation points and classify conclusions under the canonical diagnosis guide; report
-TShark dissector heuristics explicitly.
+Interpret observation points and classify conclusions under the canonical diagnosis guide; report TShark dissector heuristics explicitly.

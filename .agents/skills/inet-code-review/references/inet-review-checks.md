@@ -1,10 +1,6 @@
 # INET review checks
 
-Select project context by the changed INET contract using the shared discovery procedure. For packet,
-chunk, tag, or serialization contracts, follow the active packet guidance. For protocol interaction,
-lifecycle, queue, or configuration contracts, follow only the applicable current routes. Add another
-canonical section only when the changed contract crosses into it. This reference adds concrete INET correctness traps not stated
-there.
+Select project context by the changed INET contract using the shared discovery procedure. For packet, chunk, tag, or serialization contracts, follow the active packet guidance. For protocol interaction, lifecycle, queue, or configuration contracts, follow only the applicable current routes. Add another canonical section only when the changed contract crosses into it. This reference adds concrete INET correctness traps not stated there.
 
 ## Packets, chunks, and tags
 
@@ -21,21 +17,16 @@ there.
 - **[RP-INET-COLLECTION-INTERFACES]** When an INET collection, packet-provider, extractor, queue, buffer, gate, or scheduler interface changes, inspect every implementation and adapter. An older override that made a closed provider appear empty may not cover a new predicate operation.
 - **[RP-INET-SHARED-BUFFER-REMOVAL]** With shared buffers, scope bulk removal to the owning queue and verify callbacks cannot delete excluded or currently processed packets.
 - **[RP-INET-ORDERING-BARRIER]** Define the ordering barrier for every selector, aggregator, or scheduler and verify both selected output and residual queue order. Example: whether an eligible packet may bypass a temporarily blocked predecessor depends on the flow's ordering contract, not merely on forward-scan convenience.
-- **[RP-INET-PROVIDER-OUTCOMES]** Apply the active provider-contract guidance.
-  Identify which distinctions the contract declares among these conditions:
+- **[RP-INET-PROVIDER-OUTCOMES]** Apply the active provider-contract guidance. Identify which distinctions the contract declares among these conditions:
   - The provider exists but contains no packets.
   - An optional capability is absent.
   - The provider or its connections are invalid.
   - The requested position is outside the valid range.
 
-  Check each operation against its declared outcomes, including count, peek, remove, clear, and predicate operations.
-  Do not collapse a required distinction.
-  Do not add a distinction that no supported caller needs.
+  Check each operation against its declared outcomes, including count, peek, remove, clear, and predicate operations. Do not collapse a required distinction. Do not add a distinction that no supported caller needs.
 
   In a hypothetical lookup contract, absent and unsupported entries both return `nullptr`. Callers need no distinction, so a new result enum adds no required behavior. A different contract can require an absent provider to cause a configuration error; preserve that requirement where it applies.
-- **[RP-INET-UNSUPPORTED-VARIANTS]** Reject unsupported packet or primitive variants at a consistent boundary. Do not require a
-  syntactic one-to-one `registerProtocol`/`registerService` pair when the effective dispatcher
-  contract uses a different valid route.
+- **[RP-INET-UNSUPPORTED-VARIANTS]** Reject unsupported packet or primitive variants at a consistent boundary. Do not require a syntactic one-to-one `registerProtocol`/`registerService` pair when the effective dispatcher contract uses a different valid route.
 - **[RP-INET-INHERITED-PRIMITIVE-DISPATCH]** When protocol message classes inherit from one another, make sure broader dispatch does not consume a specialized primitive and produce the wrong confirmation or indication.
 - **[RP-INET-OPERATION-IDENTITY]** Derive duplicate or stale-operation detection from the protocol's identity rules and reachable requests. Require a generation only when those rules or a supported stale-completion path need it.
 
@@ -50,8 +41,7 @@ there.
 
 ## Serialization and wire contracts
 
-- **[RP-INET-MSG-CONSUMERS]** Trace changed `.msg` fields through generated types and existing consumers to find incorrect
-  behavior; leave missing required introspection artifacts to the canonical architecture checklist.
+- **[RP-INET-MSG-CONSUMERS]** Trace changed `.msg` fields through generated types and existing consumers to find incorrect behavior; leave missing required introspection artifacts to the canonical architecture checklist.
 - **[RP-INET-SERIALIZATION-VALIDATION]** Validate model/configuration invariants before serialization while keeping serializer field-range and body-bound checks strict.
 - **[RP-INET-WIRE-LAYOUT]** For decode/modify/encode paths, check declared body/chunk length against bytes written and consumed, field order and bit width, reserved bits, protocol-defined byte order, field counts and ranges, duplicate elements, trailing bytes, and byte-exact round trips where required. Writer/reader symmetry is insufficient when both repeat the same layout error.
 - **[RP-INET-UNIT-CONVERSION]** Trace units and conversion ownership across NED, C++, model fields, serializers, and wire encodings. Test zero, destination resolution, values not exactly representable, and overflow; apply the byte order and unit defined by the specific protocol rather than a universal network-order rule.
@@ -59,8 +49,7 @@ there.
 
 ## Focused verification
 
-Choose the test category under the active project guidance, then use the smallest INET check that reaches the
-production integration:
+Choose the test category under the active project guidance, then use the smallest INET check that reaches the production integration:
 
 | Mechanism | High-value check |
 | --- | --- |
@@ -77,8 +66,4 @@ Use the owning test or simulation skill for the selected check.
 
 ## Generated and external consumers
 
-**[RP-CPP-COMPATIBILITY-REACHABILITY]** Changes to signatures or enums can reach generated callers, reflection, registration, serializers,
-printers, NED, and external result-analysis tools. Check these consumers when assessing compatibility
-or apparently dead code. For externally visible enum values, apply the active release guidance;
-ordinary diagnostic logs establish numeric stability
-only when they are a defined published or tooling interface.
+**[RP-CPP-COMPATIBILITY-REACHABILITY]** Changes to signatures or enums can reach generated callers, reflection, registration, serializers, printers, NED, and external result-analysis tools. Check these consumers when assessing compatibility or apparently dead code. For externally visible enum values, apply the active release guidance; ordinary diagnostic logs establish numeric stability only when they are a defined published or tooling interface.

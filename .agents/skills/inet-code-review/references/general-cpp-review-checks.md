@@ -1,8 +1,6 @@
 # C++ contract checks
 
-Use these compact prompts for implementation and review when the changed contract involves the
-mechanism in the selected section. They support the active project's architecture, quality, and
-testing guidance; they are not additional project requirements or findings by themselves.
+Use these compact prompts for implementation and review when the changed contract involves the mechanism in the selected section. They support the active project's architecture, quality, and testing guidance; they are not additional project requirements or findings by themselves.
 
 ## API and dispatch
 
@@ -39,14 +37,9 @@ testing guidance; they are not additional project requirements or findings by th
 
 ## Focused verification
 
-For verification, choose the reachable case that distinguishes the failure, not every prompt by default.
-**[RP-CPP-PRODUCTION-PATH]** Check the real caller when the claim includes integration; a helper
-test alone cannot prove dispatch or input identity. Use the domain references for OMNeT++ ownership, INET generated consumers, and
-protocol-specific ordering rather than inferring those contracts from C++ syntax.
+For verification, choose the reachable case that distinguishes the failure, not every prompt by default. **[RP-CPP-PRODUCTION-PATH]** Check the real caller when the claim includes integration; a helper test alone cannot prove dispatch or input identity. Use the domain references for OMNeT++ ownership, INET generated consumers, and protocol-specific ordering rather than inferring those contracts from C++ syntax.
 
 Use these hypothetical probes only when actual callees or a supported extension contract permit the described mutation:
 
-- A completion callback installs a replacement request. Cleanup after the callback must not clear
-  that new request; detach the completed state before notification where the contract permits it.
-- Removing the current map entry invalidates its iterator. Also check whether a synchronous
-  callback can remove the entry or its sibling indirectly before the loop advances.
+- A completion callback installs a replacement request. Cleanup after the callback must not clear that new request; detach the completed state before notification where the contract permits it.
+- Removing the current map entry invalidates its iterator. Also check whether a synchronous callback can remove the entry or its sibling indirectly before the loop advances.
