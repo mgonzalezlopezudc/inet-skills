@@ -38,6 +38,8 @@ Missing guidance does not grant permission. Stop an action if its required guida
 
 ## Use skill procedures with project policy
 
+For human-facing output, follow the current documentation route for audience and explanatory style. This includes PR descriptions, commit messages, plans, reviews, and reports. Read the artifact's specific procedure for its required structure and evidence. Treat skill templates as aids to complete explanations, subject to that procedure.
+
 Skills supply tool procedures, discovery methods, and safeguards for their specific workflows. Project documents supply project policy. Adapt command examples to the discovered mode, scope, runner options, and acceptance criteria. An example does not select debug mode or authorize a baseline update. Use the current project format for a required report. Retain the tool facts needed to reproduce the result. Do not treat a skill template as an additional project report requirement.
 
 Preserve the user's scope and existing authorization when you apply an approval procedure. Request any required approval for a concrete result, after the work permitted before approval is complete. Do not request the same approval again when it already covers the action.

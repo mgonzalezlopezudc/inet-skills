@@ -59,8 +59,8 @@ Use this template for a local change with a clear owner, understood callers, and
 ```text
 ### Lightweight Pre-Write Contract
 - Target: <file:line>
-- Bug / Invariant: <one-line bug description and preserved invariant>
-- Change: <exact minimal change to apply>
+- Bug / Invariant: <explain the trigger, cause or uncertainty, consequence, and preserved invariant in complete sentences>
+- Change: <explain the proposed action and how it produces the intended result>
 - Affected Siblings: <confirmation that sibling paths are clean or unshared>
 - Direct Verification: <smallest test or build check command>
 ```
