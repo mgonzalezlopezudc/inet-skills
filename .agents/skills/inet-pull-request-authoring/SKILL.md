@@ -40,6 +40,8 @@ Before completion, read each message and description without the diff or convers
 
 For a later proposed commit, label the assumed effects of earlier proposed commits. Do not present those assumptions as verified current behavior. A reader must not need the diff to tell which version performs each action. Use the current project guidance's worked examples when the distinction between a message, description, and plan remains unclear.
 
+Check paragraph layout in the actual message text before a commit. Apply the discovered rules for line breaks and blank lines. Check the stored message after a commit. Do not let terminal display width determine paragraph layout.
+
 ## Audit existing artifacts
 
 For each defect, cite the violated identifier from the active series guidance. Identify the commit, message, hunk, or missing description section that establishes the defect. Give a concrete correction. Distinguish a violation from missing evidence and from an open question.
