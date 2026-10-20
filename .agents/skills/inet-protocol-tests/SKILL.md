@@ -7,6 +7,8 @@ description: Run INET protocol suites under tests/protocol with inet_run_protoco
 
 Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to resolve the active checkout's test scope, build freshness, evidence, and baseline-change obligations. This skill provides the protocol runner mechanics. Also follow the project map's standard-derived test guide for failure classification and eligibility for expected-failure declarations. Use its run-record requirements when updating model evidence; do not substitute a shorter runner summary.
 
+For tests assigned by an implementation plan, discover any required companion artifacts through the current series and test routes. Complete those artifacts when the task includes their creation. Use the checkout's content and evidence requirements. Check that their explanations agree with the test source and observed results.
+
 ## Check the active implementation
 
 Use `inet_run_protocol_tests` as the integrated entry point. Check these local sources when a branch differs or a command behaves unexpectedly:

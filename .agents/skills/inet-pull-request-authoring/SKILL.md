@@ -30,6 +30,8 @@ For a proposed series, provide each commit's:
 
 The proposed fields are an output schema, not a second policy. Derive their contents and ordering from the applicable current guidance. Cite its identifiers in an audit when that guidance uses them.
 
+For an implementation plan, assess commit boundaries and artifact assignments under the discovered series and test requirements. For an implemented series, compare those assignments with the actual commits. Take required artifact content and any exclusions from the active checkout's rules.
+
 Before completion, read each message and description without the diff or conversation. Check whether its explanation connects the problem, cause, change, and result under the discovered prose guidance. Keep required evidence and review fields in their prescribed places. Apply the current message guidance to the subject and the distinction between behavior before and after the change. Select the comparison from the state of the work:
 
 | State of the work | Required comparison |

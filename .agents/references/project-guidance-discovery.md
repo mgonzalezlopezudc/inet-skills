@@ -19,7 +19,7 @@ Use the current map's links, not this table, to choose document paths. The table
 
 | Task | Guidance to find |
 | --- | --- |
-| Prepare or review an implementation plan | Plan procedure, status conditions, technical design, minimal design, simulation assumptions, lifecycle scope, verification, approval scope, and revision rules |
+| Prepare or review an implementation plan | Plan procedure, status conditions, commit series, protocol test tasks, reviewer documents, technical design, minimal design, simulation assumptions, lifecycle scope, verification, approval scope, and revision rules |
 | Implement a change or add a protocol | Contribution procedure, requirements, minimal design, ownership, reuse, protection, and applicable domain rules |
 | Review code or a pull request | Correctness procedure, minimal design, series rules, classification, exception ledgers, checklists, and report format |
 | Audit or seal a subsystem | Audit procedure, protection scope, exception disposition, and permission requirements |

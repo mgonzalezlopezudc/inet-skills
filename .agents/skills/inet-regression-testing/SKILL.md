@@ -20,9 +20,13 @@ Complete this chain in order:
 
 Map the changed or failed path and symbol to the selected case. Invoke that case with the explicit filter required by the active project guidance. A zero-case selection is `NOT_RUN`, never a pass.
 
+For an implementation plan, derive test designs and artifact assignments from the applicable series and test rules. Discover those rules through the project map. Use the checkout's required content and permitted formats. A plan-only task designs the artifacts; it does not implement them.
+
 ## Helper and production-path evidence
 
-A helper-level unit test establishes the helper's computation or boundary contract. It does not establish that a production module calls the helper with the intended identity or units. It also does not establish that the result affects observable behavior. When the claim includes integration, retain useful helper coverage. Use a module or protocol test through the production gate, API, or configuration. Extend or add a test only when existing coverage does not establish the claim. Observe the outcome through that path.
+A helper-level unit test establishes the helper's computation or boundary contract. It does not establish that a production module calls the helper with the intended identity or units. It also does not establish that the result affects observable behavior.
+
+When the claim includes integration, retain useful helper coverage. Use a module or protocol test through the production gate, API, or configuration. Add or extend a test when existing coverage does not establish the claim. Also follow any explicit project requirement for a new or extended test. Observe the outcome through that path.
 
 Do not copy production dispatch logic into a fixture as a substitute for integration evidence. In a hypothetical example, a unit test supplies a duration of two seconds to a timer helper. The helper passes, but the production caller supplies an absolute deadline instead of a duration. A test through that caller must detect the incorrect expiry time.
 
@@ -60,7 +64,8 @@ The same seed must reproduce the same trajectory. A different outcome on rerun i
 ## Execution routing
 
 - Use `inet-unit-tests` for filtered unit and module runners.
-- Use `inet-simulation-run` for protocol, network, and other simulation configurations.
+- Use `inet-protocol-tests` for protocol suites under `tests/protocol`.
+- Use `inet-simulation-run` for network and other simulation configurations.
 - Use `inet-fingerprint-regression` only as the wide net for unintended trajectory changes; it is never the correctness proof for new behavior.
 - Use `omnetpp-result-analysis` and `omnetpp-result-plotting` for recorded-value, statistical, and comparative result evidence.
 - Use the focused configuration, log, event-log, PCAP, packet/tag, or LLDB skill only when the direct evidence cannot yet explain the first divergence.

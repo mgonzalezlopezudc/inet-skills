@@ -11,6 +11,8 @@ Use [project-guidance-discovery.md](../../references/project-guidance-discovery.
 
 For a requested implementation plan, use `inet-project-guidance` to follow the current plan route before implementation. The working contract below does not replace a plan or grant approval.
 
+When implementation follows a plan, complete its assigned artifacts under the applicable series and test requirements. Discover those requirements through the project map. Use the checkout's rules to check artifact content and any change to commit boundaries.
+
 If the project entry point provides a changed-contract inventory, use it as a preventive self-audit aid. Do not adopt reviewer verdicts, finding severity, or report formats.
 
 For a wide behavior-preserving transformation, use [mechanical-migrations.md](references/mechanical-migrations.md).
@@ -102,6 +104,7 @@ When implementation reveals a related target or behavior outside the validated c
 Once the diff is stable, complete this checklist against the implementation contract and every selected domain reference:
 
 - [ ] Stable diff matches the validated behavior claim; every deviation and required scope expansion is recorded.
+- [ ] Assigned artifacts and evidence satisfy the applicable plan and project requirements.
 - [ ] Effective owner/control path, affected consumers, siblings, and terminal paths were retraced in the resulting tree.
 - [ ] Applicable project rules and relevant preventive checks were assessed. Record exclusions only where their absence could mislead the reader.
 - [ ] Focused commands reach the production behavior and have recorded exit status and artifacts; gaps and approval needs are explicit.

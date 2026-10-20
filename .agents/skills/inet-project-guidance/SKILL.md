@@ -15,6 +15,8 @@ Inspect the actual caller, responsible component, consumers, and effective confi
 
 Use the applicable architecture, standards, configuration, and regression skills when the plan needs their technical methods. A request for a plan does not authorize implementation. Record existing approval by its actual source and scope.
 
+Also discover the series and test requirements that apply to plans. Determine their scope and status from the active checkout. Read its content requirements separately from any approval conditions. Check the plan and its assigned artifacts against those requirements. Use the checkout's permitted formats. Report each unmet requirement with its source.
+
 ## Edit contributor documents
 
 Read the current map's route for documentation. Use it to identify the document that owns the fact and the audience that needs it. Read the applicable status, protection, format, reference, and validation requirements before an edit. For release notes or compatibility guidance, also follow the current release route.

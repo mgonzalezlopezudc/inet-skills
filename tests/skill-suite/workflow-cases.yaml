@@ -13,6 +13,23 @@ cases:
       - verified-facts-separated-from-proposals
       - planned-checks-separated-from-executed-evidence
 
+  - id: protocol-plan-commit-tests
+    area: planning
+    prompt: Prepare an implementation plan for two protocol repairs and a prerequisite refactor. Current series and test rules require protocol tests and reviewer documents. The separate plan approval process remains a draft. Do not start implementation.
+    expected_skills: [inet-project-guidance, inet-pull-request-authoring, inet-regression-testing]
+    required_gates:
+      - current-content-rules-independent-of-draft-approval
+      - individual-future-commits-and-dependencies
+      - current-protocol-gap-and-evidence-per-applicable-commit
+      - existing-tests-or-explicit-coverage-gap
+      - explicit-protocol-test-tasks-with-paths-and-scenarios
+      - expected-results-before-and-after-code-correction
+      - explicit-reviewer-markdown-task-per-applicable-commit
+      - reviewer-document-path-and-necessary-diagrams
+      - explained-protocol-exclusions-for-refactor
+      - proposed-results-separated-from-executed-evidence
+      - no-implementation-during-plan-preparation
+
   - id: changed-project-guidance
     area: authoring
     prompt: Continue verification after local project edits move the gate procedure and change its required mode. The old procedure names a replacement.

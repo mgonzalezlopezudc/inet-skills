@@ -394,6 +394,7 @@ skills:
       - inet-ned-ini-analysis
       - inet-packet-tag-debugging
       - inet-pcap-tshark-analysis
+      - inet-protocol-tests
       - omnetpp-eventlog-analysis
       - omnetpp-result-analysis
       - omnetpp-result-plotting
