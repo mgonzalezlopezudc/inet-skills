@@ -13,6 +13,30 @@ except ImportError:
 
 
 class StandardsProcessorTest(unittest.TestCase):
+    def test_2016_discovery_preserves_separate_base_editions(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for name in (
+                "80211-2016.pdf",
+                "80211ax-2024.pdf",
+                "80211be-2024.pdf",
+                "80211-2020.pdf",
+                "supporting.pdf",
+            ):
+                (root / name).touch()
+            self.assertEqual(
+                {"80211-2016.pdf", "80211ax-2024.pdf", "80211be-2024.pdf"},
+                {path.name for path in processor.discover_pdfs(root)},
+            )
+        profile = processor.profile_for_pdf(Path("80211-2016.pdf"))
+        self.assertEqual("ieee80211-2016", profile.document_id)
+        self.assertEqual("IEEE Std 802.11-2016", profile.title)
+        self.assertEqual("2016", profile.revision)
+        self.assertEqual(model.DocumentKind.BASE_STANDARD, profile.kind)
+        self.assertEqual((), profile.amends)
+        amendment = processor.profile_for_pdf(Path("80211be-2024.pdf"))
+        self.assertEqual(("ieee80211-2024",), amendment.amends)
+
     def test_802154_discovery_keeps_supporting_pdfs_out(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -51,6 +75,42 @@ class StandardsProcessorTest(unittest.TestCase):
                 Path("80211ax-2024.pdf"), (7, 8), 10
             )
         self.assertEqual([(7, "first"), (8, "second")], pages)
+
+    def test_raised_footnote_is_separate_from_the_clause_number(self):
+        text = "See 10.4.31\n\n31\nA synthetic footnote.\n"
+        xml = (
+            '<html xmlns="http://www.w3.org/1999/xhtml"><word '
+            'xMin="90" xMax="110" yMin="105" yMax="117">10.4.</word>'
+            '<word xMin="110" xMax="118" yMin="103" yMax="112">31</word></html>'
+        )
+        completed = subprocess.CompletedProcess(args=[], returncode=0, stdout=xml.encode(), stderr=b"")
+        with mock.patch.object(processor, "run_command", return_value=completed):
+            actual = processor.separate_reference_footnotes(Path("example.pdf"), 7, text)
+        self.assertEqual("See 10.4. 31\n\n31\nA synthetic footnote.\n", actual)
+
+    def test_baseline_digits_do_not_change_a_clause_number(self):
+        text = "See 10.4.31\n\n31 A synthetic footnote.\n"
+        xml = (
+            '<html xmlns="http://www.w3.org/1999/xhtml"><word '
+            'xMin="90" xMax="110" yMin="105" yMax="117">10.4.</word>'
+            '<word xMin="110" xMax="118" yMin="105" yMax="117">31</word></html>'
+        )
+        completed = subprocess.CompletedProcess(args=[], returncode=0, stdout=xml.encode(), stderr=b"")
+        with mock.patch.object(processor, "run_command", return_value=completed):
+            actual = processor.separate_reference_footnotes(Path("example.pdf"), 7, text)
+        self.assertEqual(text, actual)
+
+    def test_repeated_joined_text_requires_unambiguous_position_evidence(self):
+        text = "See 10.4.31 twice: 10.4.31\n\n31 A synthetic footnote.\n"
+        xml = (
+            '<html xmlns="http://www.w3.org/1999/xhtml"><word '
+            'xMin="90" xMax="110" yMin="105" yMax="117">10.4.</word>'
+            '<word xMin="110" xMax="118" yMin="103" yMax="112">31</word></html>'
+        )
+        completed = subprocess.CompletedProcess(args=[], returncode=0, stdout=xml.encode(), stderr=b"")
+        with mock.patch.object(processor, "run_command", return_value=completed):
+            actual = processor.separate_reference_footnotes(Path("example.pdf"), 7, text)
+        self.assertEqual(text, actual)
 
     def test_build_publishes_complete_structural_corpus(self):
         with tempfile.TemporaryDirectory() as directory:

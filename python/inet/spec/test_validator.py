@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import copy
+import json
+import os
 import unittest
 from pathlib import Path
 
@@ -161,6 +163,43 @@ class FeatureValidatorTest(unittest.TestCase):
         before = copy.deepcopy(self.feature)
         self.validate()
         self.assertEqual(before, self.feature)
+
+
+@unittest.skipUnless(os.environ.get("INET_STANDARDS_CORPUS"), "requires generated corpus")
+class Ieee802112016SourceTest(unittest.TestCase):
+    """Check source-record compatibility without a protocol behavior claim."""
+
+    def setUp(self):
+        self.root = Path(os.environ["INET_STANDARDS_CORPUS"])
+        self.feature = load_feature(FEATURE_PATH)
+        document = "ieee80211-2016"
+        node_id = f"{document}:clause:10.24.2"
+        path = self.root / "structure" / document / "nodes.jsonl"
+        nodes = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines()]
+        node = next(node for node in nodes if node["node_id"] == node_id)
+        span = node["source_spans"][0]
+        self.feature["sources"][0].update(
+            document=document,
+            revision="2016",
+            node_id=node_id,
+            locator=f"{document}@{span['start_offset']}:{span['end_offset']}",
+            reviewed_text_sha256=span["text_sha256"],
+        )
+
+    def test_2016_source_record_passes_external_validation(self):
+        result = validate_feature(
+            self.feature, corpus_root=self.root, inet_root=PROJECT_ROOT
+        )
+        self.assertTrue(result.valid, result.errors)
+        self.assertEqual([], result.warnings)
+
+    def test_2016_source_record_rejects_a_2024_revision(self):
+        self.feature["sources"][0]["revision"] = "2024"
+        result = validate_feature(
+            self.feature, corpus_root=self.root, inet_root=PROJECT_ROOT
+        )
+        self.assertFalse(result.valid)
+        self.assertIn("revision does not match", "\n".join(result.errors))
 
 
 if __name__ == "__main__":

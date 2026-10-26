@@ -53,8 +53,7 @@ EXPLICIT_FIGURE_RE = re.compile(
     re.IGNORECASE,
 )
 EXPLICIT_ANNEX_RE = re.compile(
-    r"\bAnnex[ \t]+(?P<label>[A-Z]{1,2}(?:\.\d+)*)",
-    re.IGNORECASE,
+    r"\b[Aa][Nn][Nn][Ee][Xx][ \t]+(?P<label>[A-Z]{1,2}(?:\.\d+)*)(?!\w|\.\d)",
 )
 CUE_REFERENCE_RE = re.compile(
     r"\b(?:see|defined in|described in|specified in|according to|"
@@ -64,18 +63,22 @@ CUE_REFERENCE_RE = re.compile(
     re.IGNORECASE,
 )
 CLAUSE_LABEL_RE = re.compile(CLAUSE_LABEL_PATTERN)
+STANDARD_DESIGNATION = (
+    r"(?:IEEE(?:[ \t]+Std)?[ \t]+\d+(?:\.\d+)*[a-zA-Z]*(?:[-\u2010\u2011]\s*\d{4})?"
+    r"|ISO(?:/IEC)?[ \t]+\d+(?:-\d+)*(?::\d{4})?"
+    r"|IEC[ \t]+\d+(?:-\d+)*(?::\d{4})?|(?:IETF[ \t]+)?RFC[ \t]+\d+)"
+)
 EXTERNAL_BEFORE_RE = re.compile(
-    r"(?:IEEE(?:\s+Std)?|ISO(?:/IEC)?|IEC|IETF|RFC)\b[^\n]{0,48}$",
+    rf"(?P<document>{STANDARD_DESIGNATION})[ \t]*[,:(]?[ \t]*$",
     re.IGNORECASE,
 )
 EXTERNAL_AFTER_RE = re.compile(
-    r"^\s+(?:of|in)\s+(?:IEEE(?:\s+Std)?|ISO(?:/IEC)?|IEC|IETF|RFC)\b",
+    rf"^[ \t]+(?:of|in)[ \t]+(?P<document>{STANDARD_DESIGNATION})",
     re.IGNORECASE,
 )
 MEASUREMENT_AFTER_RE = re.compile(
-    r"^\s*(?:GHz|MHz|kHz|Hz|THz|dB(?:m|i)?|Mb/s|Gb/s|kb/s|ms|"
-    r"[\u00b5\u03bc]s|ns|ps|TU|V|mV|A|mA|W|mW|m|cm|mm)\b",
-    re.IGNORECASE,
+    r"^[ \t]*(?:GHz|MHz|kHz|Hz|THz|dB(?:m|i)?|Mb/s|Gb/s|kb/s|ms|"
+    r"[\u00b5\u03bc]s|ns|ps|TU|V|mV|A|mA|W|mW|m|cm|mm)(?![-\w])",
 )
 DEFINITION_RE = re.compile(
     r"^(?P<leading>[ \t]*)(?P<term>[^\n:][^:]{0,239}?):[ \t]+"
@@ -259,12 +262,28 @@ def _definition_nodes(
     )
 
 
-def _unsafe_reference_reason(text: str, start: int, end: int) -> str | None:
+def _unsafe_reference_reason(
+    analysis: StructureAnalysis, start: int, end: int, kind: NodeKind, label: str
+) -> str | None:
+    text = analysis.text
     before = text[max(0, start - 80) : start]
     after = text[end : min(len(text), end + 80)]
-    if EXTERNAL_BEFORE_RE.search(before) or EXTERNAL_AFTER_RE.match(after):
-        return "reference is qualified by an external standards document"
-    if MEASUREMENT_AFTER_RE.match(after):
+    qualifier = EXTERNAL_BEFORE_RE.search(before) or EXTERNAL_AFTER_RE.match(after)
+    if qualifier:
+        designation = re.sub(r"\s+", " ", qualifier.group("document"))
+        ieee = re.fullmatch(
+            r"IEEE(?: Std)? (?P<number>\d+(?:\.\d+)*[a-zA-Z]*)(?:[-\u2010\u2011] ?(?P<year>\d{4}))?",
+            designation, re.IGNORECASE,
+        )
+        if not (
+            ieee
+            and (
+                "ieee" + ieee.group("number").replace(".", "").lower()
+                + "-" + (ieee.group("year") or analysis.document.revision)
+            ) in (analysis.document.document_id, *analysis.document.amends)
+        ):
+            return "reference is qualified by an external standards document"
+    if kind == NodeKind.CLAUSE and label.count(".") == 1 and MEASUREMENT_AFTER_RE.match(after):
         return "numeric token is followed by a measurement unit"
     return None
 
@@ -300,7 +319,7 @@ def _reference_candidates(
                         start=absolute_start,
                         end=absolute_end,
                         unsafe_reason=_unsafe_reference_reason(
-                            analysis.text, absolute_start, absolute_end
+                            analysis, absolute_start, absolute_end, target_kind, target_label
                         ),
                     )
                 )
@@ -319,7 +338,8 @@ def _reference_candidates(
                         start=absolute_start,
                         end=absolute_end,
                         unsafe_reason=_unsafe_reference_reason(
-                            analysis.text, absolute_start, absolute_end
+                            analysis, absolute_start, absolute_end, NodeKind.CLAUSE,
+                            normalize_node_label(label_match.group()),
                         ),
                     )
                 )

@@ -154,6 +154,73 @@ class StandardsStructureTest(unittest.TestCase):
             analysis.occurrences[0].node_id, analysis.occurrences[1].node_id
         )
 
+    def test_units_do_not_hide_hyphenated_protocol_terms(self):
+        analysis = structure.analyze_structure(
+            self.document(),
+            ((100, "9.7.1 A-MPDU format\n\n9.7.2 A-MSDU contents\n\n0.25 A current\n"),),
+        )
+        self.assertEqual({"9.7.1", "9.7.2"}, {node.label for node in analysis.nodes})
+
+    def test_calculations_and_case_references_do_not_compete_with_headings(self):
+        pages = (
+            (100, "1.5 Arithmetic\n\n14.10.3 Reply conditions\nBody.\n"),
+            (200, "See the reply procedure in\n14.10.3 Case D), with the flag set.\n"
+             "1.5 × SCALE\n1.5 \uf0b4 SCALE\n2.376 576 × 64 = 152.1\n"),
+        )
+        analysis = structure.analyze_structure(self.document(), pages)
+        self.assertEqual({"1.5", "14.10.3"}, {node.label for node in analysis.nodes})
+        self.assertFalse(any(d.code == "unresolved-heading-ambiguity" for d in analysis.diagnostics))
+
+    def test_wrapped_continuation_marker_preserves_one_clause(self):
+        pages = (
+            (100, "B.4.14 Controlled access\n(HCCA)\n\nFirst part.\n"),
+            (101, "B.4.14 Controlled access\n(HCCA) (continued)\n\nSecond part.\n"),
+        )
+        analysis = structure.analyze_structure(self.document(), pages)
+        self.assertEqual(1, len(analysis.nodes))
+        self.assertEqual("Controlled access (HCCA)", analysis.nodes[0].title)
+        self.assertEqual(2, len(analysis.nodes[0].source_spans))
+        self.assertEqual(model.OccurrenceClassification.CONTINUATION, analysis.occurrences[1].classification)
+
+    def test_midpage_top_level_clause_uses_paragraph_evidence(self):
+        page = "\n".join(["Previous clause text."] * 20)
+        page += "\n\n2. Normative references\n\nReference text.\n"
+        analysis = structure.analyze_structure(self.document(), ((100, page),))
+        self.assertEqual(["2"], [node.label for node in analysis.nodes])
+
+    def test_isolated_symbol_headings_do_not_hide_lowercase_references(self):
+        page = (
+            "20.3.1 Earlier rule\nText refers to\n20.3.2 for details.\n\n"
+            "20.3.2 hFilt definition\n\nFilter text.\n\n"
+            "20.3.3 π/2-BPSK modulation\n\nModulation text.\n"
+        )
+        analysis = structure.analyze_structure(self.document(), ((100, page),))
+        self.assertEqual({"20.3.1", "20.3.2", "20.3.3"}, {node.label for node in analysis.nodes})
+
+    def test_early_annex_reference_requires_an_annex_marker(self):
+        analysis = structure.analyze_structure(
+            self.document(),
+            ((100, "Table row\n       Annex C\nMore table text.\n"),
+             (200, "Annex C\n(normative)\n\nMIB\n")),
+        )
+        self.assertEqual(1, len(analysis.nodes))
+        self.assertEqual(200, analysis.nodes[0].source_spans[0].pdf_page_start)
+
+    def test_blank_line_before_annex_marker_preserves_the_annex(self):
+        text = "       Annex B\n\n       (normative)\n\n       PICS\n"
+        analysis = structure.analyze_structure(self.document(), ((100, text),))
+        self.assertEqual(["B"], [node.label for node in analysis.nodes])
+
+    def test_side_by_side_captions_keep_separate_labels_and_source_offsets(self):
+        text = "  Figure 10-78—Receive beam       Figure 10-79—Transmit beam\n"
+        analysis = structure.analyze_structure(self.document(), ((100, text),))
+        self.assertEqual({"10-78", "10-79"}, {node.label for node in analysis.nodes})
+        for occurrence in analysis.occurrences:
+            span = occurrence.candidate.span
+            self.assertEqual(occurrence.candidate.raw_heading, text[span.start_offset:span.end_offset])
+        self.assertEqual("Receive beam", analysis.nodes[0].title)
+        self.assertEqual("Transmit beam", analysis.nodes[1].title)
+
     def test_duplicate_body_captions_remain_explicitly_ambiguous(self):
         pages = (
             (10, "Table 9-45—First plausible caption\n"),

@@ -43,6 +43,9 @@ TABLE_FIGURE_RE = re.compile(
     r"(?P<label>(?:[A-Z]{1,2}|\d+)-\d+[A-Za-z]?)"
     r"(?P<separator>[\u2013\u2014-]|\s{2,})(?P<title>.*\S)\s*$"
 )
+CAPTION_COLUMN_RE = re.compile(
+    r"(?<!\S)(?:Table|Figure)\s+(?:[A-Z]{1,2}|\d+)-\d+[A-Za-z]?[\u2013\u2014-]"
+)
 NESTED_CLAUSE_RE = re.compile(
     r"^(?P<indent>\s*)(?P<label>(?:\d{1,2}|[A-Z]{1,2})(?:\.\d+){1,8})"
     r"(?P<separator>\s+)(?P<title>.*\S)\s*$"
@@ -56,7 +59,7 @@ INDEX_LEADER_RE = re.compile(r"\.{4,}\s*\d+\s*$")
 CONTINUED_RE = re.compile(r"\(continued\)\s*$", re.IGNORECASE)
 MEASUREMENT_TITLE_RE = re.compile(
     r"^(?:\([^)]*\)\s*)?(?:GHz|MHz|kHz|Hz|THz|dB(?:m|i)?|Mb/s|Gb/s|kb/s|"
-    r"[kMG]?symbol/s|ms|[\u00b5\u03bc]s|ns|ps|TU|V|mV|A|mA|W|mW|m|cm|mm)\b",
+    r"[kMG]?symbol/s|ms|[\u00b5\u03bc]s|ns|ps|TU|V|mV|A|mA|W|mW|m|cm|mm)(?![-\w])",
     re.IGNORECASE,
 )
 PAGE_HEADER_RE = re.compile(
@@ -66,8 +69,9 @@ PAGE_HEADER_RE = re.compile(
 REFERENCE_CONTINUATION_RE = re.compile(
     r"^(?:and|or|to|through|is|are|was|were|has|have|provides?|specifies?|"
     r"using|used|for|from|with|where|when|which|that|of|in|on|as|except)\b"
-    r"|^Case [A-Z]\.\s|^[\[(]|^[\u00d7\u00f7=<>]"
+    r"|^Case [A-Z](?:[).]|\s+\()|^[\[(]|^[\u00d7\u00f7=<>]"
 )
+CALCULATION_TITLE_RE = re.compile(r"^(?:\d+(?:[ .]\d+)*\s*)?[\u00d7\u00f7\uf0b4=<>]")
 
 
 class PageRegion(str, Enum):
@@ -109,6 +113,8 @@ class DetectedHeading:
     separator_width: int
     explicit_continuation: bool
     index_evidence: bool
+    separate_paragraph: bool = False
+    annex_marker: bool = False
 
 
 @dataclass(frozen=True)
@@ -216,15 +222,20 @@ def _prepare_pages(
         line_offset = start_offset
         for line_number, line in enumerate(lines, 1):
             plain_line = line.rstrip("\r\n")
-            line_records.append(
-                _Line(
-                    page=page,
-                    number=line_number,
-                    text=plain_line,
-                    start_offset=line_offset,
-                    index_evidence=_index_line(plain_lines, line_number - 1),
+            captions = tuple(CAPTION_COLUMN_RE.finditer(plain_line))
+            columns = [0]
+            if len(captions) > 1 and not plain_line[:captions[0].start()].strip():
+                columns.extend(match.start() for match in captions[1:])
+            for column, end in zip(columns, columns[1:] + [len(plain_line)]):
+                line_records.append(
+                    _Line(
+                        page=page,
+                        number=line_number,
+                        text=plain_line[column:end],
+                        start_offset=line_offset + column,
+                        index_evidence=_index_line(plain_lines, line_number - 1),
+                    )
                 )
-            )
             line_offset += len(line)
         # splitlines() produces no record for a non-newline empty page, which is fine.
         offset += len(page_text)
@@ -289,6 +300,25 @@ def _candidate_from_line(
                 title = _annex_title(lines, index, label)
                 separator = " "
 
+    following = lines[index + 1] if index + 1 < len(lines) else None
+    preceding = lines[index - 1] if index else None
+    following_text = (
+        following.text.strip() if following is not None and following.page == line.page else ""
+    )
+    next_nonempty = next(
+        (item.text.strip() for item in lines[index + 1:index + 5]
+         if item.page == line.page and item.text.strip()),
+        "",
+    )
+    if kind == NodeKind.CLAUSE and re.fullmatch(
+        r"\([^()]+\)(?:\s+\(continued\))?", following_text, re.IGNORECASE
+    ) and not re.fullmatch(r"\((?:normative|informative)\)", following_text, re.IGNORECASE):
+        title = f"{title} {following_text}"
+    separate_paragraph = (
+        not line.text[:1].isspace()
+        and (preceding is None or preceding.page != line.page or not preceding.text.strip())
+        and not following_text
+    )
     raw_heading = line.text.strip()
     leading = len(line.text) - len(line.text.lstrip())
     trailing = len(line.text.rstrip())
@@ -327,6 +357,10 @@ def _candidate_from_line(
         separator_width=separator_width,
         explicit_continuation=bool(CONTINUED_RE.search(title)),
         index_evidence=index_evidence,
+        separate_paragraph=separate_paragraph,
+        annex_marker=bool(re.fullmatch(
+            r"\((?:normative|informative)\)", next_nonempty, re.IGNORECASE
+        )),
     )
 
 
@@ -347,9 +381,17 @@ def _local_rejection(detected: DetectedHeading) -> str | None:
     candidate = detected.candidate
     if candidate.kind == NodeKind.CLAUSE and MEASUREMENT_TITLE_RE.match(candidate.title):
         return "numeric label is followed by a measurement unit"
+    if candidate.kind == NodeKind.CLAUSE and CALCULATION_TITLE_RE.match(candidate.title):
+        return "numeric label is part of a calculation"
+    if candidate.raw_heading.startswith("Annex ") and not detected.annex_marker:
+        return "annex reference has no normative or informative marker"
     if detected.separator_width > 4:
         return "wide column gap is characteristic of a table row, not a heading"
-    if candidate.kind == NodeKind.CLAUSE and candidate.title[:1].islower():
+    if (
+        candidate.kind == NodeKind.CLAUSE
+        and candidate.title[:1].islower()
+        and not detected.separate_paragraph
+    ):
         return "lowercase text after the numeric label continues a reference or sentence"
     if candidate.kind == NodeKind.CLAUSE and REFERENCE_CONTINUATION_RE.match(
         candidate.title
@@ -359,6 +401,8 @@ def _local_rejection(detected: DetectedHeading) -> str | None:
         candidate.kind == NodeKind.CLAUSE
         and "." not in candidate.label
         and detected.line_number > 12
+        and not detected.separate_paragraph
+        and not detected.annex_marker
     ):
         return "top-level clause or annex is not positioned as a page heading"
     return None

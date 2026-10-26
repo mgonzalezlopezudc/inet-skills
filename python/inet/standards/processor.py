@@ -7,6 +7,7 @@ import json
 import re
 import sqlite3
 import subprocess
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -28,7 +29,7 @@ except ImportError:
 DEFAULT_STANDARDS_DIR = Path("standards")
 DEFAULT_OUTPUT_DIR = DEFAULT_STANDARDS_DIR / "processed"
 EXTRACTOR_IMPLEMENTATION = "poppler-pdftotext"
-EXTRACTOR_VERSION = "2"
+EXTRACTOR_VERSION = "3"
 PDFTOTEXT_ARGS = ("-layout",)
 LICENSE_FOOTER_RE = re.compile(
     r"^\s*Authorized licensed use limited to: .* Downloaded on .* "
@@ -48,6 +49,12 @@ class DocumentProfile:
 # Reviewed identity contracts. Supporting PDFs are deliberately not auto-ingested
 # by the IEEE structural recognizer.
 DOCUMENT_PROFILES = {
+    "80211-2016.pdf": DocumentProfile(
+        document_id="ieee80211-2016",
+        title="IEEE Std 802.11-2016",
+        revision="2016",
+        kind=DocumentKind.BASE_STANDARD,
+    ),
     "802154-2024.pdf": DocumentProfile(
         document_id="ieee802154-2024",
         title="IEEE Std 802.15.4-2024",
@@ -192,6 +199,43 @@ def split_pages(text: str) -> list[str]:
     return pages
 
 
+def separate_reference_footnotes(pdf_path: Path, page_number: int, text: str) -> str:
+    """Separate a raised footnote from a clause number with PDF coordinate evidence."""
+
+    footer = "\n".join(text.splitlines()[-25:])
+    notes = set(re.findall(
+        r"^[ \t]*(\d{1,3})(?:[ \t]*\n[ \t]*|[ \t]+|(?=[A-Z]))(?=[A-Z])",
+        footer, re.MULTILINE,
+    ))
+    if not any(
+        match.group(1) in notes
+        for match in re.finditer(r"\b\d{1,2}(?:\.\d+)*\.(\d{1,3})\b", text)
+    ):
+        return text
+    completed = run_command([
+        "pdftotext", "-bbox-layout", "-f", str(page_number), "-l", str(page_number),
+        str(pdf_path), "-",
+    ])
+    words = tuple(ET.fromstring(completed.stdout).iter("{http://www.w3.org/1999/xhtml}word"))
+    for left, right in zip(words, words[1:]):
+        if not left.text or right.text not in notes:
+            continue
+        if not re.search(r"\b\d{1,2}(?:\.\d+)*\.$", left.text):
+            continue
+        left_height = float(left.attrib["yMax"]) - float(left.attrib["yMin"])
+        right_height = float(right.attrib["yMax"]) - float(right.attrib["yMin"])
+        if not (
+            0 < right_height < 0.9 * left_height
+            and float(right.attrib["yMax"]) < float(left.attrib["yMax"]) - 1
+            and abs(float(right.attrib["xMin"]) - float(left.attrib["xMax"])) < 1.5
+        ):
+            continue
+        joined = left.text + right.text
+        if text.count(joined) == 1:
+            text = text.replace(joined, left.text + " " + right.text)
+    return text
+
+
 def extract_pdf_pages(
     pdf_path: Path, pages: tuple[int, ...] | None, pdf_page_count: int
 ) -> list[tuple[int, str]]:
@@ -224,7 +268,7 @@ def extract_pdf_pages(
                 f"{start}-{end}, expected {len(expected_numbers)}"
             )
         extracted.extend(
-            (number, clean_page_text(text))
+            (number, separate_reference_footnotes(pdf_path, number, clean_page_text(text)))
             for number, text in zip(expected_numbers, segment_pages)
         )
     return extracted
@@ -234,7 +278,7 @@ def extraction_record() -> corpus.ExtractionRecord:
     return corpus.ExtractionRecord(
         implementation=EXTRACTOR_IMPLEMENTATION,
         version=EXTRACTOR_VERSION,
-        arguments=PDFTOTEXT_ARGS,
+        arguments=PDFTOTEXT_ARGS + ("-bbox-layout",),
         tool_versions=(
             ("pdftotext", tool_version("pdftotext")),
             ("pdfinfo", tool_version("pdfinfo")),
