@@ -91,7 +91,7 @@ class VerificationNormalizerTest(unittest.TestCase):
         result = NORMALIZER.normalize(
             text=(FIXTURES / "fingerprint-expected-change.log").read_text(),
             runner="fingerprint",
-            command="update_fingerprint_test_results(...) ",
+            command="opp_update_fingerprint_test_results --load @opp -p inet -m debug -f Demo",
             working_directory="/work/inet",
             build_mode="debug",
             selector="Demo",
@@ -99,7 +99,7 @@ class VerificationNormalizerTest(unittest.TestCase):
             run=0,
             seed=1,
             exit_code=0,
-            artifacts=["/work/inet/tests/fingerprint/fingerprint.json"],
+            artifacts=["/work/inet/tests/fingerprint/store.json"],
             flaky=False,
             changed_result_expected=True,
             changed_result_approved=True,

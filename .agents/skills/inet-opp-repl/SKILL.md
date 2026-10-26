@@ -14,13 +14,13 @@ For repeated history verification, read [incremental-builds.md](references/incre
 ## Capability and command discovery
 
 1. Verify `command -v opp_repl` in the active environment. Record the resolved executable.
-2. Inspect the installed command/API help and the workflow's checked-in `.opp` entrypoints. Do not assume function names, keyword arguments, or result stores from another `opp_repl` version.
+2. Inspect the installed command/API help and the loaded `.opp` entrypoints. Check project descriptions supplied with `--load @opp` when no local entrypoint exists. Do not assume interfaces or stores from another version.
 3. Resolve the active simulation project and build mode from the active project guidance. Record the selected mode.
-4. If the executable, required entrypoint, dependency store, or selected test data is unavailable, invoke the adapter with `--not-run-reason '<missing capability>'`. Return `NOT_RUN`. Do not improvise an unscoped substitute.
+4. If an executable, required option, entrypoint, required dependency store, or selected data is absent, report `NOT_RUN` through the adapter. Supply `--not-run-reason '<missing capability>'`. Do not substitute an unscoped run.
 
 ## Dependency mapping and scope
 
-Use the active `dependency.json` and checked-out NED/package/feature graph to map:
+For selection from changed paths, use the active `dependency.json` and the checked-out NED/package/feature graph to map:
 
 ```text
 changed paths or commits -> NED packages -> features -> simulation configurations
@@ -28,13 +28,15 @@ changed paths or commits -> NED packages -> features -> simulation configuration
 
 Record the mapping evidence. Select only directly related configurations, test types, runs or seeds, and result ingredients. A missing mapping is a coverage gap. It does not justify an unrelated full-suite run.
 
+For explicitly named configurations, record the direct selection and its relation to the behavior claim. A fingerprint run does not inherently require dependency-based selection.
+
 The calling workflow supplies the comparison controls and any union rule. Keep build mode, configuration, run, seed, time limit, and result ingredients like-for-like across those controls.
 
 ## Result facts
 
 | Runner | Result | Meaning |
 | --- | --- | --- |
-| Test | `PASS` | The selected test reported its expected result. |
+| Test | `PASS` | The selected test reported success. Compare this result with its recorded expectation. |
 | Test | `FAIL` | The selected test ran and reported a mismatch. |
 | Test | `ERROR` | The build, runner, or simulation failed. |
 | Test | `NOT_RUN` | No cases executed. |
@@ -44,10 +46,12 @@ The calling workflow supplies the comparison controls and any union rule. Keep b
 
 An `INSERT` or `UPDATE` result does not prove that the new value is correct. It never supplies baseline approval.
 
+Keep the observed result separate from whether the runner accepts it. Some cases expect `FAIL` or `ERROR`. Confirm that the cause matches the expected behavior before you use such a result as evidence.
+
 For a machine-readable handoff, use the skill-suite `.agents/scripts/normalize_verification.py --runner opp_repl` adapter. Supply command, working directory, mode, selector, configuration, run, seed, exit code, artifacts, flaky status, and recorded changed-result expectation/approval. The adapter normalizes facts to schema v1 and intentionally does not judge correctness.
 
 ## Boundaries
 
 Use `inet-fingerprint-regression` for fingerprint-specific first-divergence and baseline reasoning, and the result skills for quantitative scalar/vector interpretation. Use `inet-branch-cleanup` or `inet-branch-rebase` for branch construction, immutable refs, recovery, and human approval gates.
 
-Return the resolved interface, dependency mapping, exact scoped invocation, normalized verification record, and raw artifacts. Report any unavailable capability or coverage gap.
+Return the resolved interface, scope evidence, exact scoped invocation, normalized verification record, and raw artifacts. Include the dependency mapping when it supplies the selection. Report any unavailable capability or coverage gap.

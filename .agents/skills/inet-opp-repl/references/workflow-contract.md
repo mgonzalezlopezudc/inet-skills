@@ -12,7 +12,7 @@ Record before execution:
 - simulation project, working directory, and debug/release build mode;
 - test type and exact selector;
 - configurations, runs or seeds, time limits, and result ingredients;
-- dependency-store path and the path/package/feature/configuration mapping used for scope;
+- selection evidence, including the dependency-store path and mapping when dependency-based selection applies;
 - comparison controls and their pinned SHAs or result directories;
 - output log and result/baseline artifact paths.
 
@@ -24,7 +24,7 @@ Do not conflate a test operation with an update operation. A test operation comp
 
 An update requires the exact scope, cause, correctness reason, and explicit approval required by the active baseline procedure. Run the same scoped test after an approved update. Record the affected entries or files and keep the update with its causal source change unless the canonical procedure permits a standalone baseline commit.
 
-Treat `fingerprint.json`, baseline `.sca` files, `dependency.json`, raw logs, and result directories as artifacts. A dependency-store change can alter selection and must be explained separately from a simulation-result change.
+Treat `tests/fingerprint/store.json`, baseline `.sca` files, `dependency.json`, raw logs, and result directories as artifacts. Record the baseline separately from any JSON report supplied through `--result-file`. A dependency-store change can alter selection. Explain it separately from a simulation-result change.
 
 ## Comparison discipline
 

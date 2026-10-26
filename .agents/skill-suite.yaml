@@ -293,9 +293,10 @@ skills:
       short_description: Diagnose fingerprint regressions
       default_prompt: Use $inet-fingerprint-regression to diagnose this fingerprint change. Determine whether the change is expected.
     dependencies: []
-    required_tools: [python3]
+    required_tools: [python3, opp_run_fingerprint_tests]
+    optional_tools: [opp_update_fingerprint_test_results]
     checkout_requirements:
-      required: [tests/fingerprint/fingerprinttest]
+      required: [tests/fingerprint/store.json]
       optional: []
 
   inet-lldb-debugging:
@@ -332,8 +333,8 @@ skills:
       - omnetpp-result-plotting
     required_tools: [opp_repl]
     checkout_requirements:
-      required: [tests/dependency.json]
-      optional: []
+      required: []
+      optional: [tests/dependency.json]
 
   inet-packet-tag-debugging:
     metadata:
