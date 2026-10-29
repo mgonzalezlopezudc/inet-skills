@@ -82,7 +82,7 @@ class SkillSuiteValidatorTest(unittest.TestCase):
             )
             self.assertEqual([], errors)
             self.assertEqual(
-                ["inet-statistical-tests", "omnetpp-result-analysis", "omnetpp-result-plotting"], skills
+                ["inet-chart-tests", "inet-statistical-tests", "omnetpp-result-analysis", "omnetpp-result-plotting"], skills
             )
             self.assertFalse(list(output.rglob("*.pyc")))
             self.assertFalse(list(output.rglob("__pycache__")))

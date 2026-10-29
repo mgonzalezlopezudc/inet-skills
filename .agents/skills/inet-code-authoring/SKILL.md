@@ -5,7 +5,7 @@ description: Implement INET C++, NED, MSG, INI, and test changes after design ch
 
 # INET code authoring
 
-Prevent defects before and during implementation. Keep `inet-code-review` independent and read-only. Reuse its correctness references. Do not adopt its finding format or reviewer role.
+Prevent defects before and during implementation. Reuse correctness references from `inet-code-review`. That skill remains independent and read-only. Do not adopt its reviewer role, verdicts, severity, or report format.
 
 Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to find the active checkout's contribution, protection, rule, gate, and test guidance. Read that guidance before its application. This skill adds a pre-write correctness contract and a post-write self-audit; it does not repeat project policy.
 
@@ -13,11 +13,9 @@ For a requested implementation plan, use `inet-project-guidance` to follow the c
 
 When implementation follows a plan, complete its assigned artifacts under the applicable series and test requirements. Discover those requirements through the project map. Use the checkout's rules to check artifact content and any change to commit boundaries.
 
-If the project entry point provides a changed-contract inventory, use it as a preventive self-audit aid. Do not adopt reviewer verdicts, finding severity, or report formats.
+If the project entry point provides a changed-contract inventory, use it as a preventive self-audit aid.
 
 For a wide behavior-preserving transformation, use [mechanical-migrations.md](references/mechanical-migrations.md).
-
-The preventive references are maintained by `inet-code-review`; this skill depends on that skill's reference package but does not adopt its independent-review role or finding format.
 
 Select layers by the changed runtime contract, not only by file extension:
 

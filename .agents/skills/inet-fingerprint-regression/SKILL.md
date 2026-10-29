@@ -11,7 +11,7 @@ Use [project-guidance-discovery.md](../../references/project-guidance-discovery.
 
 Check the resolved test executable with `command -v opp_run_fingerprint_tests`. Inspect its options with `--help`. For an update, also check `opp_update_fingerprint_test_results`. Read the active checkout's migration guide and fingerprint workflow for the required installation source. Check each executable's Python interpreter when multiple Python environments exist. An update through `python3 -m pip` can leave an earlier executable in `PATH`.
 
-Load the project description supplied with `opp_repl` through `--load @opp -p inet`. Confirm that its `INET_ROOT` selects the intended checkout. A checkout can supply a different `.opp` entrypoint; follow its guidance. Check the loaded description for the baseline path, ingredients, and time limits.
+Prefer the active checkout's project description. From its root, use `--load . -p inet`. Use the bundled description through `--load @opp -p inet` only when the checkout supplies none. For that fallback, confirm that `INET_ROOT` selects the intended checkout. Check the loaded description for the baseline path, ingredients, and time limits.
 
 The current INET baseline is `tests/fingerprint/store.json`. Each entry identifies the directory, INI file, configuration, run number, simulation time limit, ingredients, fingerprint, and expected result. The project description selects `tplx`, `~tNl`, and `~tND` by default. These select event properties, packet lengths between network nodes, and packet data between network nodes, respectively. Both packet selections also include event times and node paths.
 
@@ -24,7 +24,7 @@ Set up the OMNeT++ environment. Load `setenv` from the intended INET root. Use t
 Run from the INET root with an explicit selection. This example applies when the project guidance selects debug mode:
 
 ```sh
-opp_run_fingerprint_tests --load @opp -p inet -m debug \
+opp_run_fingerprint_tests --load . -p inet -m debug \
   -f '<directly-related-regex>'
 ```
 
@@ -57,7 +57,7 @@ Before an update, confirm that `opp_update_fingerprint_test_results` is availabl
 For the test example above, which uses the project defaults, the update command is:
 
 ```sh
-opp_update_fingerprint_test_results --load @opp -p inet -m debug \
+opp_update_fingerprint_test_results --load . -p inet -m debug \
   -f '<directly-related-regex>'
 git diff -- tests/fingerprint/store.json
 ```

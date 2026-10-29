@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Chart Tests"
+  short_description: "Run chart tests against INET reference images"
+  default_prompt: "Use $inet-chart-tests to run the selected chart tests. Diagnose image differences against the matching media baseline."

@@ -1,6 +1,6 @@
 ---
 name: inet-statistical-tests
-description: Run INET statistical regression tests with inet_run_statistical_tests and the separate statistics baseline repository. Use for test scope, scalar baseline comparisons, missing baselines, statistical CI failures, or worktree verification. Do not use for the legacy R-based tests/statistical/*.test harness or hypothesis-test design.
+description: Run INET statistical regression tests with opp_run_statistical_tests and the separate statistics baseline repository. Use for test scope, scalar baseline comparisons, missing baselines, statistical CI failures, or worktree verification. Do not use for the legacy R-based tests/statistical/*.test harness or hypothesis-test design.
 ---
 
 # INET statistical result regression tests
@@ -11,10 +11,9 @@ Use [project-guidance-discovery.md](../../references/project-guidance-discovery.
 
 Check the active checkout rather than assuming every branch matches upstream master:
 
-- `python/inet/test/statistical.py`: task selection, conversion, comparison, and artifacts.
-- `python/inet/main.py`: common CLI, filters, logging, and defaults.
-- `python/inet/simulation/task.py`: simulation selection and run-number handling.
-- `python/inet/project/inet.py`: baseline location (`statistics`, relative to the INET root).
+- `inet.opp`: project defaults, run selection, and baseline location.
+- The installed `opp_repl.test.statistical` module: task selection, conversion, comparison, and artifacts.
+- The installed `opp_repl.main` and `opp_repl.simulation.task` modules: CLI filters and simulation selection.
 - `.github/workflows/statistical-tests.yml`: CI setup and command.
 
 The inspected implementation converts relevant scalar/vector results through `opp_scavetool` before comparing scalar dataframes with stored `.sca` files. Use the project's test-anatomy guidance to interpret that comparison; distributional analysis follows its result-analysis guide.
@@ -30,11 +29,14 @@ source "$OMNETPP_ROOT/setenv"
 source setenv
 ```
 
-Install dependencies in the active Python environment if missing:
+Check the actual runner before execution:
 
 ```bash
-python3 -m pip install -r python/requirements.txt
+command -v opp_run_statistical_tests
+opp_run_statistical_tests --help
 ```
+
+Use the installation source and Python requirements from the active checkout's installation guide and statistical workflow. Current INET uses `opp_repl`; its earlier `python/requirements.txt` can be absent. Load the local project description with `--load . -p inet` from the INET root. Use `--load @opp` only when the checkout supplies no project description.
 
 The separate baseline checkout must be at `<INET-root>/statistics`. If absent:
 
@@ -65,18 +67,18 @@ Focused examples below use debug mode. For statistical CI, read the active workf
 For a requested full statistical CI reproduction, use the active workflow's scope and mode. This example applies when that workflow selects release mode:
 
 ```bash
-inet_run_statistical_tests -m release --dry-run
-inet_run_statistical_tests -m release
+opp_run_statistical_tests --load . -p inet -m release --dry-run
+opp_run_statistical_tests --load . -p inet -m release
 ```
 
 For focused verification, preview and execute the same explicit selection:
 
 ```bash
-inet_run_statistical_tests -m debug -w '^examples/wireless(/|$)' --dry-run
-inet_run_statistical_tests -m debug -w '^examples/wireless(/|$)' --no-concurrent
+opp_run_statistical_tests --load . -p inet -m debug -w '^examples/wireless(/|$)' --dry-run
+opp_run_statistical_tests --load . -p inet -m debug -w '^examples/wireless(/|$)' --no-concurrent
 ```
 
-With no filters and no explicit project selection, the CLI restricts selection to the current directory recursively. Running from `examples/wireless` therefore scopes discovery to that subtree. **Supplying any filter disables this automatic directory filter.** Include `-w` explicitly when combining subtree scope with another filter.
+Use explicit `-w` scope from the INET root. Directory defaults can vary with the installed runner and project selection. Do not assume that the current directory restricts a command with explicit filters or project selection.
 
 | Option | Selection |
 | --- | --- |
@@ -89,24 +91,24 @@ With no filters and no explicit project selection, the CLI restricts selection t
 Filters are regular expressions; quote them and anchor exact names when needed. For example:
 
 ```bash
-inet_run_statistical_tests -m debug \
+opp_run_statistical_tests --load . -p inet -m debug \
     -w '^examples/wireless(/|$)' -i '^omnetpp\.ini$' -c '^MyConfig$' --dry-run
 ```
 
 Replace `MyConfig` with a discovered configuration. Check the preview and executed-case count against the selected scope, then interpret empty selections and dry runs under the gate procedure.
 
-The common CLI accepts `-r`, but in the inspected implementation statistical task selection passes `run_number=0`, and `get_simulation_tasks` applies run-number filters only when `run_number` is `None`. Do not assume `-r` selects other runs or creates a repetition campaign. Check the local implementation and actual selected tasks before making any multi-run claim.
+The current `inet.opp` pins statistical tests to run 0. A `-r` filter does not necessarily override that fixed run. Check the loaded defaults and actual selected tasks before a claim about other runs. One run does not establish statistical confidence.
 
 ## Diagnose failures
 
 Keep the same filters. Run the selected failed cases one at a time with more logs:
 
 ```bash
-inet_run_statistical_tests -m debug -w '^examples/wireless(/|$)' \
-    --no-concurrent -l INFO --external-command-log-level INFO
+opp_run_statistical_tests --load . -p inet -m debug -w '^examples/wireless(/|$)' \
+    --no-concurrent -l INFO -L INFO --log-file statistical-wireless.log
 ```
 
-Use `DEBUG` for both log levels if INFO is insufficient. Defaults are concurrent execution, `Cmdenv`, and `statistical_tests.log` in the invocation directory. Preserve logs before rerunning; `--log-file` can give each invocation a distinct filename. Preserve exit status when using `tee` by enabling `set -o pipefail`.
+Use `DEBUG` for both log levels if INFO is insufficient. The runner uses concurrent execution and `Cmdenv` by default. Set `--log-file` explicitly to retain a diagnostic log. Preserve existing logs before another run. Preserve exit status through `tee` with `set -o pipefail`.
 
 Expected scalars live under `statistics/<simulation-directory>/<ini-file>-<config>-#<run>.sca`. Differences normally produce `.diff` and `.csv` diagnostics beside that baseline. Empty current or stored data is `FAIL`; a missing expected `.sca` is `ERROR`. Other simulation, build, or conversion errors need their own diagnosis. The comparator uses exact dataframe/value checks, with result-filter handling; the CSV's relative-error column is diagnostic, not a significance threshold. Inspect the task reason as well as its status.
 

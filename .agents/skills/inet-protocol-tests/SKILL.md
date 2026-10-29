@@ -1,6 +1,6 @@
 ---
 name: inet-protocol-tests
-description: Run INET protocol suites under tests/protocol with inet_run_protocol_tests and OMNeT++ opp_test. Use for test selection, execution, generated builds, shared protocoltest library failures, and expected-result interpretation. Do not use for unit/module tests, statistical baselines, or general regression design.
+description: Run INET protocol suites under tests/protocol with opp_run_protocol_tests and OMNeT++ opp_test. Use for test selection, execution, generated builds, shared protocoltest library failures, and expected-result interpretation. Do not use for unit/module tests, statistical baselines, or general regression design.
 ---
 
 # Run INET protocol tests
@@ -11,15 +11,15 @@ For tests assigned by an implementation plan, discover any required companion ar
 
 ## Check the active implementation
 
-Use `inet_run_protocol_tests` as the integrated entry point. Check these local sources when a branch differs or a command behaves unexpectedly:
+Resolve `opp_run_protocol_tests` with `command -v`. Check its `--help` output. Inspect these sources when a command behaves unexpectedly:
 
-- `python/inet/test/all.py`, `get_protocol_test_tasks`: suite discovery and framework selection.
-- `python/inet/test/opp.py`: recursive discovery, generation, compilation, and result parsing.
-- `python/inet/main.py`: CLI defaults, directory selection, logging, and exit status.
-- `python/inet/common/util.py`, `matches_filter`: regular-expression matching.
+- `inet.opp`: test folders, suite layout, and shared support library.
+- The installed `opp_repl.test.opp` module: discovery, generation, compilation, and result parsing.
+- The installed `opp_repl.main` module: CLI defaults, filters, logs, and exit status.
+- `.github/workflows/protocol-tests.yml`: CI setup and command.
 - `tests/protocol/`: actual suites, test names, shared library, and generated artifacts.
 
-The inspected runner discovers suites from direct children of `tests/protocol/` containing `.test` files at any depth, excluding each suite's generated `work/` directory. New suites need no manual registration. Discover available names locally; do not assume a historical topic branch is needed, or that every older checkout has the current infrastructure. If it is absent, report the missing capability rather than selecting a different branch automatically.
+The current project description selects direct children of `tests/protocol/` as suite roots. The runner discovers `.test` files recursively and excludes generated `work/` directories. New suites need no manual registration. Discover available suites locally. Report absent infrastructure rather than select another branch automatically.
 
 ## Prepare the environment and library
 
@@ -30,7 +30,7 @@ source "$OMNETPP_ROOT/setenv"
 source setenv
 ```
 
-INET's `setenv` exposes `bin/` on `PATH` and `python/` on `PYTHONPATH`. Confirm that `inet_run_protocol_tests`, `opp_test`, `opp_makemake`, and `make` resolve in this environment.
+Confirm that `opp_run_protocol_tests`, `opp_test`, `opp_makemake`, and `make` resolve in this environment. Follow the installation guide and workflow for Python dependencies. Load the local project description with `--load . -p inet` from the INET root. Use `--load @opp` only when the checkout supplies no project description.
 
 Apply the build-mode and freshness requirements from the project's gate procedure. The debug build command used with the examples below is:
 
@@ -38,61 +38,56 @@ Apply the build-mode and freshness requirements from the project's gate procedur
 make MODE=debug -j$(nproc)
 ```
 
-The runner builds test executables and applicable support libraries, but its support-library build hook does not rebuild INET itself. For release verification, use both `MODE=release` and `-m release`.
+The current runner builds INET by default. Use `--no-build` only when the matching INET binaries are current. This option does not disable required support builds or test compilation. For a manual release build, use `MODE=release`; select the same mode with `-m release`.
 
 ## Select and run tests
 
 Prefer explicit project, mode, suite, and test filters in scripts. For a requested full suite:
 
 ```bash
-inet_run_protocol_tests -p inet -m debug
+opp_run_protocol_tests --load . -p inet -m debug
 ```
 
 For one complete protocol suite:
 
 ```bash
-inet_run_protocol_tests -p inet -m debug -w wifi
-inet_run_protocol_tests -p inet -m debug -w tcp
-inet_run_protocol_tests -p inet -m debug -w ipv6
+opp_run_protocol_tests --load . -p inet -m debug -w wifi
 ```
 
 Run only the suite relevant to the request. For a focused Wi-Fi selection:
 
 ```bash
 # One test
-inet_run_protocol_tests -p inet -m debug -w wifi -f 'N_BlockAck\.test$'
+opp_run_protocol_tests --load . -p inet -m debug -w wifi -f 'N_BlockAck\.test$'
 
 # All Block Ack tests
-inet_run_protocol_tests -p inet -m debug -w wifi -f BlockAck
+opp_run_protocol_tests --load . -p inet -m debug -w wifi -f BlockAck
 
 # Tests under the 802.11n subdirectory
-inet_run_protocol_tests -p inet -m debug -w wifi -f '/11n/'
+opp_run_protocol_tests --load . -p inet -m debug -w wifi -f '/11n/'
 ```
 
-`-w/--working-directory-filter` matches the suite path, such as `tests/protocol/wifi`. `-f/--filter` matches the full discovered `.test` path. Both use regular expressions with `re.search()` by default. Quote regexes; use `-w '^tests/protocol/wifi$'` for exact suite selection. Combine alternatives in a single `-f` expression when needed. Do not use simulation configuration or run-number switches as substitutes for protocol test-file selection.
+`-w/--working-directory-filter` matches the test folder, suite root, or source directory. `-f/--filter` matches the full discovered `.test` path. Both use regular expressions with `re.search()` by default. Quote regexes; use `-w '^tests/protocol/wifi$'` for exact suite selection. Combine alternatives in a single `-f` expression when needed. Do not use simulation configuration or run-number switches as substitutes for protocol test-file selection.
 
 Add `--dry-run` to the same invocation to preview selection before a costly run. Compare actual test counts with that scope and interpret empty selections and dry runs under the gate procedure.
 
-Without `-p` or any filter, the CLI uses the current directory as its working-directory filter:
-
-```bash
-cd tests/protocol/wifi
-inet_run_protocol_tests -m debug
-```
-
-Adding `-p` or any filter disables that implicit scope. Supply `-w` when combining filters. The protocol runner matches suite roots. A deeper working directory such as `wifi/11n` does not provide recursive sub-suite selection. Use `-w wifi -f '/11n/'` for that selection.
+Use explicit scope from the INET root. Directory defaults can vary with the installed runner and project selection. Use `-w wifi -f '/11n/'` for tests under that subdirectory without reliance on implicit scope.
 
 ## Understand generated builds and support libraries
 
-For each selected test, the normal pipeline is:
+For a test without a `%testprog` directive, the pipeline is:
 
 ```text
 opp_test gen → opp_makemake → make MODE=<mode> → opp_test run
 ```
 
-Generation extracts a test into `<suite>/work/<test-basename>/`, even if its source `.test` lives in a nested directory. Compilation links against INET with the mode's library suffix (`_dbg` for debug). Treat `work/` as generated output; fix the source `.test` or shared inputs, not extracted copies. If nested tests with identical basenames interfere, inspect this shared output location.
+Generation extracts these tests into `<suite>/work/<test-basename>/`, even if the source `.test` lives in a nested directory. Compilation links against INET with the mode's library suffix (`_dbg` for debug). If nested tests with identical basenames interfere, inspect this shared output location.
 
-Framework detection scans all tests in a suite for the literal `#include "ProtocolTest.h"`. When found, the suite uses `tests/protocol/lib` and links `protocoltest`; detection is not limited to the selected individual tests. Otherwise, the generic runner can use a suite-local `lib/`. The normal build-enabled invocation builds applicable support libraries before the suite runs. `--no-build` skips that support build; it does not skip generation and compilation of each test.
+A `%testprog` directive selects an external test program. The runner generates the test files but skips `opp_makemake` and compilation of a test executable. It extracts these tests into `<source-directory>/work/<test-basename>/`. For example, a nested TCP test with `%testprog` uses its source directory's `work/`, not the suite root's `work/`.
+
+Treat `work/` as generated output. Fix the source `.test` or shared inputs, not extracted copies.
+
+The current `inet.opp` selects `tests/protocol/lib` and library name `protocoltest` for protocol suites. The runner builds that support library before execution, including with `--no-build`. Inspect the loaded description when the support library differs. Preserve generated diagnostics before another run; the runner clears test work directories before execution.
 
 For ordinary development, prefer the integrated runner over `tests/protocol/wifi/run-tests.sh`. Inspect a suite-specific script only when diagnosing differences or explicitly asked to use it.
 
@@ -101,11 +96,11 @@ For ordinary development, prefer the integrated runner over `tests/protocol/wifi
 Rerun the failing selection serially with command logging:
 
 ```bash
-inet_run_protocol_tests -p inet -m debug -w wifi -f 'N_BlockAck\.test$' \
-    --no-concurrent -l INFO --external-command-log-level INFO
+opp_run_protocol_tests --load . -p inet -m debug -w wifi -f 'N_BlockAck\.test$' \
+    --no-concurrent -l INFO -L INFO --log-file protocol-blockack.log
 ```
 
-Use `DEBUG` for both log levels if needed. The default CLI log is `protocol_tests.log` in the invocation directory; use `--log-file` for distinct rerun logs. Preserve runner output and the relevant generated test artifacts. Enable `set -o pipefail` if piping through `tee`.
+Use `DEBUG` for both log levels if needed. Set `--log-file` explicitly to retain a diagnostic log. Preserve runner output and the relevant generated test artifacts. Enable `set -o pipefail` for output through `tee`.
 
 Identify the first failed stage: environment/selection, INET library freshness, shared support build, `opp_test gen`, `opp_makemake`, test compilation, or `opp_test run` assertions. Generation and compilation errors do not establish a protocol behavior failure. Inspect the `.test` checks and generated stdout/stderr for runtime mismatches.
 

@@ -30,8 +30,17 @@ cases:
     expected_skills: [inet-protocol-tests]
   - id: protocol-tests-negative
     kind: negative
-    prompt: Run the INET C++ unit tests for packet chunks with inet_run_unit_tests.
+    prompt: Run the INET C++ unit tests for packet chunks with opp_run_unit_tests.
     forbidden_skills: [inet-protocol-tests]
+
+  - id: chart-tests-positive
+    kind: positive
+    prompt: Run the error-rate showcase chart tests with opp_run_chart_tests. Diagnose image differences against the media repository.
+    expected_skills: [inet-chart-tests]
+  - id: chart-tests-negative
+    kind: negative
+    prompt: Create a throughput plot from these scalar results without a reference image comparison.
+    forbidden_skills: [inet-chart-tests]
 
   - id: statistical-tests-positive
     kind: positive

@@ -7,30 +7,29 @@ description: Run focused INET C++ unit tests or OMNeT++ module tests. Use for th
 
 Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active checkout's test category, scope, freshness, and gate obligations. This skill adds filtered runner mechanics.
 
-Run from the repository root with `inet_run_unit_tests`. Do not infer a runner from another project.
+Run from the INET root with `opp_run_unit_tests`. Check the resolved executable and its `--help` output. Read the local `inet.opp` and unit/module workflows for the test folders, mode, and installation source. Load the local description with `--load . -p inet`. Use `--load @opp` only when the checkout supplies no project description.
 
 Select freshness requirements and build mode from the current project guidance. This example shows a build and a test when that guidance selects debug mode:
 
 ```sh
-make MODE=debug -j$(nproc)
-inet_run_unit_tests -m debug -f '<regex>'
+opp_run_unit_tests --load . -p inet -m debug -f '<regex>'
 ```
 
-Use the build mode required by the active project guidance. Record the mode with the runner. The test runner builds selected test executables but does not rebuild the INET library. Apply the discovered freshness procedure to test definitions and compiled support inputs.
+Record the selected mode. The current runner builds the INET project by default and compiles selected test executables. Use `--no-build` only when the matching INET binaries are current. This option does not disable compilation of individual tests or required support libraries.
 
 The `-f` option accepts one regex. Combine groups with alternation. Quote the expression:
 
 ```sh
-inet_run_unit_tests -m debug -f '(First|Second|Third).*\.test'
+opp_run_unit_tests --load . -p inet -m debug -f '(First|Second|Third).*\.test'
 ```
 
-For module tests, use the same selected mode and an explicit filter. This example uses debug mode:
+For focused module tests, use the same selected mode and an explicit filter. This example uses debug mode:
 
 ```sh
-inet_run_module_tests -m debug -f '<directly-related-filter>'
+opp_run_module_tests --load . -p inet -m debug -f '<directly-related-filter>'
 ```
 
-The runner invocation must carry an explicit `-f` regex for the set selected under the canonical test rule. For a pipeline through `tee`, preserve the runner's exit status with `pipefail`.
+For focused verification, use an explicit `-f` regex for the selected tests. For a requested full unit or module suite, omit the filter. Keep the explicit project selection to avoid implicit directory scope. For a pipeline through `tee`, preserve the runner's exit status with `pipefail`.
 
 Classify the first failure as INET-library build, test-executable build, runner/setup, or test assertion. Record the executed-case count and the failed case. A zero-case selection is `NOT_RUN`. A setup failure provides no evidence about the behavior under test.
 
