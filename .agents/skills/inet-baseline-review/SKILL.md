@@ -1,6 +1,6 @@
 ---
 name: inet-baseline-review
-description: Review statistical and chart baseline changes across an INET commit range. Attribute each difference to the smallest justified source change. Use for staged baseline review, temporary reverse experiments, persistent review decisions, and preparation of separate baseline publications. Do not use for test execution alone or fingerprint refreshes.
+description: Inventory statistical and chart baselines for a selected INET area. Review source history from the oldest selected baseline in bounded stages. Attribute changes to their smallest justified causes. Use for baseline provenance, attribution, and publication preparation. Do not use for test execution alone or fingerprint refreshes.
 ---
 
 # Review statistical and chart baselines
@@ -9,19 +9,37 @@ Produce a reviewable sequence of baseline changes from a pinned source history. 
 
 Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) for the active checkout's baseline, test, result-analysis, diagnosis, and publication requirements. Resolve their scope for separate baseline repositories and current source history. Preserve current authorization. If a requirement conflicts with the requested publication, report the conflict before that action. Do not rewrite source history to resolve it without authorization.
 
-Use [inet-statistical-tests](../inet-statistical-tests/SKILL.md) for scalar comparisons and their artifacts. Use [inet-chart-tests](../inet-chart-tests/SKILL.md) for image comparisons and their artifacts. Read each skill when its test type enters the scope. Read [review-record.md](references/review-record.md) before the first experiment. Keep that record sufficient for review and resumption without the conversation.
+Use [inet-statistical-tests](../inet-statistical-tests/SKILL.md) for scalar comparisons and their artifacts. Use [inet-chart-tests](../inet-chart-tests/SKILL.md) for image comparisons and their artifacts. Read each skill when its test type enters the scope.
 
-## Establish the range and first stage
+## Select the area and build baseline tables first
 
-Record the source repository, start SHA, end SHA, selected history, and both baseline repositories with their revisions and local changes. Record the relationship between the initial baselines and the source start. Verify that relationship with a control comparison. Treat an initial mismatch as a separate unresolved item.
+Use the INET area that the user requests, such as IEEE 802.11, TCP, or the whole framework. Infer the area from task context when it is clear. Ask for the area when the scope remains unclear. Do not silently expand a protocol review to all INET models.
+
+Read [baseline-inventory.md](references/baseline-inventory.md) for file selection, grouped tables, and source evidence. Create the persistent report during this phase. Publish the tables before source range selection or simulation execution. The inventory section of [review-record.md](references/review-record.md#baseline-inventory-fields) lists the stored fields.
+
+## Bound source evidence recovery
+
+Set a finite time or lookup limit before historical source recovery. Use an existing agreed limit when it covers this phase. Stop when the limit expires or the available evidence is exhausted. Publish a checkpoint with the unresolved origins and work already complete. Resume only when new evidence or a new recovery scope is available.
+
+## Start from the oldest selected baseline
+
+Use source ancestry to order the documented source origins from the inventory. Start the review at the oldest selected baseline's source revision. If the oldest origin remains unknown or source branches are incomparable, report that gap at the recovery checkpoint. Do not silently substitute a newer origin or a successful control. A different start needs the user's explicit choice.
+
+Respect an explicit source range from the user. Report any older baseline history that those bounds exclude.
+
+Record the source repository, start SHA, end SHA, and selected history. Baselines from different source revisions need separate controls. Introduce each file at its own source control during the forward review. Do not compare newer expectations against older source as if all files shared one baseline epoch.
+
+## Agree on the first stage
 
 List every selected commit in order. Identify merges and the comparison parent for each merge. Expose any history omitted by a first-parent selection. Distinguish a source commit from a baseline commit. A source commit can change expected output without any baseline file in its diff.
 
-Agree on a bounded first stage before substantial execution. Offer approximately 10% of the selected history as an initial stage. Adjust the boundary for dependencies and test cost. Define the commit boundary, test scope, and a time or run limit. Record which limit ends the stage first. Do not interpret a small history fraction as a small execution cost.
+Agree on a bounded first stage before any build or simulation, including control comparisons. Reuse an existing agreement when it covers that stage. Offer approximately 10% of the selected history as an initial stage. Adjust the boundary for dependencies and test cost. Define the commit boundary, test scope, and a time or run limit. Include build time in that limit. Record which limit ends the stage first. Do not interpret a small history fraction as a small execution cost.
 
 Allow investigation to continue within that agreed limit while human decisions remain pending. At the limit, publish the checkpoint. Wait for further scope. Do not run the whole range under an open-ended interpretation of the task.
 
 ## Preserve controls and artifacts
+
+Read the review header and attribution fields in [review-record.md](references/review-record.md) before the first build or simulation.
 
 Use a small set of task-owned worktrees for history comparisons and temporary experiments. Keep master and the user's active checkout intact. Keep original baseline revisions immutable. Store candidate baselines outside accepted baseline paths until the applicable approval permits replacement. Check runner output locations and repository links before execution. Separate worktrees can still share a baseline directory.
 
@@ -34,6 +52,10 @@ Separate model behavior, scenario configuration, result collection, chart script
 ## Compile incrementally
 
 Apply the shared [incremental build recipe](../../references/incremental-builds.md) throughout the review. Statistics and chart tests can share a successful build when their source inputs, mode, and toolchain match. Rebuild incrementally after application or removal of a reverse patch that changes compiled inputs.
+
+## Compare the initial controls
+
+Compare each initial baseline with its source control inside the agreed stage. Treat a mismatch as an unresolved control item. A successful comparison proves reproducibility within its scope; it does not prove historical origin or result correctness.
 
 ## Find the smallest defensible cause
 
@@ -70,9 +92,11 @@ For example, consider a hypothetical counter that counts one delivered frame twi
 
 ## Expose progress and review decisions
 
-Create a persistent review report before the first test. Present the selected history with links to each commit's baseline changes, artifacts, and explanation. Use an available interactive UI for the same records. Otherwise, publish the report path. Update the report at each completed comparison. Do not claim UI controls or background execution that the environment does not provide.
+Keep the report's main text short and clear for human readers. Explain the findings, evidence limits, and next action first. Put detailed file tables and execution records in an appendix. Link the appendix to full commit IDs and raw artifacts.
 
-Keep investigation state separate from human acceptance. Mark untested commits explicitly. Mark a commit unchanged only within its executed scope. Store each human decision in its attribution record against exact evidence and candidate revisions. Derive the index and baseline chain views from those records.
+Show commit IDs, original subjects, and labeled dates for both source history and baseline history. Present the selected source history with links to each commit's baseline changes, artifacts, and explanation. Use an available interactive UI for the same records. Otherwise, publish the report path. Update the report at each completed comparison. Do not claim UI controls or background execution that the environment does not provide.
+
+Read the decision fields in review-record.md when a candidate needs a human decision. Keep investigation state separate from human acceptance. Mark untested commits explicitly. Mark a commit unchanged only within its executed scope. Store each human decision in its attribution record against exact evidence and candidate revisions. Derive the index and baseline chain views from those records.
 
 A material change to the candidate, source patch, evidence, scope, or correctness claim invalidates the affected acceptance. Editorial corrections preserve acceptance when those facts remain unchanged. Preserve earlier decisions in the attribution record's history.
 
@@ -81,6 +105,8 @@ The agent can prepare later candidates within the agreed work limit while review
 At each checkpoint, show examined commits, explained differences, accepted differences, unresolved items, and the next bounded action. Keep these counts separate. Do not report completion from a percentage estimate alone.
 
 ## Reconcile and prepare publication
+
+Read the final reconciliation fields in review-record.md when publication enters scope.
 
 Maintain an ordered chain of candidate baselines for both statistics and charts. Identify each transition by source cause, predecessor baseline, new baseline, evidence, and decision. Keep transient differences even when a later commit restores the initial value. Group rows only when one mechanism explains every row. Retain the full row list.
 

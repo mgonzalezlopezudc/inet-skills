@@ -2,6 +2,56 @@ version: 1
 
 # Gates name observable decisions or evidence. Evaluations assert these outcomes, not prose.
 cases:
+  - id: baseline-area-inventory-first
+    area: results
+    prompt: Review baselines for IEEE 802.11. Some scalar cases use an 802.11 radio with a generic MAC. Other wireless cases use only 802.15.4. Each baseline repository has several partial updates. Build tables before the review.
+    expected_skills: [inet-baseline-review]
+    required_gates:
+      - requested-area-and-file-selection-evidence
+      - mac-phy-and-mixed-case-scope
+      - unrelated-wireless-cases-excluded
+      - tracked-scalar-and-chart-reference-mapping
+      - per-file-baseline-commit-identity
+      - grouped-commit-subject-date-and-complete-file-lists
+      - baseline-tables-before-source-range-and-simulations
+      - short-human-report-with-detailed-appendix
+
+  - id: baseline-oldest-endpoint-unresolved
+    area: results
+    prompt: The oldest selected baseline commit gives no INET source revision. Its historical CI logs are unavailable. The newest baseline update names source Z for one file. A later complete suite passes at source Y. Recover evidence within a finite lookup limit before a review from the oldest baseline.
+    expected_skills: [inet-baseline-review]
+    required_gates:
+      - baseline-commit-separated-from-source-endpoint
+      - source-reference-roles-and-evidence-scope
+      - oldest-endpoint-recovery-before-comparison
+      - unresolved-source-endpoint-recorded
+      - bounded-provenance-recovery
+      - checkpoint-at-recovery-limit-or-evidence-exhaustion
+      - no-newer-successful-run-as-oldest-baseline-substitute
+      - no-partial-update-as-complete-baseline
+
+  - id: baseline-control-does-not-prove-origin
+    area: results
+    prompt: The baseline file has no historical source record. Source revisions A and B produce identical results. A fresh comparison at B passes. Record what this comparison establishes.
+    expected_skills: [inet-baseline-review]
+    required_gates:
+      - successful-control-recorded-with-tested-conditions
+      - historical-origin-remains-unknown
+      - reproducibility-separated-from-historical-origin-and-correctness
+
+  - id: baseline-controls-from-different-source-revisions
+    area: results
+    prompt: Baseline X comes from source A and baseline Y comes from later source C. Their author dates suggest the opposite order. Review through source D from the oldest selected baseline.
+    expected_skills: [inet-baseline-review]
+    required_gates:
+      - source-ancestry-instead-of-date-order
+      - oldest-selected-source-control-first
+      - per-file-source-control-and-activation-point
+      - no-newer-expectations-compared-as-old-epoch
+      - scoped-initial-control-comparisons
+      - agreed-stage-and-work-limit
+      - stage-agreement-before-control-build-or-simulation
+
   - id: staged-baseline-attribution
     area: results
     prompt: Review the first 10% of a pinned source range for statistical and chart baseline changes. Continue within the agreed run limit while human decisions remain pending. Preserve source master.

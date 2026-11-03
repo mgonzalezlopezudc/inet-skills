@@ -421,8 +421,8 @@ skills:
   inet-baseline-review:
     metadata:
       display_name: INET Baseline Review
-      short_description: Attribute statistical and chart baseline changes
-      default_prompt: Use $inet-baseline-review to review this source history in bounded stages. Explain each statistical and chart baseline change through its smallest justified cause. Keep evidence and human decisions in a persistent report. Preserve source master.
+      short_description: Trace baseline history and review scoped changes
+      default_prompt: Use $inet-baseline-review for the selected INET area. First group baseline files by commit with subjects and dates. Trace their source revisions. Start at the oldest selected baseline within the agreed stage limit. Keep the report clear and preserve source master.
     dependencies: [inet-chart-tests, inet-statistical-tests]
     required_tools: [git]
     checkout_requirements:

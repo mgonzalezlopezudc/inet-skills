@@ -7,6 +7,10 @@ cases:
     kind: positive
     prompt: Review statistical and chart baseline differences across this source history. Attribute each difference to its smallest cause. Keep review decisions in a report.
     expected_skills: [inet-baseline-review]
+  - id: baseline-provenance-area-positive
+    kind: positive
+    prompt: Find the baseline commit, subject, and date for every statistical and chart file related to IEEE 802.11. Group the files by commit before a review from the oldest baseline.
+    expected_skills: [inet-baseline-review]
   - id: baseline-review-negative
     kind: negative
     prompt: Run this fixed chart test selection against its current baseline. No history attribution or baseline update is required.

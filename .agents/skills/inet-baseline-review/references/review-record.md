@@ -15,13 +15,26 @@ Record these inputs before execution:
 
 For each build workspace, record the last successful source tree and build configuration. Keep its build command, status, and log with the experiment record. Record artifact reuse or the reason for invalidation when the workspace changes state.
 
+## Baseline inventory fields
+
+The procedure and table layout belong to [baseline-inventory.md](baseline-inventory.md). Store these fields during inventory:
+
+- Requested INET area, selected cases, selection evidence, and exclusions.
+- Pinned INET source end, baseline repository revisions, local changes, and committed file identities.
+- Grouped baseline tables with full commit IDs and author and committer timestamps in the stored data.
+- Documented source origins with their evidence, or explicit unknown origins.
+- Recovery limit, work consumed, sources checked, and unresolved items at the checkpoint.
+- Proposed oldest source start, ancestry evidence, and any range exclusions.
+
+Add control revisions, tested conditions, and comparison outcomes when experiments execute. Keep these results separate from the historical origin fields.
+
 ## History index
 
 Create one row for every selected commit. Link each row to its attribution records. Use full SHAs in the stored record. The display can use short SHAs if they are unambiguous.
 
-| Commit and comparison parent | Investigation state | Attribution records |
-| --- | --- | --- |
-| Source SHA and parent SHA | untested / partial / unchanged in tested scope / changed / blocked | Links to each baseline change |
+| Commit, original subject, and author date | Comparison parent | Investigation state | Attribution records |
+| --- | --- | --- | --- |
+| Source SHA, subject, and date | Parent SHA | untested / partial / unchanged in tested scope / changed / blocked | Links to each baseline change |
 
 Derive any decision summary from the linked attribution records. A commit can contain both accepted and rejected changes. Keep those decisions separate.
 
