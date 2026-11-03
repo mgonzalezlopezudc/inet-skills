@@ -44,6 +44,10 @@ Choose applicable probes from the changed mechanism:
 
 Establish reachability from the production entry point before you add a case. Record which path each selected test reaches and what assertion would fail before the fix. A successful command or a passing neighboring test does not establish that coverage.
 
+For a protocol regression, identify the responsible behavior commit and its immediate parent. Design one fixture whose assertions express the new behavior on both revisions. Check that the fixture can reach the intended runtime observation on the parent. An incompatible fixture cannot demonstrate the behavior difference. Explain the parent's failure mechanism and the changed action that satisfies the assertion. If the parent passes, identify the test as a control or added coverage instead.
+
+Provide this comparison to `inet-pull-request-authoring` for both the commit body and PR description. Distinguish source-based expectations from executed results. Test design alone does not establish a failing parent or passing commit.
+
 ## Seed and parameter scope
 
 One fixed seed is enough when the invariant is deterministic, the reproduction reaches the exact causal path, and the claim is about that path rather than probability, distribution, fairness, or robustness. It is also enough to preserve a minimal reproduction of one known seeded failure.

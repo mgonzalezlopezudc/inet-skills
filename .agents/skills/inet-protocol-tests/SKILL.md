@@ -107,3 +107,7 @@ Identify the first failed stage: environment/selection, INET library freshness, 
 The runner parses `Aggregate result` from `opp_test`. A source marker `%# expected-result: FAIL` declares an expected failure. CLI success means outcomes matched expectations, which can include those failures; it does not prove every protocol obligation passed. Apply the project's failure-classification and baseline-change procedures before proposing any marker or expected-output change.
 
 Populate the project's evidence record with the selected `.test` paths and counts, per-test observed/expected outcomes, failed pipeline stage, and log/generated-artifact paths. The existing unit/module verification normalizer is not a protocol adapter; do not label protocol output as unit or module evidence.
+
+For an authorized parent/commit comparison, use the responsible commit's fixture and expectations on its immediate parent. Preserve the exact fixture, revisions, commands, mode, seeds, and results for both executions. Identify the assertion or required event that detects the parent's defect and explain why the new commit satisfies it. Separate fixture incompatibility and infrastructure errors from runtime behavior failures. Do not replace missing executions with results from another revision.
+
+Use `inet-pull-request-authoring` when these results support PR or commit descriptions. Supply the causal comparison for each protocol test, with explicit evidence limits. Keep execution records separate from the commit's explanation of behavior.
