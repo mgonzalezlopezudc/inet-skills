@@ -2,6 +2,73 @@ version: 1
 
 # Gates name observable decisions or evidence. Evaluations assert these outcomes, not prose.
 cases:
+  - id: staged-baseline-attribution
+    area: results
+    prompt: Review the first 10% of a pinned source range for statistical and chart baseline changes. Continue within the agreed run limit while human decisions remain pending. Preserve source master.
+    expected_skills: [inet-baseline-review, inet-statistical-tests, inet-chart-tests]
+    required_gates:
+      - pinned-source-and-baseline-controls
+      - agreed-stage-and-work-limit
+      - isolated-candidates-and-preserved-master
+      - retained-workspaces-and-incremental-builds
+      - smallest-executable-source-cause
+      - per-result-and-per-chart-differences
+      - independent-correctness-basis
+      - persistent-history-and-artifact-links
+      - evidence-versioned-human-decisions
+      - authoritative-decisions-in-attribution-records
+      - separate-decisions-for-mixed-commit
+      - provisional-dependent-candidates
+      - checkpoint-before-further-stage
+
+  - id: baseline-reverse-control
+    area: results
+    prompt: A mixed source commit changes a scalar and its chart. The forward explanation is difficult. Test a minimal reverse patch that restores the suspected defect. A later commit cancels the final numerical difference.
+    expected_skills: [inet-baseline-review]
+    required_gates:
+      - isolated-minimal-reverse-patch
+      - predicted-effect-before-execution
+      - new-reverse-and-restored-controls
+      - incremental-build-after-patch-application-and-removal
+      - valid-old-control-when-available
+      - wrong-behavior-explained-independently
+      - partial-agreement-not-overclaimed
+      - transient-differences-retained
+      - no-source-history-amendment
+
+  - id: baseline-reverse-without-old-control
+    area: results
+    prompt: The old source cannot execute. A minimal reverse patch on the new source restores a duplicate count. A trace shows the defect independently. Review the attribution without an old control.
+    expected_skills: [inet-baseline-review]
+    required_gates:
+      - new-reverse-and-restored-controls
+      - independent-evidence-for-restored-defect
+      - historical-differences-unverified-when-unsupported
+      - no-mandatory-old-endpoint-execution
+
+  - id: baseline-decision-after-edit
+    area: results
+    prompt: A human accepts a baseline candidate. Correct a spelling error in its explanation. Later, change the candidate value. Keep the decision history accurate.
+    expected_skills: [inet-baseline-review]
+    required_gates:
+      - editorial-correction-preserves-acceptance
+      - material-change-invalidates-affected-acceptance
+      - prior-decision-preserved-in-attribution-record
+      - index-and-chain-derived-from-authoritative-record
+
+  - id: baseline-rejected-dependency
+    area: results
+    prompt: A human rejects one candidate while later candidates depend on it. Prepare publication only to statistics and media after the review resolves the dependencies.
+    expected_skills: [inet-baseline-review]
+    required_gates:
+      - rejection-and-evidence-preserved
+      - dependent-candidates-excluded-from-accepted-chain
+      - fresh-final-source-reconciliation
+      - every-final-difference-attributed
+      - baseline-approval-separated-from-publication
+      - source-master-preserved
+      - separate-repository-publication-status
+
   - id: current-plan-guidance
     area: planning
     prompt: Prepare a plan from the active project map. The linked plan procedure is a draft with conditional approval requirements.

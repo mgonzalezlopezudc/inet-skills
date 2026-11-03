@@ -44,7 +44,7 @@ The diff command must succeed, and the merge list must be empty. Tree equality c
 
 ## Verify in one sweep
 
-Walk every output commit from oldest to newest in one uninterrupted sequential run. Reuse one verification worktree with retained build artifacts so the `clean` ref remains pinned at its final SHA. Apply the [incremental build recipe](../inet-opp-repl/references/incremental-builds.md); dispose of the worktree only after verification and evidence collection are complete. For each commit:
+Walk every output commit from oldest to newest in one uninterrupted sequential run. Reuse one verification worktree with retained build artifacts so the `clean` ref remains pinned at its final SHA. Apply the [incremental build recipe](../../references/incremental-builds.md); dispose of the worktree only after verification and evidence collection are complete. For each commit:
 
 1. Build the INET artifacts for the selected commit. Run its explicitly filtered, directly related `opp_repl` cases. Zero executed cases is not evidence.
 2. Require behavior-preserving commits to retain the selected behavior signal. For a fix or feature, accept movement only in the predicted, already-approved scope.

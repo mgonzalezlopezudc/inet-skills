@@ -58,7 +58,7 @@ The ancestry command must succeed, the merge list must be empty, the counts must
 
 ## Verify the final series once
 
-Walk every target commit from oldest to newest in one uninterrupted sequential run, using a reusable verification worktree so `target` remains pinned at its final SHA. Retain build artifacts under the [incremental build recipe](../inet-opp-repl/references/incremental-builds.md) throughout the sweep; dispose of the worktree only after verification and evidence collection. For each commit:
+Walk every target commit from oldest to newest in one uninterrupted sequential run, using a reusable verification worktree so `target` remains pinned at its final SHA. Retain build artifacts under the [incremental build recipe](../../references/incremental-builds.md) throughout the sweep; dispose of the worktree only after verification and evidence collection. For each commit:
 
 1. Build the INET artifacts for the selected commit. Run explicitly filtered, directly related `opp_repl` cases. Zero executed cases is not evidence.
 2. Attribute the selected result to the pinned-main control, the corresponding topic effect, or their non-overlapping combination. Any unexplained movement leaves the fast path.

@@ -5,6 +5,7 @@ project_guidance:
 
 shared_resources:
   - .agents/references/project-guidance-discovery.md
+  - .agents/references/incremental-builds.md
 
 generated_metadata:
   source: .agents/skill-suite.yaml
@@ -70,6 +71,7 @@ profiles:
       - inet-80211-regression-testing
   results:
     skills:
+      - inet-baseline-review
       - inet-chart-tests
       - inet-statistical-tests
       - omnetpp-result-analysis
@@ -415,6 +417,17 @@ skills:
     checkout_requirements:
       required: [Makefile]
       optional: []
+
+  inet-baseline-review:
+    metadata:
+      display_name: INET Baseline Review
+      short_description: Attribute statistical and chart baseline changes
+      default_prompt: Use $inet-baseline-review to review this source history in bounded stages. Explain each statistical and chart baseline change through its smallest justified cause. Keep evidence and human decisions in a persistent report. Preserve source master.
+    dependencies: [inet-chart-tests, inet-statistical-tests]
+    required_tools: [git]
+    checkout_requirements:
+      required: []
+      optional: [inet.opp, statistics, media]
 
   inet-chart-tests:
     metadata:

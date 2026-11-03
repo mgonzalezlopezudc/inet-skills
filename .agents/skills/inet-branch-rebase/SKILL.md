@@ -18,7 +18,7 @@ Use `inet-pull-request-authoring` and the active project's current series guidan
 - Always read [state-log.md](references/state-log.md) so the work is resumable from disk.
 - Use [inet-opp-repl](../inet-opp-repl/SKILL.md) and read [opp-repl-contract.md](references/opp-repl-contract.md) when defining verification scope.
 - After the groups are approved, read [topology-and-stages.md](references/topology-and-stages.md) before choosing mode or executing a stage.
-- Before the first build, read the shared [incremental build recipe](../inet-opp-repl/references/incremental-builds.md). Reuse compatible build workspaces across attempts, controls, repairs, and final verification; fresh attempt branches do not require fresh build directories or clean rebuilds.
+- Before the first build, read the shared [incremental build recipe](../../references/incremental-builds.md). Reuse compatible build workspaces across attempts, controls, repairs, and final verification; fresh attempt branches do not require fresh build directories or clean rebuilds.
 - Read [failure-recovery.md](references/failure-recovery.md) only after a failure or when an adaptation is required.
 - Read [finalization.md](references/finalization.md) only when every group has reached pinned `main`.
 

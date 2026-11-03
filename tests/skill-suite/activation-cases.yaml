@@ -3,6 +3,15 @@ version: 1
 # These are selection contracts, not keyword-matching tests. An evaluation runner should present
 # only `prompt` to the model and compare observed skill loads with the expected/forbidden sets.
 cases:
+  - id: baseline-review-positive
+    kind: positive
+    prompt: Review statistical and chart baseline differences across this source history. Attribute each difference to its smallest cause. Keep review decisions in a report.
+    expected_skills: [inet-baseline-review]
+  - id: baseline-review-negative
+    kind: negative
+    prompt: Run this fixed chart test selection against its current baseline. No history attribution or baseline update is required.
+    forbidden_skills: [inet-baseline-review]
+
   - id: project-guidance-plan-positive
     kind: positive
     prompt: Prepare an INET implementation plan from current contributor documents. Check whether the draft approval process applies.

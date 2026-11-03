@@ -1,6 +1,6 @@
 # Reuse builds across history verification
 
-Read this before building cleanup commits, rebase attempts, controls, or final-series sweeps. The active project's build-freshness requirement means artifacts must match the checked-out inputs. A successful incremental build satisfies it; a clean rebuild at each stage is unnecessary.
+Use this recipe for baseline reviews, history verification, and repeated controls. An incremental build satisfies freshness requirements when its artifacts match the checked-out inputs. A clean build at each step is unnecessary.
 
 ## Retain build artifacts in the workspace
 

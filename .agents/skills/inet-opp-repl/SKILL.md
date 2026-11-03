@@ -9,7 +9,7 @@ Use this skill for the shared `opp_repl` procedures in history and comparison wo
 
 Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active checkout's test category and directly related scope. Read [workflow-contract.md](references/workflow-contract.md) before the first invocation in a workflow.
 
-For repeated history verification, read [incremental-builds.md](references/incremental-builds.md) before the first build. Retain compatible artifacts in reusable worktrees. Build incrementally. Fresh evidence at each stage does not require a clean rebuild.
+For repeated history verification, read [incremental-builds.md](../../references/incremental-builds.md) before the first build. Retain compatible artifacts in reusable worktrees. Build incrementally. Fresh evidence at each stage does not require a clean rebuild.
 
 ## Capability and command discovery
 

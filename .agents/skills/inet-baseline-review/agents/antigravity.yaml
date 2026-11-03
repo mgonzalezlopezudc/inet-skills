@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Baseline Review"
+  short_description: "Attribute statistical and chart baseline changes"
+  default_prompt: "Use $inet-baseline-review to review this source history in bounded stages. Explain each statistical and chart baseline change through its smallest justified cause. Keep evidence and human decisions in a persistent report. Preserve source master."

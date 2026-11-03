@@ -29,7 +29,7 @@ Use plain upstream checkpoint `Sj` as the anchor for `parallel-end`, individual 
 
 ## Attempts and safe points
 
-Keep the build workspaces reusable under the [incremental build recipe](../../inet-opp-repl/references/incremental-builds.md). Immutable attempt refs and evidence survive independently of the worktree used to compile and test them.
+Keep the build workspaces reusable under the [incremental build recipe](../../../references/incremental-builds.md). Immutable attempt refs and evidence survive independently of the worktree used to compile and test them.
 
 For each group/checkpoint:
 

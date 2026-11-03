@@ -2,7 +2,7 @@
 
 Read this reference once when defining a cleanup, rebase, comparison, or baseline-update invocation. Recheck active help whenever the installed `opp_repl` revision changes.
 
-For cleanup/rebase stages and repeated controls, apply [incremental-builds.md](incremental-builds.md) to the build recipe and workspace lifecycle before execution.
+For cleanup/rebase stages and repeated controls, apply [incremental-builds.md](../../../references/incremental-builds.md) to the build recipe and workspace lifecycle before execution.
 
 ## Invocation record
 

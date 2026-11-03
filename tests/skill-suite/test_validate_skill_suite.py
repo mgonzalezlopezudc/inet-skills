@@ -82,7 +82,7 @@ class SkillSuiteValidatorTest(unittest.TestCase):
             )
             self.assertEqual([], errors)
             self.assertEqual(
-                ["inet-chart-tests", "inet-statistical-tests", "omnetpp-result-analysis", "omnetpp-result-plotting"], skills
+                ["inet-baseline-review", "inet-chart-tests", "inet-statistical-tests", "omnetpp-result-analysis", "omnetpp-result-plotting"], skills
             )
             self.assertFalse(list(output.rglob("*.pyc")))
             self.assertFalse(list(output.rglob("__pycache__")))
@@ -93,6 +93,9 @@ class SkillSuiteValidatorTest(unittest.TestCase):
             self.assertFalse((output / ".agents" / "skill-suite.yaml").exists())
             self.assertTrue(
                 (output / ".agents" / "references" / "project-guidance-discovery.md").is_file()
+            )
+            self.assertTrue(
+                (output / ".agents" / "references" / "incremental-builds.md").is_file()
             )
             self.assertTrue((output / ".agents" / "schemas" / "verification-result-v1.schema.json").is_file())
 
