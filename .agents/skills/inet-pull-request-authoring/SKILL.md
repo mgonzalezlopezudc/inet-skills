@@ -50,6 +50,8 @@ Write short PR descriptions that a human reviewer can easily understand. Keep th
 
 For a PR, start with the problem and resulting behavior. Include as many diagrams as needed to explain the change clearly. Select diagrams that clarify a flow, interaction, or state change. Do not impose a fixed diagram count. Use Mermaid when the host supports it. Each diagram must agree with the source and the stated limits. Keep enough prose for the reader to understand what each diagram shows.
 
+Do not use semicolons inside Mermaid diagrams. Semicolons can cause the host to fail to render the diagram. Use line breaks between Mermaid statements. Use periods or commas inside labels. Before publication, check every Mermaid block for semicolons.
+
 List all commits in review order with links and a short explanation of what each commit contributes. Explain each contribution instead of repeating its subject. Distinguish preparation, behavior changes, tests, and documentation. Where appropriate, name and link the protocol tests associated with each commit. Explain which behavior each test checks. Use a compact table or list that lets the reviewer connect each contribution to its tests. Preserve the parent comparison described below without repeating shared setup in every row.
 
 Put detailed commands and execution records after the explanation, in a collapsible section when useful. Preserve the active project's required structure and evidence fields. Before completion, check that the summary explains the result and the commit list explains each contribution and its associated tests.
