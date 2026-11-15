@@ -4,7 +4,7 @@ This is an overview of model bindings for the semantic specialist classes. Class
 
 | Class | Codex | Antigravity | Kimi |
 | --- | --- | --- | --- |
-| Reasoning | GPT-6 Astra, medium | Gemini 3.8 Flash, high | Kimi K3, max |
-| Navigation | GPT-6 Astra, low | Gemini 3.8 Flash, medium | Kimi K3, high |
-| Implementation | GPT-5.6 Luna, xhigh | Gemini 3.8 Flash, medium | Kimi K3, high |
-| Extraction | GPT-5.6 Luna, xhigh | Gemini 3.8 Flash, low | Kimi K3, low |
+| Reasoning | GPT-6 Astra, high / GPT-6.1 Sol, xhigh | Gemini 4 Argon, high / Gemini 4 Hydrogen, xhigh | Kimi K3, max |
+| Navigation | GPT-6.1 Sol, medium | Gemini 4 Hydrogen, medium | Kimi K3, high |
+| Implementation | GPT-6.1 Sol, high–medium | Gemini 4 Hydrogen, high–medium | Kimi K3, high |
+| Extraction | GPT-6.1 Sol, medium | Gemini 3.8 Flash, low | Kimi K3, low |

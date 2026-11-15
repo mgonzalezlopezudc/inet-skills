@@ -14,7 +14,7 @@ For active specialist-class bindings, consult [MODELS.md](../../../../MODELS.md)
 ## Runtime-Specific Spawning Procedures
 
 ### Codex and Antigravity
-Spawn registered agent types directly using the platform sub-agent tool or configuration name. The sub-agent inherits workspace configuration and repository rules automatically.
+Spawn registered agent types directly using the platform sub-agent tool or configuration name. The sub-agent inherits workspace configuration and repository rules automatically. When spawning through Antigravity tools that accept a model tier enum (`inherit`, `pro`, `flash`, `flash_lite`) instead of an explicit runner model string, use `pro` (or `inherit` when the parent already runs on a Gemini 4 model) for Reasoning, Navigation, and Implementation specialists, and `flash` (or `flash_lite` for simple high-fan-out inventories) for `inet-evidence-miner`.
 
 ### Prompt-Persona Runtimes
 When running on platforms without declarative agent registration, instantiate the persona by prepending:
