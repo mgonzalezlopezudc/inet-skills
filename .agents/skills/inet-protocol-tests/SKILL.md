@@ -23,14 +23,13 @@ The current project description selects direct children of `tests/protocol/` as 
 
 ## Prepare the environment and library
 
-From the intended INET root, use its established `.envrc` setup or:
+Apply [command-execution.md](../../references/command-execution.md). Each command runs in a fresh shell session: if the OMNeT++ toolchain is not already on `PATH`, load `.envrc` or run the `setenv` scripts in the **same** command from the intended INET root:
 
 ```bash
-source "$OMNETPP_ROOT/setenv"
-source setenv
+source "$OMNETPP_ROOT/setenv" && source setenv
 ```
 
-Confirm that `opp_run_protocol_tests`, `opp_test`, `opp_makemake`, and `make` resolve in this environment. Follow the installation guide and workflow for Python dependencies. Load the local project description with `--load . -p inet` from the INET root. Use `--load @opp` only when the checkout supplies no project description.
+Confirm once that `opp_run_protocol_tests`, `opp_test`, `opp_featuretool`, `opp_makemake`, and `make` resolve. If `$OMNETPP_ROOT` or the `opp_repl` Python environment lies outside a workspace-isolated sandbox and fails that check, run subsequent `opp_featuretool`, `make`, and `opp_run_protocol_tests` commands directly outside the sandbox (`BypassSandbox: true` where supported) instead of retrying each build or test inside the sandbox. Follow the installation guide and workflow for Python dependencies. Load the local project description with `--load . -p inet` from the INET root. Use `--load @opp` only when the checkout supplies no project description.
 
 Apply the build-mode and freshness requirements from the project's gate procedure. The debug build command used with the examples below is:
 

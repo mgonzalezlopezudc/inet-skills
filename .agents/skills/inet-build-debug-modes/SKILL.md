@@ -5,7 +5,7 @@ description: Build INET debug artifacts, generated code, and model libraries. Di
 
 # INET debug builds
 
-Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active checkout's required build modes, freshness obligations, and release gates. Select the mode and toolchain from that guidance for the requested operation. The following is the technical debug shape; project guidance decides when it is required:
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active checkout's required build modes, freshness obligations, and release gates, and apply [command-execution.md](../../references/command-execution.md) for stateless `setenv` loading and external `OMNETPP_ROOT` sandbox handling. Select the mode and toolchain from that guidance for the requested operation. The following is the technical debug shape; project guidance decides when it is required:
 
 - build: `make MODE=debug -j$(nproc)`;
 - launcher: `inet --debug`;

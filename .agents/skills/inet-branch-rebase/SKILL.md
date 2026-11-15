@@ -7,7 +7,7 @@ description: Rebase an opp_repl-tested INET topic branch across approved upstrea
 
 Carry a pinned `base..topic` range onto pinned `main` through approved commit groups and upstream checkpoints. Preserve every attempt branch and deliver a clean target containing approved topic and adaptation effects, with no stage-only scaffolding.
 
-Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active project's current series, protection, baseline, and verification requirements.
+Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active project's current series, protection, baseline, and verification requirements, and apply [command-execution.md](../../references/command-execution.md) for Git worktrees and `opp_repl` sandbox handling.
 
 This mutates history. Start only when the user explicitly requests a high-risk upstream rebase. Use `inet-branch-cleanup` for fixed-base split/squash/re-authoring, and ordinary Git for a low-risk one-shot rebase. Rebase authorization does not authorize unrelated redesign, baseline movement, a push, or a pull request.
 

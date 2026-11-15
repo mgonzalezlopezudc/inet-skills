@@ -5,7 +5,7 @@ description: Plan, write, or audit reviewable INET commits and pull requests. Us
 
 # INET pull request authoring
 
-Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) before a commit or pull request task. Follow the active checkout's current series, review, and contribution routes. Read its documentation route for the audience and explanatory style of commit messages and PR descriptions. Those routes provide the authority for project policy.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) before a commit or pull request task, and apply [command-execution.md](../../references/command-execution.md) when running `git` in a worktree or invoking checkout enforcement scripts. Follow the active checkout's current series, review, and contribution routes. Read its documentation route for the audience and explanatory style of commit messages and PR descriptions. Those routes provide the authority for project policy.
 
 This skill adds planning and reporting structure. It does not reconstruct history: route fixed-base requests to split, merge, reorder, or re-author existing commits through `inet-branch-cleanup`, and route high-risk `opp_repl`-backed rebases onto changed upstream history through `inet-branch-rebase`.
 

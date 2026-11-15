@@ -6,7 +6,7 @@ For example, a hypothetical project map links to a draft approval procedure. The
 
 Before applying project policy:
 
-1. Identify the active INET checkout from the task context. The skill source repository and a deployment directory are not INET checkouts. Use `git rev-parse --show-toplevel` in the intended directory if its location is unclear.
+1. Identify the active INET checkout from the task context. The skill source repository and a deployment directory are not INET checkouts. Use `git rev-parse --show-toplevel` in the intended directory if its location is unclear. When a checkout is a Git worktree whose `.git` file points outside the workspace, or when running OMNeT++/INET tools or checkout scripts, follow [command-execution.md](command-execution.md) so external-path and tool-flag checks do not repeat failing sandboxed commands.
 2. Read `<checkout>/doc/project/README.md`. Do not use a packaged copy, a remembered internal path, or a fixed rule identifier.
 3. Select the route for the requested task. Resolve relative links from the document that contains each link. Read the selected procedure and the relevant sections of its linked policy, design, and enforcement documents. Follow further dependencies when they define a condition that affects the task.
 4. Check each selected document's status, scope, and protection information. Use its current text to determine whether its requirements apply. A link does not make a draft accepted policy. Read the draft's conditions for use and the task instructions before you apply its approval process. Follow the named replacement for a superseded document. Use a snapshot as historical evidence, not as current policy.

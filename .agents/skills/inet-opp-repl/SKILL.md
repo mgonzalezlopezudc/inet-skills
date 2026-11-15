@@ -13,7 +13,7 @@ For repeated history verification, read [incremental-builds.md](../../references
 
 ## Capability and command discovery
 
-1. Verify `command -v opp_repl` in the active environment. Record the resolved executable.
+1. Verify `command -v opp_repl` in the active environment (see [command-execution.md](../../references/command-execution.md) for stateless `setenv` loading and external `OMNETPP_ROOT` sandbox handling). Record the resolved executable.
 2. Inspect the installed command/API help and the loaded `.opp` entrypoints. Check project descriptions supplied with `--load @opp` when no local entrypoint exists. Do not assume interfaces or stores from another version.
 3. Resolve the active simulation project and build mode from the active project guidance. Record the selected mode.
 4. If an executable, required option, entrypoint, required dependency store, or selected data is absent, report `NOT_RUN` through the adapter. Supply `--not-run-reason '<missing capability>'`. Do not substitute an unscoped run.

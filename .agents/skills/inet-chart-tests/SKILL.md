@@ -20,7 +20,7 @@ opp_run_chart_tests --help
 
 Current INET uses `opp_repl`. The earlier `inet_run_chart_tests` command can be absent. Do not substitute a legacy command without evidence that the active checkout requires it.
 
-Set up the OMNeT++ environment. Load `setenv` from the intended INET root. Use the established Python environment. The chart workflow installs OMNeT++ Python requirements plus `opp_repl`; INET's earlier `python/requirements.txt` can be absent. Check the active workflow before an authorized dependency installation. Match its dependency versions for CI reproduction.
+Set up the OMNeT++ environment and load `setenv` from the intended INET root in the same command when tools are not already on `PATH` (see [command-execution.md](../../references/command-execution.md)). Use the established Python environment. The chart workflow installs OMNeT++ Python requirements plus `opp_repl`; INET's earlier `python/requirements.txt` can be absent. Check the active workflow before an authorized dependency installation. Match its dependency versions for CI reproduction.
 
 The current `inet.opp` selects release mode and the `showcases` filter for chart tests. It declares `media` as the baseline checkout and `doc/media` as the image path relative to each analysis directory. Per-showcase links connect these paths to the baseline checkout. Inspect those links when reference images are absent.
 

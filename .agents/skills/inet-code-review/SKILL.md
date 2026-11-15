@@ -5,7 +5,7 @@ description: Review OMNeT++/INET correctness and regressions as an independent m
 
 # INET code reviewer
 
-Start with the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) and read the active checkout's project entry point. Follow its current review route; for a branch or pull request, include the route's series and domain checks. Apply the active exception ledgers and semantic checklists selected for the reviewed scope. Do not assume that a project document name, heading, rule identifier, or checklist path remains unchanged.
+Start with the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) and read the active checkout's project entry point. Apply [command-execution.md](../../references/command-execution.md) for Git worktrees and checkout script flags. Follow its current review route; for a branch or pull request, include the route's series and domain checks. Apply the active exception ledgers and semantic checklists selected for the reviewed scope. Do not assume that a project document name, heading, rule identifier, or checklist path remains unchanged.
 
 **Read-only scope policy:**
 - Remain strictly read-only with respect to committed source files, NED/MSG definitions, configuration files, test scripts, fingerprints, exception ledgers, and sealing status files.

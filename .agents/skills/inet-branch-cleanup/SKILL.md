@@ -9,7 +9,7 @@ Build a new `clean` branch from a fixed `base`. The original `topic` branch neve
 
 This workflow changes repository history. Start only when the user requested history reconstruction. Use `inet-pull-request-authoring` for commit plans, messages, or compliance audits that do not require branch reconstruction. Use `inet-branch-rebase` for a high-risk rebase onto changed upstream history with `opp_repl` evidence. Use an ordinary Git workflow for a low-risk one-shot rebase.
 
-Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active project's current series, protection, baseline, and verification requirements.
+Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active project's current series, protection, baseline, and verification requirements, and apply [command-execution.md](../../references/command-execution.md) for Git worktrees and `opp_repl` sandbox handling.
 
 Commits may be split, merged, reordered, or newly authored, even below hunk level. That freedom is kept honest by the **coverage ledger**, which proves that the cleanup lost nothing and introduced no permanent changes of its own.
 

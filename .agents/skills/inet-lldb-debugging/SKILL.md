@@ -5,7 +5,7 @@ description: Debug INET and OMNeT++ simulations at C++ source level with LLDB wh
 
 # Debug INET with LLDB
 
-Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active checkout's current reproduction and evidence guidance. This skill adds debugger mechanics.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active checkout's current reproduction and evidence guidance, and apply [command-execution.md](../../references/command-execution.md) for external `OMNETPP_ROOT` sandbox handling. This skill adds debugger mechanics.
 
 Use debug components from the same build configuration: `opp_run_dbg`, `libINET_dbg.so`, and debug project libraries. The option `--debug-on-errors=true` creates a trap but does not launch LLDB.
 

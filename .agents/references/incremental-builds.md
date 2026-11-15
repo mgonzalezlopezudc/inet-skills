@@ -14,7 +14,7 @@ Use this recipe for baseline reviews, history verification, and repeated control
 
 1. Record the workspace's last successful build SHA/tree and build configuration: mode, compiler, OMNeT++ installation, flags, enabled features, and dependent project libraries. Compare the next state with the state actually built there, not merely the next commit's parent. Include local build settings and uncommitted inputs when verifying a candidate before committing it.
 2. Inspect the active `.opp` recipe and build wrapper once for clean/rebuild operations, forced compilation, temporary checkouts, and output-directory deletion. Use their supported incremental path. Discover the installed API before choosing options; do not guess `opp_repl` keywords.
-3. Select the build command and mode from current project guidance. Run the dependency-aware build in the retained workspace. This example applies when the selected mode is debug:
+3. Select the build command and mode from current project guidance. Apply [command-execution.md](command-execution.md) for stateless `setenv` loading and external `OMNETPP_ROOT` sandbox handling. Run the dependency-aware build in the retained workspace. This example applies when the selected mode is debug:
 
    ```bash
    make MODE=debug -j$(nproc)

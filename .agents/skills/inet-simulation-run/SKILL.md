@@ -5,7 +5,7 @@ description: Run INET simulations with the INET launcher (`inet`) and Cmdenv or 
 
 # Run INET simulations
 
-Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active checkout's current reproduction and evidence guidance. This skill adds launcher, working-directory, and Cmdenv/Qtenv mechanics.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active checkout's current reproduction and evidence guidance, and apply [command-execution.md](../../references/command-execution.md) when OMNeT++ tools reside outside a workspace-isolated sandbox or require `setenv` in the same command. This skill adds launcher, working-directory, and Cmdenv/Qtenv mechanics.
 
 Invoke the `inet` launcher directly from the intended working directory. Diagnose environment setup only after a concrete launcher failure.
 

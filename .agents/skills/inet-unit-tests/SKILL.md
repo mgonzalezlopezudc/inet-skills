@@ -5,7 +5,7 @@ description: Run focused INET C++ unit tests or OMNeT++ module tests. Use for th
 
 # Build and run INET unit tests
 
-Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active checkout's test category, scope, freshness, and gate obligations. This skill adds filtered runner mechanics.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active checkout's test category, scope, freshness, and gate obligations. Apply [command-execution.md](../../references/command-execution.md) for stateless `setenv` loading and external `OMNETPP_ROOT` sandbox handling. This skill adds filtered runner mechanics.
 
 Run from the INET root with `opp_run_unit_tests`. Check the resolved executable and its `--help` output. Read the local `inet.opp` and unit/module workflows for the test folders, mode, and installation source. Load the local description with `--load . -p inet`. Use `--load @opp` only when the checkout supplies no project description.
 

@@ -7,7 +7,7 @@ description: Inventory statistical and chart baselines for a selected INET area.
 
 Produce a reviewable sequence of baseline changes from a pinned source history. Attribute each difference to the smallest source change that explains it. Show why each accepted step improves result correctness or preserves correctness under a justified representation change. A new baseline that makes a test pass supplies no correctness proof.
 
-Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) for the active checkout's baseline, test, result-analysis, diagnosis, and publication requirements. Resolve their scope for separate baseline repositories and current source history. Preserve current authorization. If a requirement conflicts with the requested publication, report the conflict before that action. Do not rewrite source history to resolve it without authorization.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) for the active checkout's baseline, test, result-analysis, diagnosis, and publication requirements, and apply [command-execution.md](../../references/command-execution.md) for Git worktrees and external `OMNETPP_ROOT`/baseline sandbox handling. Resolve their scope for separate baseline repositories and current source history. Preserve current authorization. If a requirement conflicts with the requested publication, report the conflict before that action. Do not rewrite source history to resolve it without authorization.
 
 Use [inet-statistical-tests](../inet-statistical-tests/SKILL.md) for scalar comparisons and their artifacts. Use [inet-chart-tests](../inet-chart-tests/SKILL.md) for image comparisons and their artifacts. Read each skill when its test type enters the scope.
 

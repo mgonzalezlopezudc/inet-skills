@@ -7,7 +7,7 @@ description: Implement INET C++, NED, MSG, INI, and test changes after design ch
 
 Prevent defects before and during implementation. Reuse correctness references from `inet-code-review`. That skill remains independent and read-only. Do not adopt its reviewer role, verdicts, severity, or report format.
 
-Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to find the active checkout's contribution, protection, rule, gate, and test guidance. Read that guidance before its application. This skill adds a pre-write correctness contract and a post-write self-audit; it does not repeat project policy.
+Use [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to find the active checkout's contribution, protection, rule, gate, and test guidance, and apply [command-execution.md](../../references/command-execution.md) for Git worktrees, external `OMNETPP_ROOT` tools, and checkout script flags. Read that guidance before its application. This skill adds a pre-write correctness contract and a post-write self-audit; it does not repeat project policy.
 
 For a requested implementation plan, use `inet-project-guidance` to follow the current plan route before implementation. The working contract below does not replace a plan or grant approval.
 

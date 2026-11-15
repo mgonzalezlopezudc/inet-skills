@@ -19,7 +19,7 @@ The CSV files, `fingerprinttest`, and INET's earlier Python fingerprint commands
 
 ## Select and run cases
 
-Set up the OMNeT++ environment. Load `setenv` from the intended INET root. Use the build mode required by the discovered project guidance. Rebuild the matching library after compiled source or generated-code inputs change. The runner builds by default; use `--no-build` only when the matching binaries are current.
+Apply [command-execution.md](../../references/command-execution.md) for stateless `setenv` loading and external `OMNETPP_ROOT` sandbox handling. Set up the OMNeT++ environment and load `setenv` from the intended INET root in the same command when tools are not already on `PATH`. Use the build mode required by the discovered project guidance. Rebuild the matching library after compiled source or generated-code inputs change. The runner builds by default; use `--no-build` only when the matching binaries are current.
 
 Run from the INET root with an explicit selection. This example applies when the project guidance selects debug mode:
 

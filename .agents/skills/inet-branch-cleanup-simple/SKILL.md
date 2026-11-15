@@ -11,7 +11,7 @@ This mutates repository history. Start only when the user requested history reco
 
 ## Admission contract
 
-Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active project's current series, protection, baseline, and verification requirements.
+Use the shared [project-guidance-discovery.md](../../references/project-guidance-discovery.md) to discover the active project's current series, protection, baseline, and verification requirements, and apply [command-execution.md](../../references/command-execution.md) for Git worktrees and `opp_repl` sandbox handling.
 
 Use this skill only when all of these are true:
 

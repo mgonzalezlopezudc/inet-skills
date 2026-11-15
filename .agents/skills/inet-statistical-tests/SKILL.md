@@ -22,11 +22,10 @@ Legacy `tests/statistical/*.test` files can contain `%postrun-command: Rscript c
 
 ## Prepare the worktree
 
-Run setup from the intended INET worktree root. Use its established environment, for example `source .envrc` when that file provides the local setup, or:
+Apply [command-execution.md](../../references/command-execution.md) for stateless `setenv` loading and external `OMNETPP_ROOT`/worktree sandbox handling. Run setup from the intended INET worktree root in the **same** command as execution when tools are not already on `PATH`, using `.envrc` or:
 
 ```bash
-source "$OMNETPP_ROOT/setenv"
-source setenv
+source "$OMNETPP_ROOT/setenv" && source setenv
 ```
 
 Check the actual runner before execution:
