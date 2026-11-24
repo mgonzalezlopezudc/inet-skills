@@ -46,11 +46,13 @@ Check paragraph layout in the actual message text before a commit. Apply the dis
 
 ## Write descriptions for human review
 
-Write short PR descriptions that a human reviewer can easily understand. Keep the explanation complete without the diff or conversation. Explain the problem, resulting behavior, responsible component, mechanism, and relevant limits. Explain the mechanism before API names. Use a concrete scenario to connect the trigger, old result, changed action, and new result. Remove repeated facts and implementation details that do not help the reviewer assess the change.
+Write commit messages and PR descriptions for a reviewer who knows the domain and is new to this change. Lead with the problem or unmet need. For a fix, explain when the problem occurs, what goes wrong, why it happens if known, and how the fix changes the outcome. Give enough context for the explanation to stand on its own. Introduce classes and functions through their role in the fix.
 
-For a PR, start with the problem and resulting behavior. Include as many diagrams as needed to explain the change clearly. Select diagrams that clarify a flow, interaction, or state change. Do not impose a fixed diagram count. Use Mermaid when the host supports it. Each diagram must agree with the source and the stated limits. Keep enough prose for the reader to understand what each diagram shows.
+Use a concrete example when it makes the explanation clearer. A reproduction can do this by showing the setup, trigger, and outcome before and after the fix. Label hypothetical examples.
 
-Do not use semicolons inside Mermaid diagrams. Semicolons can cause the host to fail to render the diagram. Use line breaks between Mermaid statements. Use periods or commas inside labels. Before publication, check every Mermaid block for semicolons.
+In a PR, use Mermaid when it helps explain the change. Give **each test described in the PR its own Mermaid diagram**, including control tests. Put the diagram with the test's explanation and show the setup, the action under test, and what the test checks. Show both outcomes when their difference explains what a regression test catches.
+
+Use line breaks between Mermaid statements and avoid semicolons in the blocks. Check that the diagrams match the tests and preview them when possible.
 
 List all commits in review order with links and a short explanation of what each commit contributes. Explain each contribution instead of repeating its subject. Distinguish preparation, behavior changes, tests, and documentation. Where appropriate, name and link the protocol tests associated with each commit. Explain which behavior each test checks. Use a compact table or list that lets the reviewer connect each contribution to its tests. Preserve the parent comparison described below without repeating shared setup in every row.
 
@@ -69,7 +71,18 @@ Compare the responsible commit with its immediate parent, including earlier comm
 
 Check fixture compatibility with the parent before claiming a behavioral failure. A missing API, test compilation error, or build failure does not demonstrate the claimed runtime defect. Describe any required fixture adaptation and its effect on the comparison. If the parent already passes, state that result and the test's role as a control or added coverage. Do not invent a parent failure.
 
-For example, a hypothetical test supplies three MPDUs with a malformed middle delimiter. The parent returns one MPDU, so the assertion for two outputs fails. The new commit searches for the next valid delimiter and returns the first and final MPDUs. Their count and content satisfy the assertions. This test establishes extraction; it does not establish MAC acceptance.
+For example, a hypothetical test supplies an aggregate of three Wi-Fi MAC frames with a malformed delimiter before the second frame. The original parser stops at that delimiter and returns only the first frame, so the assertion for two outputs fails. The fixed parser resumes at the next valid delimiter and returns the first and final frames. Their count and content satisfy the assertions. The test checks frame extraction. MAC acceptance would require a separate test.
+
+**Example diagram for the malformed delimiter test in a PR**
+
+```mermaid
+flowchart TD
+    Input["Supply three frames with a malformed delimiter before the second frame"]
+    Input --> Parent["Original parser stops at the malformed delimiter"]
+    Input --> Fixed["Fixed parser resumes at the next valid delimiter"]
+    Parent --> Fail["Only the first frame is returned. The two-output assertion fails."]
+    Fixed --> Pass["The first and final frames are returned. Count and content assertions pass."]
+```
 
 Keep the causal explanation in the commit body. Put exact revisions, commands, modes, seeds, execution status, and logs in the PR evidence or its linked comparison record. Distinguish test expectations from observed results. Label source-based comparisons explicitly. State when fresh executions of the exact parent and commit remain unverified. Earlier runs on different revisions do not establish that exact comparison.
 

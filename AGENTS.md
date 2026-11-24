@@ -4,6 +4,8 @@ This file routes work; it does not copy project policy. The skill source is main
 
 When a skill task depends on INET project requirements, identify the active INET checkout from the task context and read its stable `doc/project/README.md` entry point. Follow the routes exposed there and use the current documents' paths, terms, commands, modes, approval requirements, and protection status. If the entry point or required route is missing, report the gap and do not treat it as permission. The packaged skills carry the discovery procedure in `.agents/references/project-guidance-discovery.md`.
 
+For commit messages and pull request descriptions in this repository, follow the [writing guidance for human reviewers](.agents/skills/inet-pull-request-authoring/SKILL.md#write-descriptions-for-human-review).
+
 For changes to this repository, keep package integrity and skill behavior independently verifiable:
 
 ```sh
