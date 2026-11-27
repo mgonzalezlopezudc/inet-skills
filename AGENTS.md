@@ -6,7 +6,7 @@ When a skill task depends on INET project requirements, identify the active INET
 
 For commit messages and pull request descriptions in this repository, follow the [writing guidance for human reviewers](.agents/skills/inet-pull-request-authoring/SKILL.md#write-descriptions-for-human-review).
 
-For changes to this repository, keep package integrity and skill behavior independently verifiable:
+For changes to this repository, keep package integrity and skill behavior independently verifiable. Run the checks with a Python interpreter that can import `yaml` and `jsonschema`. If an active simulation environment lacks either dependency, use an interpreter that supplies the suite dependencies.
 
 ```sh
 python3 scripts/validate_skill_suite.py --root . --check

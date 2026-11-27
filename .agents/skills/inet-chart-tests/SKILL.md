@@ -62,7 +62,9 @@ This command selects analysis files in that directory and runs their simulations
 
 Use an explicit `-f` path expression for a focused run. Quote regular expressions. Do not assume that a subdirectory or `-w` further restricts a project default filter. Earlier `opp_repl` versions let that default hide the directory restriction. Check the selected analysis files and actual chart count.
 
-The common CLI exposes simulation filters such as `-c`, `-i`, and `-r`. These options do not necessarily select individual charts. Inspect the installed chart runner before a claim about chart selection or run coverage. The Python API can expose `chart_filter` when the CLI does not.
+The common CLI exposes simulation filters such as `-c`, `-i`, and `-r`. Use `-i` when the scope depends on the INI file because an analysis-file filter can bring in simulations from other INIs in the same directory.
+
+For a chart-name filter, check whether the installed CLI lists `--chart-filter`. If it rejects that option, check the signature of `opp_repl.test.chart.run_chart_tests`. In versions that supply the Python `chart_filter` argument, load the checkout's `.opp` file with `load_opp_file(".")` and select the project with `get_simulation_project("inet")` from `opp_repl.simulation.workspace`. For example, pass that project as `simulation_project` with `mode="release"`, `filter=r"^showcases/wireless/errorrate/"` and `chart_filter=r"^PER vs SNIR$"`. Use `get_chart_test_tasks` with the same filters to inspect the chart IDs and names before execution.
 
 A dry run supplies no execution evidence. A zero-chart selection means that no chart comparison ran. Do not treat configuration discovery or a successful build as a chart test pass.
 

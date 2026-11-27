@@ -18,6 +18,8 @@ For repeated history verification, read [incremental-builds.md](../../references
 3. Resolve the active simulation project and build mode from the active project guidance. Record the selected mode.
 4. If an executable, required option, entrypoint, required dependency store, or selected data is absent, report `NOT_RUN` through the adapter. Supply `--not-run-reason '<missing capability>'`. Do not substitute an unscoped run.
 
+If loading `inet.opp` rejects a test aspect such as `sim_time_limits`, or a selector used in CI is missing locally, inspect the runner revision selected by the active checkout's workflow. Load a compatible runner in an isolated environment and check both the executable on `PATH` and the module from `python3 -c 'import opp_repl; print(opp_repl.__file__)'`. Keep the project recipe intact.
+
 ## Dependency mapping and scope
 
 For selection from changed paths, use the active `dependency.json` and the checked-out NED/package/feature graph to map:

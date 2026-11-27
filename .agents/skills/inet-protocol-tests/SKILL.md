@@ -88,6 +88,8 @@ Treat `work/` as generated output. Fix the source `.test` or shared inputs, not 
 
 The current `inet.opp` selects `tests/protocol/lib` and library name `protocoltest` for protocol suites. The runner builds that support library before execution, including with `--no-build`. Inspect the loaded description when the support library differs. Preserve generated diagnostics before another run; the runner clears test work directories before execution.
 
+Run one protocol runner at a time per worktree when invocations share generated test directories or the support library. This includes overlapping filters and debug/release reruns. A second runner can remove `work/<test>/test.out` while the first is reading it. If this happens, let the writers finish and rerun the affected selection on its own. Use separate worktrees for parallel comparisons that need independent generated output.
+
 For ordinary development, prefer the integrated runner over `tests/protocol/wifi/run-tests.sh`. Inspect a suite-specific script only when diagnosing differences or explicitly asked to use it.
 
 ## Diagnose and report results

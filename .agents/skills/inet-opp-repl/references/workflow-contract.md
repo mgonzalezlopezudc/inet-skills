@@ -18,6 +18,17 @@ Record before execution:
 
 Run one scoped invocation for one declared comparison or update operation. Preserve its exit code and raw output before interpreting the result.
 
+## Select tests with a coverage map
+
+Follow the checkout's gate guide for obtaining the map, then check the selector and runner help separately. In versions with the following options, `opp_select_tests` takes `--map` while `opp_run_fingerprint_tests` takes `--test-map`. Run the selector from the INET root.
+
+```sh
+opp_select_tests --load . -p inet --changes "$base...worktree" \
+  --map "$map_dir" --kind fingerprint --explain --ignore-environment
+```
+
+Use `"$base...$head"` for committed changes. Record the map revision, any environment differences, and the reported selection. `--ignore-environment` is for local selection when the project guide calls for it. Use the workflow's actual environment and flags when reproducing CI.
+
 ## Test and update modes
 
 Do not conflate a test operation with an update operation. A test operation compares current output with an expectation or control and reports test results such as `PASS`, `FAIL`, or `ERROR`. An update operation writes a store and reports facts such as `KEEP`, `INSERT`, `UPDATE`, or `ERROR`.

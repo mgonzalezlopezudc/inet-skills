@@ -109,6 +109,8 @@ opp_run_statistical_tests --load . -p inet -m debug -w '^examples/wireless(/|$)'
 
 Use `DEBUG` for both log levels if INFO is insufficient. The runner uses concurrent execution and `Cmdenv` by default. Set `--log-file` explicitly to retain a diagnostic log. Preserve existing logs before another run. Preserve exit status through `tee` with `set -o pipefail`.
 
+When using the runner's Python scalar comparator on retained data, inspect `ScalarComparisonResult` in the installed runner. In versions exposing `only_1` and `only_2`, these are the rows unique to the first and second inputs, respectively. `different` holds changed rows present on both sides. Keep the input ordering explicit in the report.
+
 Expected scalars live under `statistics/<simulation-directory>/<ini-file>-<config>-#<run>.sca`. Differences normally produce `.diff` and `.csv` diagnostics beside that baseline. Empty current or stored data is `FAIL`; a missing expected `.sca` is `ERROR`. Other simulation, build, or conversion errors need their own diagnosis. The comparator uses exact dataframe/value checks, with result-filter handling; the CSV's relative-error column is diagnostic, not a significance threshold. Inspect the task reason as well as its status.
 
 Conversion can remove current `.vec`/`.vci` files, and comparison normally removes the current `.sca`; do not promise those raw artifacts survive. Inspect existing diagnostics first, and use a separate scoped simulation run if raw result evidence is needed.

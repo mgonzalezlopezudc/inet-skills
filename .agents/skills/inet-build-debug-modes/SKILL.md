@@ -14,6 +14,8 @@ Use [project-guidance-discovery.md](../../references/project-guidance-discovery.
 
 If a debug invocation resolves a release runner or library, the modes do not match. Correct the mismatch before the next diagnostic step. Use `opp_run_dbg` directly only when LLDB or an exact runner/library command requires it. Use `inet --debug --printcmd` to inspect launcher resolution.
 
+For an additional model library, pass its stem to `-l` so OMNeT++ adds the platform prefix, mode suffix, and extension. For example, `inet --debug -l ./PassiveScanAudit ...` resolves `./libPassiveScanAudit_dbg.so` on Linux. A stem such as `./libPassiveScanAudit_dbg` duplicates the prefix and debug suffix. If the invocation requires an exact file, pass its path including the extension.
+
 Apply the discovered build-freshness requirement. Test-local compilation does not rebuild `libINET_dbg.so`. For stale debug output, check custom project libraries and generated MSG/NED artifacts.
 
 When LLDB cannot resolve source, locals, or breakpoints, inspect debug symbols, optimization, loaded images, and source/binary revision:
