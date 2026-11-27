@@ -194,6 +194,15 @@ cases:
     prompt: Implement the already-approved localized fix.
     forbidden_skills: [inet-code-review]
 
+  - id: devin-review-positive
+    kind: positive
+    prompt: Read the existing Devin Review for GitHub PR inet-framework/inet#1497 without an API key and tell me which flags are still open.
+    expected_skills: [inet-devin-review]
+  - id: devin-review-negative
+    kind: negative
+    prompt: Independently review the current GitHub PR diff for INET correctness and regressions.
+    forbidden_skills: [inet-devin-review]
+
   - id: fingerprint-positive
     kind: positive
     prompt: Diagnose this fingerprint mismatch and decide whether the baseline change is expected.

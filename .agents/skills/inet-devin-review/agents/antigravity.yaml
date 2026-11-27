@@ -1,0 +1,4 @@
+interface:
+  display_name: "INET Devin Review"
+  short_description: "Read Devin findings on a GitHub pull request"
+  default_prompt: "Use $inet-devin-review to read the existing Devin Review for this GitHub PR. Summarize the open findings and any relevant resolved findings with links."
