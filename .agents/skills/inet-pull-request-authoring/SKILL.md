@@ -54,6 +54,8 @@ In a PR, use Mermaid when it helps explain the change. Give **each test describe
 
 Use line breaks between Mermaid statements and avoid semicolons in the blocks. Check that the diagrams match the tests and preview them when possible.
 
+When previewing with headless Snap Firefox, create a fresh profile in a directory visible to the snap, for example `mktemp -d "$HOME/snap/firefox/common/mermaid.XXXXXX"`. Pass that path with `--profile`.
+
 List all commits in review order with links and a short explanation of what each commit contributes. Explain each contribution instead of repeating its subject. Distinguish preparation, behavior changes, tests, and documentation. Where appropriate, name and link the protocol tests associated with each commit. Explain which behavior each test checks. Use a compact table or list that lets the reviewer connect each contribution to its tests. Preserve the parent comparison described below without repeating shared setup in every row.
 
 Put detailed commands and execution records after the explanation, in a collapsible section when useful. Preserve the active project's required structure and evidence fields. Before completion, check that the summary explains the result and the commit list explains each contribution and its associated tests.
@@ -87,6 +89,18 @@ flowchart TD
 Keep the causal explanation in the commit body. Put exact revisions, commands, modes, seeds, execution status, and logs in the PR evidence or its linked comparison record. Distinguish test expectations from observed results. Label source-based comparisons explicitly. State when fresh executions of the exact parent and commit remain unverified. Earlier runs on different revisions do not establish that exact comparison.
 
 This description workflow does not authorize test execution, history changes, or publication. Follow the task's existing scope for those actions.
+
+## Publish an authorized pull request change
+
+If the GitHub connector returns `403 Resource not accessible by integration` for an authorized PR create or edit, check the remote state before retrying. Use the corresponding `gh` command with the prepared Markdown file when the authenticated account has the required repository access.
+
+```sh
+gh pr create --repo "$repo" --base "$base" --head "$fork_owner:$branch" \
+  --title "$title" --body-file "$body_file"
+gh pr edit "$pr" --repo "$repo" --body-file "$body_file"
+```
+
+For creation, preserve the requested draft state and confirm the PR does not already exist for that head and base. After the operation, use `gh pr view --repo "$repo" "$pr"` to verify the target, head, and published body.
 
 ## Audit existing artifacts
 
